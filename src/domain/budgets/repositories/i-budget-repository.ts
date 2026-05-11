@@ -1,6 +1,7 @@
 import { Budget } from "@domain/budgets/entities/budget.entity";
 import { Event } from "@domain/budgets/entities/event.entity";
 import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
+import { Company } from "@domain/budgets/entities/company.entity";
 import { Result } from "@shared/result";
 
 export interface IBudgetRepository {
@@ -15,4 +16,8 @@ export interface IBudgetRepository {
   createCategory(data: BudgetCategory): Promise<Result<BudgetCategory>>;
   updateCategory(data: BudgetCategory): Promise<Result<BudgetCategory>>;
   deleteCategory(id: string): Promise<Result<void>>;
+  createCompany(data: Company): Promise<Result<Company>>;
+  updateCompany(data: Company): Promise<Result<Company>>;
+  deleteCompany(id: string): Promise<Result<void>>;
+  getCompanyById(id: string): Promise<Result<Company | null>>;
 }

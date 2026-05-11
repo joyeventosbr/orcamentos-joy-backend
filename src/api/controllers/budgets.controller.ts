@@ -1,16 +1,19 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from "@nestjs/common";
 import { type FastifyReply } from "fastify";
 import { ApiBody, ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { CreateBudgetUseCase } from "@application/budgets/usecases/create-budget/create-budget.usecase";
-import { UpdateBudgetUseCase } from "@application/budgets/usecases/update-budget/update-budget.usecase";
-import { DeleteBudgetUseCase } from "@application/budgets/usecases/delete-budget/delete-budget.usecase";
-import { ExportBudgetUseCase } from "@application/budgets/usecases/export-budget/export-budget.usecase";
-import { CreateEventUseCase } from "@application/budgets/usecases/create-event/create-event.usecase";
-import { UpdateEventUseCase } from "@application/budgets/usecases/update-event/update-event.usecase";
-import { DeleteEventUseCase } from "@application/budgets/usecases/delete-event/delete-event.usecase";
-import { CreateCategoryUseCase } from "@application/budgets/usecases/create-category/create-category.usecase";
-import { UpdateCategoryUseCase } from "@application/budgets/usecases/update-category/update-category.usecase";
-import { DeleteCategoryUseCase } from "@application/budgets/usecases/delete-category/delete-category.usecase";
+import { CreateBudgetUseCase } from "@application/budgets/usecases/budget/create/create-budget.usecase";
+import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
+import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete/delete-budget.usecase";
+import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
+import { CreateEventUseCase } from "@application/budgets/usecases/event/create/create-event.usecase";
+import { UpdateEventUseCase } from "@application/budgets/usecases/event/update/update-event.usecase";
+import { DeleteEventUseCase } from "@application/budgets/usecases/event/delete/delete-event.usecase";
+import { CreateCategoryUseCase } from "@application/budgets/usecases/category/create/create-category.usecase";
+import { UpdateCategoryUseCase } from "@application/budgets/usecases/category/update/update-category.usecase";
+import { DeleteCategoryUseCase } from "@application/budgets/usecases/category/delete/delete-category.usecase";
+import { CreateCompanyUseCase } from "@application/budgets/usecases/company/create/create-company.usecase";
+import { UpdateCompanyUseCase } from "@application/budgets/usecases/company/update/update-company.usecase";
+import { DeleteCompanyUseCase } from "@application/budgets/usecases/company/delete/delete-company.usecase";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
 import { ExportBudgetResponseApiDto } from "@api/dtos/budgets/responses/export-budget-response.api.dto";
@@ -18,6 +21,8 @@ import { CreateEventRequestApiDto } from "@api/dtos/budgets/requests/events/crea
 import { UpdateEventRequestApiDto } from "@api/dtos/budgets/requests/events/update-event-request.api.dto";
 import { CreateCategoryRequestApiDto } from "@api/dtos/budgets/requests/categories/create-category-request.api.dto";
 import { UpdateCategoryRequestApiDto } from "@api/dtos/budgets/requests/categories/update-category-request.api.dto";
+import { CreateCompanyRequestApiDto } from "@api/dtos/budgets/requests/companies/create-company-request.api.dto";
+import { UpdateCompanyRequestApiDto } from "@api/dtos/budgets/requests/companies/update-company-request.api.dto";
 
 @ApiTags("budgets")
 @Controller("budgets")
@@ -33,6 +38,9 @@ export class BudgetsController {
     private readonly createCategoryUseCase: CreateCategoryUseCase,
     private readonly updateCategoryUseCase: UpdateCategoryUseCase,
     private readonly deleteCategoryUseCase: DeleteCategoryUseCase,
+    private readonly createCompanyUseCase: CreateCompanyUseCase,
+    private readonly updateCompanyUseCase: UpdateCompanyUseCase,
+    private readonly deleteCompanyUseCase: DeleteCompanyUseCase,
   ) {}
 
   @Post()
@@ -134,6 +142,35 @@ export class BudgetsController {
   @Delete("/categories/:id")
   async deleteCategory(@Param("id") id: string, @Res() res: FastifyReply) {
     const result = await this.deleteCategoryUseCase.execute({ id });
+    if (result.isFailure()) {
+      return res.status(HttpStatus.BAD_REQUEST).send({ error: result.getError() });
+    }
+    return res.status(HttpStatus.OK).send({ success: true });
+  }
+
+  @Post("/companies")
+  @ApiBody({ type: CreateCompanyRequestApiDto })
+  async createCompany(@Body() body: unknown, @Res() res: FastifyReply) {
+    const result = await this.createCompanyUseCase.execute(body);
+    if (result.isFailure()) {
+      return res.status(HttpStatus.BAD_REQUEST).send({ error: result.getError() });
+    }
+    return res.status(HttpStatus.CREATED).send(result.getValue());
+  }
+
+  @Put("/companies/:id")
+  @ApiBody({ type: UpdateCompanyRequestApiDto })
+  async updateCompany(@Param("id") id: string, @Body() body: unknown, @Res() res: FastifyReply) {
+    const result = await this.updateCompanyUseCase.execute({ ...(body as object), id });
+    if (result.isFailure()) {
+      return res.status(HttpStatus.BAD_REQUEST).send({ error: result.getError() });
+    }
+    return res.status(HttpStatus.OK).send(result.getValue());
+  }
+
+  @Delete("/companies/:id")
+  async deleteCompany(@Param("id") id: string, @Res() res: FastifyReply) {
+    const result = await this.deleteCompanyUseCase.execute({ id });
     if (result.isFailure()) {
       return res.status(HttpStatus.BAD_REQUEST).send({ error: result.getError() });
     }

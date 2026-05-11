@@ -1,4 +1,4 @@
-import { createBudgetSchema } from "../create-budget/create-budget.dto";
+import { createBudgetSchema } from "../create/create-budget.dto";
 
 export const updateBudgetSchema = createBudgetSchema.extend({
   id: createBudgetSchema.shape.eventId,
