@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Result } from "@shared/result";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
 import { exportBudgetSchema } from "./export-budget.dto";
 import { ZError } from "@utils/index";
 

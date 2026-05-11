@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IEventRepository } from "@domain/budgets/repositories/event/i-event-repository";
 import { Result } from "@shared/result";
 import { deleteEventSchema } from "./delete-event.dto";
 import { ZError } from "@utils/index";
@@ -7,8 +7,8 @@ import { ZError } from "@utils/index";
 @Injectable()
 export class DeleteEventUseCase {
   constructor(
-    @Inject("IBudgetRepository")
-    private readonly budgetRepository: IBudgetRepository,
+    @Inject("IEventRepository")
+    private readonly eventRepository: IEventRepository,
   ) {}
 
   async execute(input: unknown) {
@@ -18,6 +18,6 @@ export class DeleteEventUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    return this.budgetRepository.deleteEvent(parsed.data.id);
+    return this.eventRepository.delete(parsed.data.id);
   }
 }

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { ICompanyRepository } from "@domain/budgets/repositories/company/i-company-repository";
 import { Company } from "@domain/budgets/entities/company.entity";
 import { Result } from "@shared/result";
 import { createCompanySchema } from "./create-company.dto";
@@ -8,8 +8,8 @@ import { ZError } from "@utils/index";
 @Injectable()
 export class CreateCompanyUseCase {
   constructor(
-    @Inject("IBudgetRepository")
-    private readonly budgetRepository: IBudgetRepository,
+    @Inject("ICompanyRepository")
+    private readonly companyRepository: ICompanyRepository,
   ) {}
 
   async execute(input: unknown) {
@@ -20,6 +20,6 @@ export class CreateCompanyUseCase {
     }
 
     const company = new Company("", parsed.data.name, new Date());
-    return this.budgetRepository.createCompany(company);
+    return this.companyRepository.create(company);
   }
 }

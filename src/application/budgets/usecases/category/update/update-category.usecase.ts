@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/category/i-budget-category-repository";
 import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
 import { Result } from "@shared/result";
 import { updateCategorySchema } from "./update-category.dto";
@@ -8,8 +8,8 @@ import { ZError } from "@utils/index";
 @Injectable()
 export class UpdateCategoryUseCase {
   constructor(
-    @Inject("IBudgetRepository")
-    private readonly budgetRepository: IBudgetRepository,
+    @Inject("IBudgetCategoryRepository")
+    private readonly budgetCategoryRepository: IBudgetCategoryRepository,
   ) {}
 
   async execute(input: unknown) {
@@ -26,6 +26,6 @@ export class UpdateCategoryUseCase {
       parsed.data.order,
     );
 
-    return this.budgetRepository.updateCategory(category);
+    return this.budgetCategoryRepository.update(category);
   }
 }

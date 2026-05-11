@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/category/i-budget-category-repository";
 import { Result } from "@shared/result";
 import { deleteCategorySchema } from "./delete-category.dto";
 import { ZError } from "@utils/index";
@@ -7,8 +7,8 @@ import { ZError } from "@utils/index";
 @Injectable()
 export class DeleteCategoryUseCase {
   constructor(
-    @Inject("IBudgetRepository")
-    private readonly budgetRepository: IBudgetRepository,
+    @Inject("IBudgetCategoryRepository")
+    private readonly budgetCategoryRepository: IBudgetCategoryRepository,
   ) {}
 
   async execute(input: unknown) {
@@ -18,6 +18,6 @@ export class DeleteCategoryUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    return this.budgetRepository.deleteCategory(parsed.data.id);
+    return this.budgetCategoryRepository.delete(parsed.data.id);
   }
 }

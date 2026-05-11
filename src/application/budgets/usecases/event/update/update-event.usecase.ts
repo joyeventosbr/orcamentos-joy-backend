@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IEventRepository } from "@domain/budgets/repositories/event/i-event-repository";
 import { Result } from "@shared/result";
 import { updateEventSchema } from "./update-event.dto";
 import { ZError } from "@utils/index";
@@ -7,8 +7,8 @@ import { ZError } from "@utils/index";
 @Injectable()
 export class UpdateEventUseCase {
   constructor(
-    @Inject("IBudgetRepository")
-    private readonly budgetRepository: IBudgetRepository,
+    @Inject("IEventRepository")
+    private readonly eventRepository: IEventRepository,
   ) {}
 
   async execute(input: unknown) {
@@ -18,7 +18,7 @@ export class UpdateEventUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    const eventResult = await this.budgetRepository.getEventById(parsed.data.id);
+    const eventResult = await this.eventRepository.getById(parsed.data.id);
     if (eventResult.isFailure()) return Result.failure(eventResult.getError());
     const event = eventResult.getValue();
     if (!event) return Result.failure("Evento não encontrado");
@@ -26,6 +26,6 @@ export class UpdateEventUseCase {
     event.name = parsed.data.name;
     event.updatedAt = new Date();
 
-    return this.budgetRepository.updateEvent(event);
+    return this.eventRepository.update(event);
   }
 }

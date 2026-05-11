@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IEventRepository } from "@domain/budgets/repositories/event/i-event-repository";
 import { Event } from "@domain/budgets/entities/event.entity";
 import { Result } from "@shared/result";
 import { createEventSchema } from "./create-event.dto";
@@ -8,8 +8,8 @@ import { ZError } from "@utils/index";
 @Injectable()
 export class CreateEventUseCase {
   constructor(
-    @Inject("IBudgetRepository")
-    private readonly budgetRepository: IBudgetRepository,
+    @Inject("IEventRepository")
+    private readonly eventRepository: IEventRepository,
   ) {}
 
   async execute(input: unknown) {
@@ -20,6 +20,6 @@ export class CreateEventUseCase {
     }
 
     const event = new Event("", parsed.data.companyId, parsed.data.name, new Date());
-    return this.budgetRepository.createEvent(event);
+    return this.eventRepository.create(event);
   }
 }

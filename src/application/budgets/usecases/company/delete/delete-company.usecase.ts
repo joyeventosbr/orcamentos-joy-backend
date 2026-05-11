@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { ICompanyRepository } from "@domain/budgets/repositories/company/i-company-repository";
 import { Result } from "@shared/result";
 import { deleteCompanySchema } from "./delete-company.dto";
 import { ZError } from "@utils/index";
@@ -7,8 +7,8 @@ import { ZError } from "@utils/index";
 @Injectable()
 export class DeleteCompanyUseCase {
   constructor(
-    @Inject("IBudgetRepository")
-    private readonly budgetRepository: IBudgetRepository,
+    @Inject("ICompanyRepository")
+    private readonly companyRepository: ICompanyRepository,
   ) {}
 
   async execute(input: unknown) {
@@ -18,6 +18,6 @@ export class DeleteCompanyUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    return this.budgetRepository.deleteCompany(parsed.data.id);
+    return this.companyRepository.delete(parsed.data.id);
   }
 }

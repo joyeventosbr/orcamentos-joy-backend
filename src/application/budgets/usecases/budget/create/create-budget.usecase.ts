@@ -4,7 +4,7 @@ import { Budget } from "@domain/budgets/entities/budget.entity";
 import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
 import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
 import { BillingType } from "@domain/budgets/types/billing-type.type";
-import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
 import { createBudgetSchema } from "./create-budget.dto";
 import { ZError } from "@utils/index";
 
