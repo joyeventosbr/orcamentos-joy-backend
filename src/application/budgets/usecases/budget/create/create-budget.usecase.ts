@@ -27,7 +27,6 @@ export class CreateBudgetUseCase {
       (category) =>
         new BudgetCategory(
           category.id,
-          "",
           category.name,
           category.code,
           category.order,

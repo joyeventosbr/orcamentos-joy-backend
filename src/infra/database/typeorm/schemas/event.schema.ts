@@ -1,23 +1,15 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { CompanySchema } from "./company.schema";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("tb_events")
 export class EventSchema {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
-
-  @Column({ name: "company_id" })
-  companyId: string;
-
-  @ManyToOne(() => CompanySchema)
-  @JoinColumn({ name: "company_id" })
-  company: CompanySchema;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ name: "created_at" })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ name: "updated_at", nullable: true })
   updatedAt?: Date;

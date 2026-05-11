@@ -31,7 +31,6 @@ export class UpdateBudgetUseCase {
       (category) =>
         new BudgetCategory(
           category.id,
-          parsed.data.id,
           category.name,
           category.code,
           category.order,

@@ -1,12 +1,14 @@
 // infra/database/typeorm/typeorm.config.ts
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { IntegrationSchema } from "../schemas/integration.schema";
 import { UserSchema } from "../schemas/user.schema";
 import { CompanySchema } from "../schemas/company.schema";
 import { EventSchema } from "../schemas/event.schema";
 import { BudgetSchema } from "../schemas/budget.schema";
 import { BudgetCategorySchema } from "../schemas/budget-category.schema";
 import { BudgetLineItemSchema } from "../schemas/budget-line-item.schema";
+import { CompanyEventSchema } from "../schemas/company-event.schema";
+import { EventBudgetSchema } from "../schemas/event-budget.schema";
+import { BudgetCategoryLinkSchema } from "../schemas/budget-category-link.schema";
 import { config } from "dotenv";
 
 config();
@@ -19,13 +21,15 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: [
-    IntegrationSchema,
     UserSchema,
     CompanySchema,
     EventSchema,
     BudgetSchema,
     BudgetCategorySchema,
     BudgetLineItemSchema,
+    CompanyEventSchema,
+    EventBudgetSchema,
+    BudgetCategoryLinkSchema,
   ],
   synchronize: false,
   migrations: [__dirname + "/../migrations/*.{ts,js}"],

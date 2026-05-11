@@ -21,7 +21,6 @@ export class UpdateCategoryUseCase {
 
     const category = new BudgetCategory(
       parsed.data.id,
-      parsed.data.budgetId,
       parsed.data.name,
       parsed.data.code,
       parsed.data.order,

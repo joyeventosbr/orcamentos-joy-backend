@@ -2,6 +2,9 @@ import { Budget } from "@domain/budgets/entities/budget.entity";
 import { Event } from "@domain/budgets/entities/event.entity";
 import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
 import { Company } from "@domain/budgets/entities/company.entity";
+import { CompanyEvent } from "@domain/budgets/entities/company-event.entity";
+import { EventBudget } from "@domain/budgets/entities/event-budget.entity";
+import { BudgetCategoryLink } from "@domain/budgets/entities/budget-category-link.entity";
 import { Result } from "@shared/result";
 
 export interface IBudgetRepository {
@@ -20,4 +23,9 @@ export interface IBudgetRepository {
   updateCompany(data: Company): Promise<Result<Company>>;
   deleteCompany(id: string): Promise<Result<void>>;
   getCompanyById(id: string): Promise<Result<Company | null>>;
+  createCompanyEvent(data: CompanyEvent): Promise<Result<CompanyEvent>>;
+  createEventBudget(data: EventBudget): Promise<Result<EventBudget>>;
+  createBudgetCategoryLink(
+    data: BudgetCategoryLink,
+  ): Promise<Result<BudgetCategoryLink>>;
 }

@@ -1,52 +1,30 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { EventSchema } from "./event.schema";
-import { BudgetCategorySchema } from "./budget-category.schema";
-import { BudgetLineItemSchema } from "./budget-line-item.schema";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("tb_budgets")
 export class BudgetSchema {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
-
-  @Column({ name: "event_id" })
-  eventId: string;
-
-  @ManyToOne(() => EventSchema)
-  @JoinColumn({ name: "event_id" })
-  event: EventSchema;
+  id!: string;
 
   @Column()
-  client: string;
+  client!: string;
 
   @Column()
-  job: string;
+  job!: string;
 
   @Column()
-  deadline: string;
+  deadline!: string;
 
   @Column()
-  location: string;
+  location!: string;
 
   @Column({ name: "event_date" })
-  eventDate: string;
+  eventDate!: string;
 
   @Column({ name: "participants", type: "int" })
-  participants: number;
-
-  @OneToMany(() => BudgetCategorySchema, (category) => category.budget, {
-    cascade: true,
-    eager: true,
-  })
-  categories: BudgetCategorySchema[];
-
-  @OneToMany(() => BudgetLineItemSchema, (item) => item.budget, {
-    cascade: true,
-    eager: true,
-  })
-  items: BudgetLineItemSchema[];
+  participants!: number;
 
   @Column({ name: "created_at" })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ name: "updated_at", nullable: true })
   updatedAt?: Date;

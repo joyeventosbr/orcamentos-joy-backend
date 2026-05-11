@@ -21,7 +21,6 @@ export class CreateCategoryUseCase {
 
     const category = new BudgetCategory(
       "",
-      parsed.data.budgetId,
       parsed.data.name,
       parsed.data.code,
       parsed.data.order,

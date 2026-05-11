@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { IntegrationRepository } from "./repositories/integration.repository";
 import { UserRepository } from "./repositories/user.repository";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { typeOrmConfig } from "./typeorm/configs/typeorm.config";
@@ -14,10 +13,6 @@ import { BudgetRepository } from "./repositories/budget.repository";
     ]),
   ],
   providers: [
-    {
-      provide: "IIntegrationRepository",
-      useClass: IntegrationRepository,
-    },
     {
       provide: "IUserRepository",
       useClass: UserRepository,

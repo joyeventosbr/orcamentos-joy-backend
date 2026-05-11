@@ -4,22 +4,22 @@ import { Role } from "@domain/users/types/user-role.type";
 @Entity("tb_users")
 export class UserSchema {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Column({ type: "smallint", default: Role.ENTERPRISE })
-  role: Role;
+  role!: Role;
 
   @Column({ name: "created_at" })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ name: "cd_empresa", nullable: true })
   cdEmpresa?: string;

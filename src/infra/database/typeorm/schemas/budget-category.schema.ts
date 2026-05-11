@@ -1,26 +1,17 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BudgetSchema } from "./budget.schema";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("tb_budget_categories")
 export class BudgetCategorySchema {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
-
-  @Column({ name: "budget_id" })
-  budgetId: string;
-
-  @ManyToOne(() => BudgetSchema, (budget) => budget.categories, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "budget_id" })
-  budget: BudgetSchema;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  code: string;
+  code!: string;
 
-  @Column({ name: "order_index", type: "int" })
-  order: number;
+  @Column({ name: "order", type: "int" })
+  order!: number;
+
 }

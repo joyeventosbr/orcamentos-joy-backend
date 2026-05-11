@@ -3,13 +3,13 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity("tb_companies")
 export class CompanySchema {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ name: "created_at" })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ name: "updated_at", nullable: true })
   updatedAt?: Date;
