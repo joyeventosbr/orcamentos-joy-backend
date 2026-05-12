@@ -57,6 +57,7 @@ export class CustomersController {
   }
 
   @Put(":id")
+  @Public()
   @ApiBody({ type: UpdateCustomerRequestApiDto })
   async update(
     @Param("id") id: string,
@@ -77,6 +78,7 @@ export class CustomersController {
   }
 
   @Delete(":id")
+  @Public()
   async delete(@Param("id") id: string, @Res() res: FastifyReply) {
     const result = await this.deleteCustomerUseCase.execute({ id });
     if (result.isFailure()) {

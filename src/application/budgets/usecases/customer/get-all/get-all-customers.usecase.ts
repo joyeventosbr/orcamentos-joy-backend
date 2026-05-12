@@ -11,6 +11,6 @@ export class GetAllCustomersUseCase {
   ) {}
 
   async execute(): Promise<Result<Customer[]>> {
-    return this.customerRepository.getAll();
+    return await this.customerRepository.getAll();
   }
 }
