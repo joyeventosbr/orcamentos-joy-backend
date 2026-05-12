@@ -5,12 +5,12 @@ export class BudgetMapper {
   static toEntity(schema: BudgetSchema): Budget {
     return Budget.read({
       id: schema.id,
-      eventId: "",
+      folderId: "",
       client: schema.client,
       job: schema.job,
       deadline: schema.deadline,
       location: schema.location,
-      eventDate: schema.eventDate,
+      folderDate: schema.folderDate,
       participants: schema.participants,
       categories: [],
       items: [],
@@ -26,7 +26,7 @@ export class BudgetMapper {
       job: entity.job,
       deadline: entity.deadline,
       location: entity.location,
-      eventDate: entity.eventDate,
+      folderDate: entity.folderDate,
       participants: entity.participants,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,

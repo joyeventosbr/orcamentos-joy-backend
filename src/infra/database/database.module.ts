@@ -5,8 +5,8 @@ import { typeOrmConfig } from "./typeorm/configs/typeorm.config";
 import { type EntityClassOrSchema } from "@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type";
 import { BudgetRepository } from "./repositories/budget/budget.repository";
 import { BudgetCategoryRepository } from "./repositories/category/budget-category.repository";
-import { CompanyRepository } from "./repositories/company/company.repository";
-import { EventRepository } from "./repositories/event/event.repository";
+import { CustomerRepository } from "./repositories/customer/customer.repository";
+import { FolderRepository } from "./repositories/folder/folder.repository";
 import { BudgetRelationRepository } from "./repositories/relation/budget-relation.repository";
 
 @Module({
@@ -26,12 +26,12 @@ import { BudgetRelationRepository } from "./repositories/relation/budget-relatio
       useClass: BudgetRepository,
     },
     {
-      provide: "ICompanyRepository",
-      useClass: CompanyRepository,
+      provide: "ICustomerRepository",
+      useClass: CustomerRepository,
     },
     {
-      provide: "IEventRepository",
-      useClass: EventRepository,
+      provide: "IFolderRepository",
+      useClass: FolderRepository,
     },
     {
       provide: "IBudgetCategoryRepository",
@@ -45,8 +45,8 @@ import { BudgetRelationRepository } from "./repositories/relation/budget-relatio
   exports: [
     "IUserRepository",
     "IBudgetRepository",
-    "ICompanyRepository",
-    "IEventRepository",
+    "ICustomerRepository",
+    "IFolderRepository",
     "IBudgetCategoryRepository",
     "IBudgetRelationRepository",
   ],

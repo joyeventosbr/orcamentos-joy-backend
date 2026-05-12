@@ -14,7 +14,7 @@ type JwtUser = {
   userId: string;
   email: string;
   role: Role;
-  cdEmpresa?: string;
+  cdCliente?: string;
 };
 
 @Injectable()

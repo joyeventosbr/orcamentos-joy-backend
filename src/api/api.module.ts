@@ -4,6 +4,9 @@ import { InfraModule } from "@infra/infra.module";
 import { AuthController } from "./controllers/auth.controller";
 import { RouterModule } from "@nestjs/core";
 import { BudgetsController } from "./controllers/budgets.controller";
+import { CategoriesController } from "./controllers/categories.controller";
+import { CustomersController } from "./controllers/customers.controller";
+import { FoldersController } from "./controllers/folders.controller";
 
 @Module({
   imports: [
@@ -16,6 +19,12 @@ import { BudgetsController } from "./controllers/budgets.controller";
       },
     ]),
   ],
-  controllers: [AuthController, BudgetsController],
+  controllers: [
+    AuthController,
+    BudgetsController,
+    CategoriesController,
+    CustomersController,
+    FoldersController,
+  ],
 })
 export class ApiModule {}

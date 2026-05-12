@@ -17,8 +17,8 @@ export class BudgetSchema {
   @Column()
   location!: string;
 
-  @Column({ name: "event_date" })
-  eventDate!: string;
+  @Column({ name: "folder_date" })
+  folderDate!: string;
 
   @Column({ name: "participants", type: "int" })
   participants!: number;

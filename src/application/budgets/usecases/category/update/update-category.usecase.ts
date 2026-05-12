@@ -12,19 +12,19 @@ export class UpdateCategoryUseCase {
     private readonly budgetCategoryRepository: IBudgetCategoryRepository,
   ) {}
 
-  async execute(input: unknown) {
+  async execute(input: unknown): Promise<Result<BudgetCategory>> {
     const parsed = updateCategorySchema.safeParse(input);
     if (!parsed.success) {
       const errors = ZError.create(parsed.error).errors;
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    const category = new BudgetCategory(
-      parsed.data.id,
-      parsed.data.name,
-      parsed.data.code,
-      parsed.data.order,
-    );
+    const category = BudgetCategory.read({
+      id: parsed.data.id,
+      name: parsed.data.name,
+      code: parsed.data.code,
+      order: parsed.data.order,
+    });
 
     return this.budgetCategoryRepository.update(category);
   }

@@ -11,7 +11,7 @@ export class DeleteCategoryUseCase {
     private readonly budgetCategoryRepository: IBudgetCategoryRepository,
   ) {}
 
-  async execute(input: unknown) {
+  async execute(input: unknown): Promise<Result<void>> {
     const parsed = deleteCategorySchema.safeParse(input);
     if (!parsed.success) {
       const errors = ZError.create(parsed.error).errors;

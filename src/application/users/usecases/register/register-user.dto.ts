@@ -11,7 +11,7 @@ export const makeRegisterUserSchema = (validationService: IValidationService) =>
         message: "Formato do email inválido.",
       }),
     password: z.string(),
-    cdEmpresa: z.string(),
+    cdCliente: z.string(),
   });
 
 export type RegisterUserDto = z.infer<

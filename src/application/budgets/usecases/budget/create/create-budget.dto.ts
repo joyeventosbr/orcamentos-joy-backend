@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-const categorySchema = z.object({
-  id: z.string().trim().min(1),
-  name: z.string().trim().min(1),
-  code: z.string().trim().min(1),
-  order: z.number().int().nonnegative(),
-});
-
 const lineItemSchema = z.object({
   id: z.string().trim().min(1),
   parentId: z.string().trim().optional().nullable(),
@@ -30,14 +23,13 @@ const lineItemSchema = z.object({
 });
 
 export const createBudgetSchema = z.object({
-  eventId: z.string().trim().min(1),
+  folderId: z.string().trim().min(1),
   client: z.string().trim().min(1),
   job: z.string().trim().min(1),
   deadline: z.string().trim().min(1),
   location: z.string().trim().min(1),
-  eventDate: z.string().trim().min(1),
+  folderDate: z.string().trim().min(1),
   participants: z.number().int().nonnegative(),
-  categories: z.array(categorySchema),
   items: z.array(lineItemSchema),
 });
 

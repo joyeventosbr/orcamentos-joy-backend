@@ -12,20 +12,22 @@ export class CreateCategoryUseCase {
     private readonly budgetCategoryRepository: IBudgetCategoryRepository,
   ) {}
 
-  async execute(input: unknown) {
+  async execute(input: unknown): Promise<Result<BudgetCategory>> {
     const parsed = createCategorySchema.safeParse(input);
     if (!parsed.success) {
       const errors = ZError.create(parsed.error).errors;
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    const category = new BudgetCategory(
-      "",
-      parsed.data.name,
-      parsed.data.code,
-      parsed.data.order,
-    );
+    const categoryResult = BudgetCategory.create({
+      name: parsed.data.name,
+      code: parsed.data.code,
+      order: parsed.data.order,
+    });
+    if (categoryResult.isFailure()) {
+      return Result.failure(categoryResult.getError());
+    }
 
-    return this.budgetCategoryRepository.create(category);
+    return this.budgetCategoryRepository.create(categoryResult.getValue());
   }
 }

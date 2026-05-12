@@ -7,15 +7,16 @@ import { CreateBudgetUseCase } from "./budgets/usecases/budget/create/create-bud
 import { UpdateBudgetUseCase } from "./budgets/usecases/budget/update/update-budget.usecase";
 import { DeleteBudgetUseCase } from "./budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "./budgets/usecases/budget/export/export-budget.usecase";
-import { CreateEventUseCase } from "./budgets/usecases/event/create/create-event.usecase";
-import { UpdateEventUseCase } from "./budgets/usecases/event/update/update-event.usecase";
-import { DeleteEventUseCase } from "./budgets/usecases/event/delete/delete-event.usecase";
+import { GetBudgetUseCase } from "./budgets/usecases/budget/get/get-budget.usecase";
+import { CreateFolderUseCase } from "./budgets/usecases/folder/create/create-folder.usecase";
+import { UpdateFolderUseCase } from "./budgets/usecases/folder/update/update-folder.usecase";
+import { DeleteFolderUseCase } from "./budgets/usecases/folder/delete/delete-folder.usecase";
 import { CreateCategoryUseCase } from "./budgets/usecases/category/create/create-category.usecase";
 import { UpdateCategoryUseCase } from "./budgets/usecases/category/update/update-category.usecase";
 import { DeleteCategoryUseCase } from "./budgets/usecases/category/delete/delete-category.usecase";
-import { CreateCompanyUseCase } from "./budgets/usecases/company/create/create-company.usecase";
-import { UpdateCompanyUseCase } from "./budgets/usecases/company/update/update-company.usecase";
-import { DeleteCompanyUseCase } from "./budgets/usecases/company/delete/delete-company.usecase";
+import { CreateCustomerUseCase } from "./budgets/usecases/customer/create/create-customer.usecase";
+import { UpdateCustomerUseCase } from "./budgets/usecases/customer/update/update-customer.usecase";
+import { DeleteCustomerUseCase } from "./budgets/usecases/customer/delete/delete-customer.usecase";
 
 @Module({
   imports: [InfraModule],
@@ -27,15 +28,16 @@ import { DeleteCompanyUseCase } from "./budgets/usecases/company/delete/delete-c
     UpdateBudgetUseCase,
     DeleteBudgetUseCase,
     ExportBudgetUseCase,
-    CreateEventUseCase,
-    UpdateEventUseCase,
-    DeleteEventUseCase,
+    GetBudgetUseCase,
+    CreateFolderUseCase,
+    UpdateFolderUseCase,
+    DeleteFolderUseCase,
     CreateCategoryUseCase,
     UpdateCategoryUseCase,
     DeleteCategoryUseCase,
-    CreateCompanyUseCase,
-    UpdateCompanyUseCase,
-    DeleteCompanyUseCase,
+    CreateCustomerUseCase,
+    UpdateCustomerUseCase,
+    DeleteCustomerUseCase,
   ],
   exports: [
     RegisterUserUseCase,
@@ -45,15 +47,16 @@ import { DeleteCompanyUseCase } from "./budgets/usecases/company/delete/delete-c
     UpdateBudgetUseCase,
     DeleteBudgetUseCase,
     ExportBudgetUseCase,
-    CreateEventUseCase,
-    UpdateEventUseCase,
-    DeleteEventUseCase,
+    GetBudgetUseCase,
+    CreateFolderUseCase,
+    UpdateFolderUseCase,
+    DeleteFolderUseCase,
     CreateCategoryUseCase,
     UpdateCategoryUseCase,
     DeleteCategoryUseCase,
-    CreateCompanyUseCase,
-    UpdateCompanyUseCase,
-    DeleteCompanyUseCase,
+    CreateCustomerUseCase,
+    UpdateCustomerUseCase,
+    DeleteCustomerUseCase,
   ],
 })
 export class UseCasesModule {}

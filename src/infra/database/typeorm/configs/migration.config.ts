@@ -1,13 +1,13 @@
 import { DataSource } from "typeorm";
 import { config } from "dotenv";
 import { UserSchema } from "../schemas/user.schema";
-import { CompanySchema } from "../schemas/company.schema";
-import { EventSchema } from "../schemas/event.schema";
+import { CustomerSchema } from "../schemas/customer.schema";
+import { FolderSchema } from "../schemas/folder.schema";
 import { BudgetSchema } from "../schemas/budget.schema";
 import { BudgetCategorySchema } from "../schemas/budget-category.schema";
 import { BudgetLineItemSchema } from "../schemas/budget-line-item.schema";
-import { CompanyEventSchema } from "../schemas/company-event.schema";
-import { EventBudgetSchema } from "../schemas/event-budget.schema";
+import { CustomerFolderSchema } from "../schemas/customer-folder.schema";
+import { FolderBudgetSchema } from "../schemas/folder-budget.schema";
 import { BudgetCategoryLinkSchema } from "../schemas/budget-category-link.schema";
 
 config();
@@ -21,13 +21,13 @@ export default new DataSource({
   database: process.env.POSTGRES_DB,
   entities: [
     UserSchema,
-    CompanySchema,
-    EventSchema,
+    CustomerSchema,
+    FolderSchema,
     BudgetSchema,
     BudgetCategorySchema,
     BudgetLineItemSchema,
-    CompanyEventSchema,
-    EventBudgetSchema,
+    CustomerFolderSchema,
+    FolderBudgetSchema,
     BudgetCategoryLinkSchema,
   ],
   migrations: [__dirname + "/../migrations/*.{ts,js}"],

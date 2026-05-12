@@ -22,7 +22,12 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
       });
 
       return Result.success(
-        new BudgetCategory(saved.id, saved.name, saved.code, saved.order),
+        BudgetCategory.read({
+          id: saved.id,
+          name: saved.name,
+          code: saved.code,
+          order: saved.order,
+        }),
       );
     } catch (error) {
       return Result.failure("Falha ao criar categoria, erro: " + error);
@@ -39,7 +44,12 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
       });
 
       return Result.success(
-        new BudgetCategory(saved.id, saved.name, saved.code, saved.order),
+        BudgetCategory.read({
+          id: saved.id,
+          name: saved.name,
+          code: saved.code,
+          order: saved.order,
+        }),
       );
     } catch (error) {
       return Result.failure("Falha ao atualizar categoria, erro: " + error);

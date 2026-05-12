@@ -4,5 +4,5 @@ export type GenerateTokenInputDto = {
   sub: string;
   email: string;
   role: Role;
-  cdEmpresa?: string;
+  cdCliente?: string;
 };

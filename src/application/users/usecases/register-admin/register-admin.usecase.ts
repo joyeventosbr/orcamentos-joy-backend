@@ -79,7 +79,7 @@ export class RegisterAdminUseCase {
       sub: user.id,
       email: user.email,
       role: user.role,
-      cdEmpresa: user.cdEmpresa,
+      cdCliente: user.cdCliente,
     });
 
     return Result.success({

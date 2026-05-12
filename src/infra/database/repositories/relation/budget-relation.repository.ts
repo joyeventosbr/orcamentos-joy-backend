@@ -3,56 +3,66 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
 import { BudgetCategoryLink } from "@domain/budgets/entities/budget-category-link.entity";
 import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
-import { CompanyEvent } from "@domain/budgets/entities/company-event.entity";
-import { EventBudget } from "@domain/budgets/entities/event-budget.entity";
+import { CustomerFolder } from "@domain/budgets/entities/customer-folder.entity";
+import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
 import { BillingType } from "@domain/budgets/types/billing-type.type";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/relation/i-budget-relation-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
 import { BudgetCategoryLinkSchema } from "@infra/database/typeorm/schemas/budget-category-link.schema";
 import { BudgetLineItemSchema } from "@infra/database/typeorm/schemas/budget-line-item.schema";
-import { CompanyEventSchema } from "@infra/database/typeorm/schemas/company-event.schema";
-import { EventBudgetSchema } from "@infra/database/typeorm/schemas/event-budget.schema";
+import { CustomerFolderSchema } from "@infra/database/typeorm/schemas/customer-folder.schema";
+import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
 
 @Injectable()
 export class BudgetRelationRepository implements IBudgetRelationRepository {
   constructor(
-    @InjectRepository(CompanyEventSchema)
-    private readonly companyEventSchemaRepository: Repository<CompanyEventSchema>,
-    @InjectRepository(EventBudgetSchema)
-    private readonly eventBudgetSchemaRepository: Repository<EventBudgetSchema>,
+    @InjectRepository(CustomerFolderSchema)
+    private readonly customerFolderSchemaRepository: Repository<CustomerFolderSchema>,
+    @InjectRepository(FolderBudgetSchema)
+    private readonly folderBudgetSchemaRepository: Repository<FolderBudgetSchema>,
     @InjectRepository(BudgetCategoryLinkSchema)
     private readonly budgetCategoryLinkSchemaRepository: Repository<BudgetCategoryLinkSchema>,
     @InjectRepository(BudgetLineItemSchema)
     private readonly budgetLineItemSchemaRepository: Repository<BudgetLineItemSchema>,
   ) {}
 
-  async createCompanyEvent(data: CompanyEvent): Promise<Result<CompanyEvent>> {
+  async createCustomerFolder(data: CustomerFolder): Promise<Result<CustomerFolder>> {
     try {
-      const saved = await this.companyEventSchemaRepository.save({
-        companyId: data.companyId,
-        eventId: data.eventId,
+      const saved = await this.customerFolderSchemaRepository.save({
+        customerId: data.customerId,
+        folderId: data.folderId,
       });
 
-      return Result.success(new CompanyEvent(saved.companyId, saved.eventId));
+      return Result.success(
+        CustomerFolder.read({
+          customerId: saved.customerId,
+          folderId: saved.folderId,
+        }),
+      );
     } catch (error) {
       return Result.failure(
-        "Falha ao vincular empresa e evento, erro: " + error,
+        "Falha ao vincular cliente e pasta, erro: " + error,
       );
     }
   }
 
-  async createEventBudget(data: EventBudget): Promise<Result<EventBudget>> {
+  async createFolderBudget(data: FolderBudget): Promise<Result<FolderBudget>> {
     try {
-      const saved = await this.eventBudgetSchemaRepository.save({
-        eventId: data.eventId,
+      const saved = await this.folderBudgetSchemaRepository.save({
+        folderId: data.folderId,
         budgetId: data.budgetId,
       });
 
-      return Result.success(new EventBudget(saved.eventId, saved.budgetId));
+      return Result.success(
+        FolderBudget.read({
+          folderId: saved.folderId,
+          budgetId: saved.budgetId,
+        }),
+      );
     } catch (error) {
       return Result.failure(
-        "Falha ao vincular evento e orçamento, erro: " + error,
+        "Falha ao vincular pasta e orçamento, erro: " + error,
       );
     }
   }
@@ -67,7 +77,10 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
       });
 
       return Result.success(
-        new BudgetCategoryLink(saved.budgetId, saved.categoryId),
+        BudgetCategoryLink.read({
+          budgetId: saved.budgetId,
+          categoryId: saved.categoryId,
+        }),
       );
     } catch (error) {
       return Result.failure(
@@ -76,14 +89,14 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     }
   }
 
-  async replaceCompanyEvent(data: CompanyEvent): Promise<Result<CompanyEvent>> {
-    await this.companyEventSchemaRepository.delete({ eventId: data.eventId });
-    return this.createCompanyEvent(data);
+  async replaceCustomerFolder(data: CustomerFolder): Promise<Result<CustomerFolder>> {
+    await this.customerFolderSchemaRepository.delete({ folderId: data.folderId });
+    return this.createCustomerFolder(data);
   }
 
-  async replaceEventBudget(data: EventBudget): Promise<Result<EventBudget>> {
-    await this.eventBudgetSchemaRepository.delete({ budgetId: data.budgetId });
-    return this.createEventBudget(data);
+  async replaceFolderBudget(data: FolderBudget): Promise<Result<FolderBudget>> {
+    await this.folderBudgetSchemaRepository.delete({ budgetId: data.budgetId });
+    return this.createFolderBudget(data);
   }
 
   async replaceBudgetCategoryLinks(
@@ -94,11 +107,20 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
       await this.budgetCategoryLinkSchemaRepository.delete({ budgetId });
 
       if (categories.length > 0) {
-        await this.budgetCategoryLinkSchemaRepository.save(
-          categories.map(
-            (category) => new BudgetCategoryLink(budgetId, category.id),
-          ),
-        );
+        const links: BudgetCategoryLink[] = [];
+        for (const category of categories) {
+          const link = BudgetCategoryLink.create({
+            budgetId,
+            categoryId: category.id,
+          });
+          if (link.isFailure()) {
+            return Result.failure(link.getError());
+          }
+
+          links.push(link.getValue());
+        }
+
+        await this.budgetCategoryLinkSchemaRepository.save(links);
       }
 
       return Result.success();
@@ -151,25 +173,25 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     }
   }
 
-  async getCompanyIdByEventId(eventId: string): Promise<Result<string | null>> {
+  async getCustomerIdByFolderId(folderId: string): Promise<Result<string | null>> {
     try {
-      const companyEvent = await this.companyEventSchemaRepository.findOne({
-        where: { eventId },
+      const customerFolder = await this.customerFolderSchemaRepository.findOne({
+        where: { folderId },
       });
 
-      return Result.success(companyEvent?.companyId ?? null);
+      return Result.success(customerFolder?.customerId ?? null);
     } catch (error) {
-      return Result.failure("Falha ao buscar vínculo do evento, erro: " + error);
+      return Result.failure("Falha ao buscar vínculo da pasta, erro: " + error);
     }
   }
 
-  async getEventIdByBudgetId(budgetId: string): Promise<Result<string | null>> {
+  async getFolderIdByBudgetId(budgetId: string): Promise<Result<string | null>> {
     try {
-      const eventBudget = await this.eventBudgetSchemaRepository.findOne({
+      const folderBudget = await this.folderBudgetSchemaRepository.findOne({
         where: { budgetId },
       });
 
-      return Result.success(eventBudget?.eventId ?? null);
+      return Result.success(folderBudget?.folderId ?? null);
     } catch (error) {
       return Result.failure(
         "Falha ao buscar vínculo do orçamento, erro: " + error,
@@ -191,12 +213,12 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
           .filter((link) => Boolean(link.category))
           .map(
             (link) =>
-              new BudgetCategory(
-                link.category.id,
-                link.category.name,
-                link.category.code,
-                link.category.order,
-              ),
+              BudgetCategory.read({
+                id: link.category.id,
+                name: link.category.name,
+                code: link.category.code,
+                order: link.category.order,
+              }),
           ),
       );
     } catch (error) {
@@ -218,28 +240,28 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
       return Result.success(
         items.map(
           (item) =>
-            new BudgetLineItem(
-              item.id,
-              item.budgetId,
-              item.categoryId,
-              item.parentId,
-              item.order,
-              item.name,
-              item.description,
-              item.billingType as BillingType,
-              item.quantity,
-              item.dailyRates,
-              item.unitValue,
-              item.totalValue,
-              item.upfrontPayment,
-              item.installment30Days,
-              item.installment45Days,
-              item.installment60Days,
-              item.installment90Days,
-              item.installment120Days,
-              item.billingUnitValue,
-              item.billingTotalValue,
-            ),
+            BudgetLineItem.read({
+              id: item.id,
+              budgetId: item.budgetId,
+              categoryId: item.categoryId,
+              parentId: item.parentId,
+              order: item.order,
+              name: item.name,
+              description: item.description,
+              billingType: item.billingType as BillingType,
+              quantity: item.quantity,
+              dailyRates: item.dailyRates,
+              unitValue: item.unitValue,
+              totalValue: item.totalValue,
+              upfrontPayment: item.upfrontPayment,
+              installment30Days: item.installment30Days,
+              installment45Days: item.installment45Days,
+              installment60Days: item.installment60Days,
+              installment90Days: item.installment90Days,
+              installment120Days: item.installment120Days,
+              billingUnitValue: item.billingUnitValue,
+              billingTotalValue: item.billingTotalValue,
+            }),
         ),
       );
     } catch (error) {

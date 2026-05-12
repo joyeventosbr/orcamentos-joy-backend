@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Budget } from "@domain/budgets/entities/budget.entity";
-import { EventBudget } from "@domain/budgets/entities/event-budget.entity";
+import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
 import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/relation/i-budget-relation-repository";
 import { Result } from "@shared/result";
@@ -25,12 +25,20 @@ export class BudgetRepository implements IBudgetRepository {
         createdAt: new Date(),
       });
 
-      const eventBudgetResult =
-        await this.budgetRelationRepository.createEventBudget(
-          new EventBudget(data.eventId, saved.id),
+      const folderBudget = FolderBudget.create({
+        folderId: data.folderId,
+        budgetId: saved.id,
+      });
+      if (folderBudget.isFailure()) {
+        return Result.failure(folderBudget.getError());
+      }
+
+      const folderBudgetResult =
+        await this.budgetRelationRepository.createFolderBudget(
+          folderBudget.getValue(),
         );
-      if (eventBudgetResult.isFailure()) {
-        return Result.failure(eventBudgetResult.getError());
+      if (folderBudgetResult.isFailure()) {
+        return Result.failure(folderBudgetResult.getError());
       }
 
       const categoriesResult =
@@ -66,12 +74,20 @@ export class BudgetRepository implements IBudgetRepository {
         updatedAt: new Date(),
       });
 
-      const eventBudgetResult =
-        await this.budgetRelationRepository.replaceEventBudget(
-          new EventBudget(data.eventId, data.id),
+      const folderBudget = FolderBudget.create({
+        folderId: data.folderId,
+        budgetId: data.id,
+      });
+      if (folderBudget.isFailure()) {
+        return Result.failure(folderBudget.getError());
+      }
+
+      const folderBudgetResult =
+        await this.budgetRelationRepository.replaceFolderBudget(
+          folderBudget.getValue(),
         );
-      if (eventBudgetResult.isFailure()) {
-        return Result.failure(eventBudgetResult.getError());
+      if (folderBudgetResult.isFailure()) {
+        return Result.failure(folderBudgetResult.getError());
       }
 
       const categoriesResult =
@@ -124,10 +140,10 @@ export class BudgetRepository implements IBudgetRepository {
       return null;
     }
 
-    const eventIdResult =
-      await this.budgetRelationRepository.getEventIdByBudgetId(id);
-    if (eventIdResult.isFailure()) {
-      throw new Error(eventIdResult.getError());
+    const folderIdResult =
+      await this.budgetRelationRepository.getFolderIdByBudgetId(id);
+    if (folderIdResult.isFailure()) {
+      throw new Error(folderIdResult.getError());
     }
 
     const categoriesResult =
@@ -144,12 +160,12 @@ export class BudgetRepository implements IBudgetRepository {
 
     return Budget.read({
       id: budget.id,
-      eventId: eventIdResult.getValue() ?? "",
+      folderId: folderIdResult.getValue() ?? "",
       client: budget.client,
       job: budget.job,
       deadline: budget.deadline,
       location: budget.location,
-      eventDate: budget.eventDate,
+      folderDate: budget.folderDate,
       participants: budget.participants,
       categories: categoriesResult.getValue(),
       items: itemsResult.getValue(),

@@ -2,11 +2,11 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class ExportBudgetResponseApiDto {
   @ApiProperty()
-  fileName: string;
+  fileName!: string;
 
   @ApiProperty()
-  mimeType: string;
+  mimeType!: string;
 
   @ApiProperty()
-  content: string;
+  content!: string;
 }

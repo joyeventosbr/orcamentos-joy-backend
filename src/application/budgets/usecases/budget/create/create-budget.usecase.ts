@@ -5,7 +5,7 @@ import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity"
 import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
 import { BillingType } from "@domain/budgets/types/billing-type.type";
 import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
-import { createBudgetSchema } from "./create-budget.dto";
+import { createBudgetSchema, type CreateBudgetDto } from "./create-budget.dto";
 import { ZError } from "@utils/index";
 
 @Injectable()
@@ -15,7 +15,7 @@ export class CreateBudgetUseCase {
     private readonly budgetRepository: IBudgetRepository,
   ) {}
 
-  async execute(input: unknown) {
+  async execute(input: unknown): Promise<Result<Budget>> {
     const parsed = createBudgetSchema.safeParse(input);
 
     if (!parsed.success) {
@@ -23,45 +23,15 @@ export class CreateBudgetUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    const categories = parsed.data.categories.map(
-      (category) =>
-        new BudgetCategory(
-          category.id,
-          category.name,
-          category.code,
-          category.order,
-        ),
-    );
-
-    const items = parsed.data.items.map(
-      (item) =>
-        new BudgetLineItem(
-          item.id,
-          "",
-          item.categoryId,
-          item.parentId ?? null,
-          item.order,
-          item.name,
-          item.description,
-          item.billingType as BillingType,
-          item.quantity,
-          item.dailyRates,
-          item.unitValue,
-          item.totalValue,
-          item.upfrontPayment,
-          item.installment30Days,
-          item.installment45Days,
-          item.installment60Days,
-          item.installment90Days,
-          item.installment120Days,
-          item.billingUnitValue,
-          item.billingTotalValue,
-        ),
-    );
+    const itemsResult = this.createItems(parsed.data.items);
+    if (itemsResult.isFailure()) {
+      return Result.failure(itemsResult.getError());
+    }
+    const items = itemsResult.getValue();
 
     const budgetResult = Budget.create({
       ...parsed.data,
-      categories,
+      categories: this.getCategoriesFromItems(items),
       items,
     });
 
@@ -70,5 +40,35 @@ export class CreateBudgetUseCase {
     }
 
     return this.budgetRepository.create(budgetResult.getValue());
+  }
+
+  private getCategoriesFromItems(items: BudgetLineItem[]): BudgetCategory[] {
+    const categoryIds = [...new Set(items.map((item) => item.categoryId))];
+
+    return categoryIds.map((categoryId, index) =>
+      BudgetCategory.read({ id: categoryId, name: "", code: "", order: index }),
+    );
+  }
+
+  private createItems(
+    items: CreateBudgetDto["items"],
+  ): Result<BudgetLineItem[]> {
+    const lineItems: BudgetLineItem[] = [];
+
+    for (const item of items) {
+      const itemResult = BudgetLineItem.create({
+        ...item,
+        budgetId: "",
+        parentId: item.parentId ?? null,
+        billingType: item.billingType as BillingType,
+      });
+      if (itemResult.isFailure()) {
+        return Result.failure(itemResult.getError());
+      }
+
+      lineItems.push(itemResult.getValue());
+    }
+
+    return Result.success(lineItems);
   }
 }
