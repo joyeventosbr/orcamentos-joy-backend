@@ -24,4 +24,17 @@ export class Customer {
   }): Customer {
     return new Customer(input.id, input.name, input.createdAt, input.updatedAt);
   }
+
+  update(input: { name?: string }): Result<Customer> {
+    if (input.name !== undefined) {
+      if (!input.name.trim()) {
+        return Result.failure("Nome do cliente é obrigatório");
+      }
+
+      this.name = input.name.trim();
+    }
+
+    this.updatedAt = new Date();
+    return Result.success(this);
+  }
 }

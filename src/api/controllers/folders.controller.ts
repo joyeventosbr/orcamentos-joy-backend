@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Inject,
   Param,
   Post,
   Put,
@@ -13,8 +14,8 @@ import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { type FastifyReply } from "fastify";
 import { CreateFolderUseCase } from "@application/budgets/usecases/folder/create/create-folder.usecase";
 import { DeleteFolderUseCase } from "@application/budgets/usecases/folder/delete/delete-folder.usecase";
-import { GetAllFoldersUseCase } from "@application/budgets/usecases/folder/get-all/get-all-folders.usecase";
 import { UpdateFolderUseCase } from "@application/budgets/usecases/folder/update/update-folder.usecase";
+import type { IFolderRepository } from "@domain/budgets/repositories/folder/i-folder-repository";
 import { CreateFolderRequestApiDto } from "@api/dtos/folders/requests/create-folder-request.api.dto";
 import { UpdateFolderRequestApiDto } from "@api/dtos/folders/requests/update-folder-request.api.dto";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";
@@ -26,13 +27,14 @@ export class FoldersController {
     private readonly createFolderUseCase: CreateFolderUseCase,
     private readonly updateFolderUseCase: UpdateFolderUseCase,
     private readonly deleteFolderUseCase: DeleteFolderUseCase,
-    private readonly getAllFoldersUseCase: GetAllFoldersUseCase,
+    @Inject("IFolderRepository")
+    private readonly folderRepository: IFolderRepository,
   ) {}
 
   @Get()
   @Public()
   async getAll(@Res() res: FastifyReply) {
-    const result = await this.getAllFoldersUseCase.execute();
+    const result = await this.folderRepository.getAll();
     if (result.isFailure()) {
       return res
         .status(HttpStatus.BAD_REQUEST)

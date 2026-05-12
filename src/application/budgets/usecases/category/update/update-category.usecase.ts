@@ -19,13 +19,23 @@ export class UpdateCategoryUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    const category = BudgetCategory.read({
-      id: parsed.data.id,
+    const current = await this.budgetCategoryRepository.getById(parsed.data.id);
+    if (current.isFailure()) return Result.failure(current.getError());
+
+    const category = current.getValue();
+    if (!category) return Result.failure("Categoria não encontrada");
+
+    const categoryResult = category.update({
       name: parsed.data.name,
       code: parsed.data.code,
       order: parsed.data.order,
     });
+    if (categoryResult.isFailure()) {
+      return Result.failure(categoryResult.getError());
+    }
 
-    return this.budgetCategoryRepository.update(category);
+    return await this.budgetCategoryRepository.update(
+      categoryResult.getValue(),
+    );
   }
 }

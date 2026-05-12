@@ -1,12 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class UpdateCategoryRequestApiDto {
-  @ApiProperty()
-  name!: string;
+  @ApiPropertyOptional()
+  name?: string;
 
-  @ApiProperty()
-  code!: string;
+  @ApiPropertyOptional()
+  code?: string;
 
-  @ApiProperty()
-  order!: number;
+  @ApiPropertyOptional()
+  order?: number;
 }

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Inject,
   Param,
   Post,
   Put,
@@ -14,9 +15,9 @@ import { type FastifyReply } from "fastify";
 import { CreateBudgetUseCase } from "@application/budgets/usecases/budget/create/create-budget.usecase";
 import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
-import { GetAllBudgetsUseCase } from "@application/budgets/usecases/budget/get-all/get-all-budgets.usecase";
 import { GetBudgetUseCase } from "@application/budgets/usecases/budget/get/get-budget.usecase";
 import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
+import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
 import { BudgetDetailResponseApiDto } from "@api/dtos/budgets/responses/budget/budget-detail-response.api.dto";
@@ -31,12 +32,13 @@ export class BudgetsController {
     private readonly deleteBudgetUseCase: DeleteBudgetUseCase,
     private readonly exportBudgetUseCase: ExportBudgetUseCase,
     private readonly getBudgetUseCase: GetBudgetUseCase,
-    private readonly getAllBudgetsUseCase: GetAllBudgetsUseCase,
+    @Inject("IBudgetRepository")
+    private readonly budgetRepository: IBudgetRepository,
   ) {}
 
   @Get()
   async getAll(@Res() res: FastifyReply) {
-    const result = await this.getAllBudgetsUseCase.execute();
+    const result = await this.budgetRepository.getAll();
 
     if (result.isFailure()) {
       return res

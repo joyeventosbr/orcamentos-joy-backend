@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Inject,
   Param,
   Post,
   Put,
@@ -13,8 +14,8 @@ import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { type FastifyReply } from "fastify";
 import { CreateCustomerUseCase } from "@application/budgets/usecases/customer/create/create-customer.usecase";
 import { DeleteCustomerUseCase } from "@application/budgets/usecases/customer/delete/delete-customer.usecase";
-import { GetAllCustomersUseCase } from "@application/budgets/usecases/customer/get-all/get-all-customers.usecase";
 import { UpdateCustomerUseCase } from "@application/budgets/usecases/customer/update/update-customer.usecase";
+import type { ICustomerRepository } from "@domain/budgets/repositories/customer/i-customer-repository";
 import { CreateCustomerRequestApiDto } from "@api/dtos/customers/requests/create-customer-request.api.dto";
 import { UpdateCustomerRequestApiDto } from "@api/dtos/customers/requests/update-customer-request.api.dto";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";
@@ -26,13 +27,14 @@ export class CustomersController {
     private readonly createCustomerUseCase: CreateCustomerUseCase,
     private readonly updateCustomerUseCase: UpdateCustomerUseCase,
     private readonly deleteCustomerUseCase: DeleteCustomerUseCase,
-    private readonly getAllCustomersUseCase: GetAllCustomersUseCase,
+    @Inject("ICustomerRepository")
+    private readonly customerRepository: ICustomerRepository,
   ) {}
 
   @Get()
   @Public()
   async getAll(@Res() res: FastifyReply) {
-    const result = await this.getAllCustomersUseCase.execute();
+    const result = await this.customerRepository.getAll();
     if (result.isFailure()) {
       return res
         .status(HttpStatus.BAD_REQUEST)

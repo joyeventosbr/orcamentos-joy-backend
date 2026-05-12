@@ -5,4 +5,6 @@ export interface IBudgetCategoryRepository {
   create(data: BudgetCategory): Promise<Result<BudgetCategory>>;
   update(data: BudgetCategory): Promise<Result<BudgetCategory>>;
   delete(id: string): Promise<Result<void>>;
+  getById(id: string): Promise<Result<BudgetCategory | null>>;
+  getAll(): Promise<Result<BudgetCategory[]>>;
 }

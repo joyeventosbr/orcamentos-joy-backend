@@ -38,4 +38,25 @@ export class Folder {
       input.updatedAt,
     );
   }
+
+  update(input: { customerId?: string; name?: string }): Result<Folder> {
+    if (input.customerId !== undefined) {
+      if (!input.customerId.trim()) {
+        return Result.failure("Cliente é obrigatório");
+      }
+
+      this.customerId = input.customerId.trim();
+    }
+
+    if (input.name !== undefined) {
+      if (!input.name.trim()) {
+        return Result.failure("Nome da pasta é obrigatório");
+      }
+
+      this.name = input.name.trim();
+    }
+
+    this.updatedAt = new Date();
+    return Result.success(this);
+  }
 }

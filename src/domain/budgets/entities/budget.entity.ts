@@ -84,4 +84,60 @@ export class Budget {
       input.updatedAt,
     );
   }
+
+  update(input: {
+    folderId?: string;
+    client?: string;
+    job?: string;
+    deadline?: string;
+    location?: string;
+    folderDate?: string;
+    participants?: number;
+    categories?: BudgetCategory[];
+    items?: BudgetLineItem[];
+  }): Result<Budget> {
+    if (input.folderId !== undefined) {
+      if (!input.folderId.trim()) return Result.failure("Pasta é obrigatória");
+      this.folderId = input.folderId.trim();
+    }
+
+    if (input.client !== undefined) {
+      if (!input.client.trim()) return Result.failure("Cliente é obrigatório");
+      this.client = input.client.trim();
+    }
+
+    if (input.job !== undefined) {
+      if (!input.job.trim()) return Result.failure("Job é obrigatório");
+      this.job = input.job.trim();
+    }
+
+    if (input.deadline !== undefined) {
+      if (!input.deadline.trim()) return Result.failure("Prazo é obrigatório");
+      this.deadline = input.deadline.trim();
+    }
+
+    if (input.location !== undefined) {
+      if (!input.location.trim()) return Result.failure("Local é obrigatório");
+      this.location = input.location.trim();
+    }
+
+    if (input.folderDate !== undefined) {
+      if (!input.folderDate.trim()) return Result.failure("Data é obrigatória");
+      this.folderDate = input.folderDate.trim();
+    }
+
+    if (input.participants !== undefined) {
+      if (input.participants < 0) {
+        return Result.failure("Número de participantes inválido");
+      }
+
+      this.participants = input.participants;
+    }
+
+    if (input.categories !== undefined) this.categories = input.categories;
+    if (input.items !== undefined) this.items = input.items;
+
+    this.updatedAt = new Date();
+    return Result.success(this);
+  }
 }

@@ -1,6 +1,6 @@
 import { createBudgetSchema } from "../create/create-budget.dto";
 
-export const updateBudgetSchema = createBudgetSchema.extend({
+export const updateBudgetSchema = createBudgetSchema.partial().extend({
   id: createBudgetSchema.shape.folderId,
 });
 

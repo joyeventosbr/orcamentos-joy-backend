@@ -25,9 +25,11 @@ export class UpdateCustomerUseCase {
     const customer = current.getValue();
     if (!customer) return Result.failure("Cliente não encontrado");
 
-    customer.name = parsed.data.name;
-    customer.updatedAt = new Date();
+    const customerResult = customer.update({ name: parsed.data.name });
+    if (customerResult.isFailure()) {
+      return Result.failure(customerResult.getError());
+    }
 
-    return this.customerRepository.update(customer);
+    return this.customerRepository.update(customerResult.getValue());
   }
 }

@@ -24,9 +24,14 @@ export class UpdateFolderUseCase {
     const folder = folderResult.getValue();
     if (!folder) return Result.failure("Pasta não encontrada");
 
-    folder.name = parsed.data.name;
-    folder.updatedAt = new Date();
+    const folderUpdateResult = folder.update({
+      customerId: parsed.data.customerId,
+      name: parsed.data.name,
+    });
+    if (folderUpdateResult.isFailure()) {
+      return Result.failure(folderUpdateResult.getError());
+    }
 
-    return this.folderRepository.update(folder);
+    return this.folderRepository.update(folderUpdateResult.getValue());
   }
 }

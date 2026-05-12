@@ -25,16 +25,22 @@ export class UpdateBudgetUseCase {
 
     const current = await this.budgetRepository.getById(parsed.data.id);
     if (current.isFailure()) return Result.failure(current.getError());
-    if (!current.getValue()) return Result.failure("Orçamento não encontrado");
+    const budget = current.getValue();
+    if (!budget) return Result.failure("Orçamento não encontrado");
 
-    const itemsResult = this.createItems(parsed.data.id, parsed.data.items);
-    if (itemsResult.isFailure()) {
-      return Result.failure(itemsResult.getError());
+    let items: BudgetLineItem[] | undefined;
+    let categories: BudgetCategory[] | undefined;
+    if (parsed.data.items !== undefined) {
+      const itemsResult = this.createItems(parsed.data.id, parsed.data.items);
+      if (itemsResult.isFailure()) {
+        return Result.failure(itemsResult.getError());
+      }
+
+      items = itemsResult.getValue();
+      categories = this.getCategoriesFromItems(items);
     }
-    const items = itemsResult.getValue();
 
-    const entity = Budget.read({
-      id: parsed.data.id,
+    const budgetResult = budget.update({
       folderId: parsed.data.folderId,
       client: parsed.data.client,
       job: parsed.data.job,
@@ -42,13 +48,14 @@ export class UpdateBudgetUseCase {
       location: parsed.data.location,
       folderDate: parsed.data.folderDate,
       participants: parsed.data.participants,
-      categories: this.getCategoriesFromItems(items),
+      categories,
       items,
-      createdAt: current.getValue()!.createdAt,
-      updatedAt: new Date(),
     });
+    if (budgetResult.isFailure()) {
+      return Result.failure(budgetResult.getError());
+    }
 
-    return this.budgetRepository.update(entity);
+    return this.budgetRepository.update(budgetResult.getValue());
   }
 
   private getCategoriesFromItems(items: BudgetLineItem[]): BudgetCategory[] {
@@ -61,7 +68,7 @@ export class UpdateBudgetUseCase {
 
   private createItems(
     budgetId: string,
-    items: UpdateBudgetDto["items"],
+    items: NonNullable<UpdateBudgetDto["items"]>,
   ): Result<BudgetLineItem[]> {
     const lineItems: BudgetLineItem[] = [];
 

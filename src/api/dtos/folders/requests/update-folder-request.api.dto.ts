@@ -1,6 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class UpdateFolderRequestApiDto {
-  @ApiProperty()
-  name!: string;
+  @ApiPropertyOptional()
+  customerId?: string;
+
+  @ApiPropertyOptional()
+  name?: string;
 }
