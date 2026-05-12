@@ -17,9 +17,10 @@ import { GetAllFoldersUseCase } from "@application/budgets/usecases/folder/get-a
 import { UpdateFolderUseCase } from "@application/budgets/usecases/folder/update/update-folder.usecase";
 import { CreateFolderRequestApiDto } from "@api/dtos/folders/requests/create-folder-request.api.dto";
 import { UpdateFolderRequestApiDto } from "@api/dtos/folders/requests/update-folder-request.api.dto";
+import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 
 @ApiTags("folders")
-@Controller("budgets/folders")
+@Controller("folders")
 export class FoldersController {
   constructor(
     private readonly createFolderUseCase: CreateFolderUseCase,
@@ -29,6 +30,7 @@ export class FoldersController {
   ) {}
 
   @Get()
+  @Public()
   async getAll(@Res() res: FastifyReply) {
     const result = await this.getAllFoldersUseCase.execute();
     if (result.isFailure()) {
@@ -41,6 +43,7 @@ export class FoldersController {
   }
 
   @Post()
+  @Public()
   @ApiBody({ type: CreateFolderRequestApiDto })
   async create(@Body() body: unknown, @Res() res: FastifyReply) {
     const result = await this.createFolderUseCase.execute(body);
@@ -54,6 +57,7 @@ export class FoldersController {
   }
 
   @Put(":id")
+  @Public()
   @ApiBody({ type: UpdateFolderRequestApiDto })
   async update(
     @Param("id") id: string,
@@ -74,6 +78,7 @@ export class FoldersController {
   }
 
   @Delete(":id")
+  @Public()
   async delete(@Param("id") id: string, @Res() res: FastifyReply) {
     const result = await this.deleteFolderUseCase.execute({ id });
     if (result.isFailure()) {
