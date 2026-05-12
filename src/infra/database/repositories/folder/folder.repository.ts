@@ -117,4 +117,35 @@ export class FolderRepository implements IFolderRepository {
       return Result.failure("Falha ao buscar pasta, erro: " + error);
     }
   }
+
+  async getAll(): Promise<Result<Folder[]>> {
+    try {
+      const folders = await this.folderSchemaRepository.find({
+        order: { createdAt: "DESC" },
+      });
+      const result: Folder[] = [];
+
+      for (const folder of folders) {
+        const customerIdResult =
+          await this.budgetRelationRepository.getCustomerIdByFolderId(folder.id);
+        if (customerIdResult.isFailure()) {
+          return Result.failure(customerIdResult.getError());
+        }
+
+        result.push(
+          Folder.read({
+            id: folder.id,
+            customerId: customerIdResult.getValue() ?? "",
+            name: folder.name,
+            createdAt: folder.createdAt,
+            updatedAt: folder.updatedAt,
+          }),
+        );
+      }
+
+      return Result.success(result);
+    } catch (error) {
+      return Result.failure("Falha ao listar pastas, erro: " + error);
+    }
+  }
 }

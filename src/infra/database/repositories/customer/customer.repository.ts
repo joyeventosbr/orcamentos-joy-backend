@@ -83,4 +83,25 @@ export class CustomerRepository implements ICustomerRepository {
       return Result.failure("Falha ao buscar cliente, erro: " + error);
     }
   }
+
+  async getAll(): Promise<Result<Customer[]>> {
+    try {
+      const customers = await this.customerSchemaRepository.find({
+        order: { createdAt: "DESC" },
+      });
+
+      return Result.success(
+        customers.map((customer) =>
+          Customer.read({
+            id: customer.id,
+            name: customer.name,
+            createdAt: customer.createdAt,
+            updatedAt: customer.updatedAt,
+          }),
+        ),
+      );
+    } catch (error) {
+      return Result.failure("Falha ao listar clientes, erro: " + error);
+    }
+  }
 }

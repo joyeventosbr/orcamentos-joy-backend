@@ -134,6 +134,44 @@ export class BudgetRepository implements IBudgetRepository {
     }
   }
 
+  async getAll(): Promise<Result<Budget[]>> {
+    try {
+      const budgets = await this.budgetSchemaRepository.find({
+        order: { createdAt: "DESC" },
+      });
+      const result: Budget[] = [];
+
+      for (const budget of budgets) {
+        const folderIdResult =
+          await this.budgetRelationRepository.getFolderIdByBudgetId(budget.id);
+        if (folderIdResult.isFailure()) {
+          return Result.failure(folderIdResult.getError());
+        }
+
+        result.push(
+          Budget.read({
+            id: budget.id,
+            folderId: folderIdResult.getValue() ?? "",
+            client: budget.client,
+            job: budget.job,
+            deadline: budget.deadline,
+            location: budget.location,
+            folderDate: budget.folderDate,
+            participants: budget.participants,
+            categories: [],
+            items: [],
+            createdAt: budget.createdAt,
+            updatedAt: budget.updatedAt,
+          }),
+        );
+      }
+
+      return Result.success(result);
+    } catch (error) {
+      return Result.failure("Falha ao listar orçamentos, erro: " + error);
+    }
+  }
+
   private async getHydratedBudget(id: string): Promise<Budget | null> {
     const budget = await this.budgetSchemaRepository.findOne({ where: { id } });
     if (!budget) {

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpStatus,
   Param,
   Post,
@@ -12,6 +13,7 @@ import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { type FastifyReply } from "fastify";
 import { CreateCustomerUseCase } from "@application/budgets/usecases/customer/create/create-customer.usecase";
 import { DeleteCustomerUseCase } from "@application/budgets/usecases/customer/delete/delete-customer.usecase";
+import { GetAllCustomersUseCase } from "@application/budgets/usecases/customer/get-all/get-all-customers.usecase";
 import { UpdateCustomerUseCase } from "@application/budgets/usecases/customer/update/update-customer.usecase";
 import { CreateCustomerRequestApiDto } from "@api/dtos/customers/requests/create-customer-request.api.dto";
 import { UpdateCustomerRequestApiDto } from "@api/dtos/customers/requests/update-customer-request.api.dto";
@@ -24,7 +26,21 @@ export class CustomersController {
     private readonly createCustomerUseCase: CreateCustomerUseCase,
     private readonly updateCustomerUseCase: UpdateCustomerUseCase,
     private readonly deleteCustomerUseCase: DeleteCustomerUseCase,
+    private readonly getAllCustomersUseCase: GetAllCustomersUseCase,
   ) {}
+
+  @Get()
+  @Public()
+  async getAll(@Res() res: FastifyReply) {
+    const result = await this.getAllCustomersUseCase.execute();
+    if (result.isFailure()) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ error: result.getError() });
+    }
+
+    return res.status(HttpStatus.OK).send(result.getValue());
+  }
 
   @Post()
   @ApiBody({ type: CreateCustomerRequestApiDto })

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpStatus,
   Param,
   Post,
@@ -12,6 +13,7 @@ import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { type FastifyReply } from "fastify";
 import { CreateFolderUseCase } from "@application/budgets/usecases/folder/create/create-folder.usecase";
 import { DeleteFolderUseCase } from "@application/budgets/usecases/folder/delete/delete-folder.usecase";
+import { GetAllFoldersUseCase } from "@application/budgets/usecases/folder/get-all/get-all-folders.usecase";
 import { UpdateFolderUseCase } from "@application/budgets/usecases/folder/update/update-folder.usecase";
 import { CreateFolderRequestApiDto } from "@api/dtos/folders/requests/create-folder-request.api.dto";
 import { UpdateFolderRequestApiDto } from "@api/dtos/folders/requests/update-folder-request.api.dto";
@@ -23,7 +25,20 @@ export class FoldersController {
     private readonly createFolderUseCase: CreateFolderUseCase,
     private readonly updateFolderUseCase: UpdateFolderUseCase,
     private readonly deleteFolderUseCase: DeleteFolderUseCase,
+    private readonly getAllFoldersUseCase: GetAllFoldersUseCase,
   ) {}
+
+  @Get()
+  async getAll(@Res() res: FastifyReply) {
+    const result = await this.getAllFoldersUseCase.execute();
+    if (result.isFailure()) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ error: result.getError() });
+    }
+
+    return res.status(HttpStatus.OK).send(result.getValue());
+  }
 
   @Post()
   @ApiBody({ type: CreateFolderRequestApiDto })

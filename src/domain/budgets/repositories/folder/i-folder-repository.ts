@@ -6,4 +6,5 @@ export interface IFolderRepository {
   update(data: Folder): Promise<Result<Folder>>;
   delete(id: string): Promise<Result<void>>;
   getById(id: string): Promise<Result<Folder | null>>;
+  getAll(): Promise<Result<Folder[]>>;
 }

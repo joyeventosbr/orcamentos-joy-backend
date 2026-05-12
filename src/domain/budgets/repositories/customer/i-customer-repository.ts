@@ -6,4 +6,5 @@ export interface ICustomerRepository {
   update(data: Customer): Promise<Result<Customer>>;
   delete(id: string): Promise<Result<void>>;
   getById(id: string): Promise<Result<Customer | null>>;
+  getAll(): Promise<Result<Customer[]>>;
 }
