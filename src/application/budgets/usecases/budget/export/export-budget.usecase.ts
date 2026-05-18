@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Result } from "@shared/result";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
-import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
+import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
 import { exportBudgetSchema } from "./export-budget.dto";
 import { ZError } from "@utils/index";
 
@@ -10,13 +10,13 @@ export class ExportBudgetUseCase {
   constructor(
     @Inject("IBudgetRepository")
     private readonly budgetRepository: IBudgetRepository,
-    @Inject("IBudgetRelationRepository")
-    private readonly budgetRelationRepository: IBudgetRelationRepository,
+    @Inject("IBudgetLineRepository")
+    private readonly budgetLineRepository: IBudgetLineRepository,
   ) {}
 
-  async execute(input: unknown): Promise<
-    Result<{ fileName: string; mimeType: string; content: string }>
-  > {
+  async execute(
+    input: unknown,
+  ): Promise<Result<{ fileName: string; mimeType: string; content: string }>> {
     const parsed = exportBudgetSchema.safeParse(input);
 
     if (!parsed.success) {
@@ -25,15 +25,16 @@ export class ExportBudgetUseCase {
     }
 
     const budgetResult = await this.budgetRepository.getById(parsed.data.id);
-    if (budgetResult.isFailure()) return Result.failure(budgetResult.getError());
+    if (budgetResult.isFailure())
+      return Result.failure(budgetResult.getError());
 
     const budget = budgetResult.getValue();
     if (!budget) return Result.failure("Orçamento não encontrado");
 
-    const itemsResult = await this.budgetRelationRepository.getLineItemsByBudgetId(
+    const linesResult = await this.budgetLineRepository.getAllByBudgetId(
       budget.id,
     );
-    if (itemsResult.isFailure()) return Result.failure(itemsResult.getError());
+    if (linesResult.isFailure()) return Result.failure(linesResult.getError());
 
     const header = [
       "id",
@@ -58,32 +59,34 @@ export class ExportBudgetUseCase {
       "faturamentoValorTotal",
     ].join(",");
 
-    const lines = itemsResult.getValue().map((item) =>
-      [
-        item.id,
-        item.parentId ?? "",
-        item.categoryId,
-        budget.id,
-        item.order,
-        item.name,
-        item.description,
-        item.billingType,
-        item.quantity,
-        item.dailyRates,
-        item.unitValue,
-        item.totalValue,
-        item.upfrontPayment,
-        item.installment30Days,
-        item.installment45Days,
-        item.installment60Days,
-        item.installment90Days,
-        item.installment120Days,
-        item.billingUnitValue,
-        item.billingTotalValue,
-      ]
-        .map((value) => `"${String(value).replaceAll('"', '""')}"`)
-        .join(","),
-    );
+    const lines = linesResult
+      .getValue()
+      .map((line) =>
+        [
+          line.id,
+          line.parentId ?? "",
+          line.categoryId,
+          budget.id,
+          line.order,
+          line.name,
+          line.description,
+          line.billingType,
+          line.quantity,
+          line.dailyRates,
+          line.unitValue,
+          line.totalValue,
+          line.upfrontPayment,
+          line.installment30Days,
+          line.installment45Days,
+          line.installment60Days,
+          line.installment90Days,
+          line.installment120Days,
+          line.billingUnitValue,
+          line.billingTotalValue,
+        ]
+          .map((value) => `"${String(value).replaceAll('"', '""')}"`)
+          .join(","),
+      );
 
     return Result.success({
       fileName: `orcamento-${budget.id}.csv`,

@@ -5,7 +5,7 @@ import { CustomerSchema } from "../schemas/customer.schema";
 import { FolderSchema } from "../schemas/folder.schema";
 import { BudgetSchema } from "../schemas/budget.schema";
 import { BudgetCategorySchema } from "../schemas/budget-category.schema";
-import { BudgetLineItemSchema } from "../schemas/budget-line-item.schema";
+import { BudgetLineSchema } from "../schemas/budget-line.schema";
 import { CustomerFolderSchema } from "../schemas/customer-folder.schema";
 import { FolderBudgetSchema } from "../schemas/folder-budget.schema";
 import { config } from "dotenv";
@@ -25,7 +25,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     FolderSchema,
     BudgetSchema,
     BudgetCategorySchema,
-    BudgetLineItemSchema,
+    BudgetLineSchema,
     CustomerFolderSchema,
     FolderBudgetSchema,
   ],

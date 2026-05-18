@@ -1,13 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
 import { CustomerFolder } from "@domain/folders/entities/customer-folder.entity";
 import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
-import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
-import { BudgetLineItemSchema } from "@infra/database/typeorm/schemas/budget-line-item.schema";
 import { CustomerFolderSchema } from "@infra/database/typeorm/schemas/customer-folder.schema";
 import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
 
@@ -18,11 +15,11 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     private readonly customerFolderSchemaRepository: Repository<CustomerFolderSchema>,
     @InjectRepository(FolderBudgetSchema)
     private readonly folderBudgetSchemaRepository: Repository<FolderBudgetSchema>,
-    @InjectRepository(BudgetLineItemSchema)
-    private readonly budgetLineItemSchemaRepository: Repository<BudgetLineItemSchema>,
   ) {}
 
-  async createCustomerFolder(data: CustomerFolder): Promise<Result<CustomerFolder>> {
+  async createCustomerFolder(
+    data: CustomerFolder,
+  ): Promise<Result<CustomerFolder>> {
     try {
       const saved = await this.customerFolderSchemaRepository.save({
         customerId: data.customerId,
@@ -62,8 +59,12 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     }
   }
 
-  async replaceCustomerFolder(data: CustomerFolder): Promise<Result<CustomerFolder>> {
-    await this.customerFolderSchemaRepository.delete({ folderId: data.folderId });
+  async replaceCustomerFolder(
+    data: CustomerFolder,
+  ): Promise<Result<CustomerFolder>> {
+    await this.customerFolderSchemaRepository.delete({
+      folderId: data.folderId,
+    });
     return this.createCustomerFolder(data);
   }
 
@@ -72,49 +73,9 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     return this.createFolderBudget(data);
   }
 
-  async replaceBudgetLineItems(
-    budgetId: string,
-    items: BudgetLineItem[],
-  ): Promise<Result<void>> {
-    try {
-      await this.budgetLineItemSchemaRepository.delete({ budgetId });
-
-      if (items.length > 0) {
-        await this.budgetLineItemSchemaRepository.save(
-          items.map((item) => ({
-            id: item.id || undefined,
-            budgetId,
-            categoryId: item.categoryId,
-            parentId: item.parentId,
-            order: item.order,
-            name: item.name,
-            description: item.description,
-            billingType: item.billingType,
-            quantity: item.quantity,
-            dailyRates: item.dailyRates,
-            unitValue: item.unitValue,
-            totalValue: item.totalValue,
-            upfrontPayment: item.upfrontPayment,
-            installment30Days: item.installment30Days,
-            installment45Days: item.installment45Days,
-            installment60Days: item.installment60Days,
-            installment90Days: item.installment90Days,
-            installment120Days: item.installment120Days,
-            billingUnitValue: item.billingUnitValue,
-            billingTotalValue: item.billingTotalValue,
-          })),
-        );
-      }
-
-      return Result.success();
-    } catch (error) {
-      return Result.failure(
-        "Falha ao substituir linhas do orçamento, erro: " + error,
-      );
-    }
-  }
-
-  async getCustomerIdByFolderId(folderId: string): Promise<Result<string | null>> {
+  async getCustomerIdByFolderId(
+    folderId: string,
+  ): Promise<Result<string | null>> {
     try {
       const customerFolder = await this.customerFolderSchemaRepository.findOne({
         where: { folderId },
@@ -126,7 +87,9 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     }
   }
 
-  async getFolderIdByBudgetId(budgetId: string): Promise<Result<string | null>> {
+  async getFolderIdByBudgetId(
+    budgetId: string,
+  ): Promise<Result<string | null>> {
     try {
       const folderBudget = await this.folderBudgetSchemaRepository.findOne({
         where: { budgetId },
@@ -136,48 +99,6 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     } catch (error) {
       return Result.failure(
         "Falha ao buscar vínculo do orçamento, erro: " + error,
-      );
-    }
-  }
-
-  async getLineItemsByBudgetId(
-    budgetId: string,
-  ): Promise<Result<BudgetLineItem[]>> {
-    try {
-      const items = await this.budgetLineItemSchemaRepository.find({
-        where: { budgetId },
-        order: { order: "ASC" },
-      });
-
-      return Result.success(
-        items.map((item) =>
-          BudgetLineItem.read({
-            id: item.id,
-            budgetId: item.budgetId,
-            categoryId: item.categoryId,
-            parentId: item.parentId,
-            order: item.order,
-            name: item.name,
-            description: item.description,
-            billingType: item.billingType as BillingType,
-            quantity: item.quantity,
-            dailyRates: item.dailyRates,
-            unitValue: item.unitValue,
-            totalValue: item.totalValue,
-            upfrontPayment: item.upfrontPayment,
-            installment30Days: item.installment30Days,
-            installment45Days: item.installment45Days,
-            installment60Days: item.installment60Days,
-            installment90Days: item.installment90Days,
-            installment120Days: item.installment120Days,
-            billingUnitValue: item.billingUnitValue,
-            billingTotalValue: item.billingTotalValue,
-          }),
-        ),
-      );
-    } catch (error) {
-      return Result.failure(
-        "Falha ao buscar linhas do orçamento, erro: " + error,
       );
     }
   }

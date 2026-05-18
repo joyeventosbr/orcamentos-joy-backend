@@ -7,7 +7,9 @@ import { CreateBudgetUseCase } from "./budgets/usecases/budget/create/create-bud
 import { UpdateBudgetUseCase } from "./budgets/usecases/budget/update/update-budget.usecase";
 import { DeleteBudgetUseCase } from "./budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "./budgets/usecases/budget/export/export-budget.usecase";
-import { GetBudgetUseCase } from "./budgets/usecases/budget/get/get-budget.usecase";
+import { CreateBudgetLineUseCase } from "./budgets/usecases/budget-line/create/create-budget-line.usecase";
+import { UpdateBudgetLineUseCase } from "./budgets/usecases/budget-line/update/update-budget-line.usecase";
+import { DeleteBudgetLineUseCase } from "./budgets/usecases/budget-line/delete/delete-budget-line.usecase";
 import { CreateFolderUseCase } from "./budgets/usecases/folder/create/create-folder.usecase";
 import { UpdateFolderUseCase } from "./budgets/usecases/folder/update/update-folder.usecase";
 import { DeleteFolderUseCase } from "./budgets/usecases/folder/delete/delete-folder.usecase";
@@ -28,7 +30,9 @@ import { DeleteCustomerUseCase } from "./budgets/usecases/customer/delete/delete
     UpdateBudgetUseCase,
     DeleteBudgetUseCase,
     ExportBudgetUseCase,
-    GetBudgetUseCase,
+    CreateBudgetLineUseCase,
+    UpdateBudgetLineUseCase,
+    DeleteBudgetLineUseCase,
     CreateFolderUseCase,
     UpdateFolderUseCase,
     DeleteFolderUseCase,
@@ -47,7 +51,9 @@ import { DeleteCustomerUseCase } from "./budgets/usecases/customer/delete/delete
     UpdateBudgetUseCase,
     DeleteBudgetUseCase,
     ExportBudgetUseCase,
-    GetBudgetUseCase,
+    CreateBudgetLineUseCase,
+    UpdateBudgetLineUseCase,
+    DeleteBudgetLineUseCase,
     CreateFolderUseCase,
     UpdateFolderUseCase,
     DeleteFolderUseCase,

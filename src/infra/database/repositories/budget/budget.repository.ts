@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Budget } from "@domain/budgets/entities/budget.entity";
-import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
 import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
@@ -26,19 +25,24 @@ export class BudgetRepository implements IBudgetRepository {
         createdAt: new Date(),
       });
 
-      const folderBudgetResult = await this.saveFolderBudget(data.folderId, saved.id);
+      const folderBudgetResult = await this.saveFolderBudget(
+        data.folderId,
+        saved.id,
+      );
       if (folderBudgetResult.isFailure()) {
         return Result.failure(folderBudgetResult.getError());
       }
 
       const createdBudget = await this.getBudget(saved.id);
-      return Result.success(createdBudget ?? BudgetMapper.toEntity(saved, data.folderId));
+      return Result.success(
+        createdBudget ?? BudgetMapper.toEntity(saved, data.folderId),
+      );
     } catch (error) {
       return Result.failure("Falha ao criar orçamento, erro: " + error);
     }
   }
 
-  async update(data: Budget, items?: BudgetLineItem[]): Promise<Result<Budget>> {
+  async update(data: Budget): Promise<Result<Budget>> {
     try {
       await this.budgetSchemaRepository.save({
         ...BudgetMapper.toSchema(data),
@@ -46,17 +50,13 @@ export class BudgetRepository implements IBudgetRepository {
         updatedAt: new Date(),
       });
 
-      const folderBudgetResult = await this.saveFolderBudget(data.folderId, data.id, true);
+      const folderBudgetResult = await this.saveFolderBudget(
+        data.folderId,
+        data.id,
+        true,
+      );
       if (folderBudgetResult.isFailure()) {
         return Result.failure(folderBudgetResult.getError());
-      }
-
-      if (items !== undefined) {
-        const itemsResult =
-          await this.budgetRelationRepository.replaceBudgetLineItems(data.id, items);
-        if (itemsResult.isFailure()) {
-          return Result.failure(itemsResult.getError());
-        }
       }
 
       const updated = await this.getBudget(data.id);
@@ -99,7 +99,9 @@ export class BudgetRepository implements IBudgetRepository {
           return Result.failure(folderIdResult.getError());
         }
 
-        result.push(BudgetMapper.toEntity(budget, folderIdResult.getValue() ?? ""));
+        result.push(
+          BudgetMapper.toEntity(budget, folderIdResult.getValue() ?? ""),
+        );
       }
 
       return Result.success(result);
@@ -132,7 +134,11 @@ export class BudgetRepository implements IBudgetRepository {
     }
 
     return replace
-      ? this.budgetRelationRepository.replaceFolderBudget(folderBudget.getValue())
-      : this.budgetRelationRepository.createFolderBudget(folderBudget.getValue());
+      ? this.budgetRelationRepository.replaceFolderBudget(
+          folderBudget.getValue(),
+        )
+      : this.budgetRelationRepository.createFolderBudget(
+          folderBudget.getValue(),
+        );
   }
 }

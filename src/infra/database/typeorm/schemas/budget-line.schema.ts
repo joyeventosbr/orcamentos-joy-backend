@@ -8,8 +8,8 @@ import {
 import { BudgetSchema } from "./budget.schema";
 import { BudgetCategorySchema } from "./budget-category.schema";
 
-@Entity("tb_budget_line_items")
-export class BudgetLineItemSchema {
+@Entity("tb_budget_lines")
+export class BudgetLineSchema {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
@@ -34,12 +34,12 @@ export class BudgetLineItemSchema {
   @Column({ name: "parent_id", nullable: true })
   parentId!: string | null;
 
-  @ManyToOne(() => BudgetLineItemSchema, {
+  @ManyToOne(() => BudgetLineSchema, {
     onDelete: "SET NULL",
     nullable: true,
   })
   @JoinColumn({ name: "parent_id" })
-  parent?: BudgetLineItemSchema | null;
+  parent?: BudgetLineSchema | null;
 
   @Column({ name: "order", type: "int" })
   order!: number;

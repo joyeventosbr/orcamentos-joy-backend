@@ -15,12 +15,10 @@ import { type FastifyReply } from "fastify";
 import { CreateBudgetUseCase } from "@application/budgets/usecases/budget/create/create-budget.usecase";
 import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
-import { GetBudgetUseCase } from "@application/budgets/usecases/budget/get/get-budget.usecase";
 import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
-import { BudgetDetailResponseApiDto } from "@api/dtos/budgets/responses/budget/budget-detail-response.api.dto";
 import { ExportBudgetResponseApiDto } from "@api/dtos/budgets/responses/export-budget-response.api.dto";
 
 @ApiTags("budgets")
@@ -31,7 +29,6 @@ export class BudgetsController {
     private readonly updateBudgetUseCase: UpdateBudgetUseCase,
     private readonly deleteBudgetUseCase: DeleteBudgetUseCase,
     private readonly exportBudgetUseCase: ExportBudgetUseCase,
-    private readonly getBudgetUseCase: GetBudgetUseCase,
     @Inject("IBudgetRepository")
     private readonly budgetRepository: IBudgetRepository,
   ) {}
@@ -97,20 +94,6 @@ export class BudgetsController {
     return res.status(HttpStatus.OK).send({ success: true });
   }
 
-  @Get(":id")
-  @ApiOkResponse({ type: BudgetDetailResponseApiDto })
-  async get(@Param("id") id: string, @Res() res: FastifyReply) {
-    const result = await this.getBudgetUseCase.execute({ id });
-
-    if (result.isFailure()) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send({ error: result.getError() });
-    }
-
-    return res.status(HttpStatus.OK).send(result.getValue());
-  }
-
   @Get(":id/export")
   @ApiOkResponse({ type: ExportBudgetResponseApiDto })
   async export(@Param("id") id: string, @Res() res: FastifyReply) {
@@ -123,5 +106,25 @@ export class BudgetsController {
     }
 
     return res.status(HttpStatus.OK).send(result.getValue());
+  }
+
+  @Get(":id")
+  async get(@Param("id") id: string, @Res() res: FastifyReply) {
+    const result = await this.budgetRepository.getById(id);
+
+    if (result.isFailure()) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ error: result.getError() });
+    }
+
+    const budget = result.getValue();
+    if (!budget) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .send({ error: "Orçamento não encontrado" });
+    }
+
+    return res.status(HttpStatus.OK).send(budget);
   }
 }

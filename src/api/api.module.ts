@@ -4,6 +4,7 @@ import { InfraModule } from "@infra/infra.module";
 import { AuthController } from "./controllers/auth.controller";
 import { RouterModule } from "@nestjs/core";
 import { BudgetsController } from "./controllers/budgets.controller";
+import { BudgetLinesController } from "./controllers/budget-lines.controller";
 import { CategoriesController } from "./controllers/categories.controller";
 import { CustomersController } from "./controllers/customers.controller";
 import { FoldersController } from "./controllers/folders.controller";
@@ -22,6 +23,7 @@ import { FoldersController } from "./controllers/folders.controller";
   controllers: [
     AuthController,
     BudgetsController,
+    BudgetLinesController,
     CategoriesController,
     CustomersController,
     FoldersController,

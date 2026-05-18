@@ -1,18 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 
-export class BudgetTableRowResponseApiDto {
+export class CreateBudgetLineRequestApiDto {
   @ApiProperty()
-  id!: string;
-
-  @ApiProperty({ nullable: true })
-  parentId!: string | null;
+  budgetId!: string;
 
   @ApiProperty()
   categoryId!: string;
 
-  @ApiProperty()
-  budgetId!: string;
+  @ApiPropertyOptional({ nullable: true })
+  parentId?: string | null;
 
   @ApiProperty()
   order!: number;
@@ -20,8 +17,8 @@ export class BudgetTableRowResponseApiDto {
   @ApiProperty()
   name!: string;
 
-  @ApiProperty()
-  description!: string;
+  @ApiPropertyOptional()
+  description?: string;
 
   @ApiProperty({ enum: BillingType })
   billingType!: BillingType;
@@ -61,7 +58,4 @@ export class BudgetTableRowResponseApiDto {
 
   @ApiProperty()
   billingTotalValue!: number;
-
-  @ApiProperty({ type: () => [BudgetTableRowResponseApiDto] })
-  children!: BudgetTableRowResponseApiDto[];
 }
