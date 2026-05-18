@@ -2,18 +2,15 @@ import { Budget } from "@domain/budgets/entities/budget.entity";
 import { BudgetSchema } from "../typeorm/schemas/budget.schema";
 
 export class BudgetMapper {
-  static toEntity(schema: BudgetSchema): Budget {
+  static toEntity(schema: BudgetSchema, folderId = ""): Budget {
     return Budget.read({
       id: schema.id,
-      folderId: "",
-      client: schema.client,
-      job: schema.job,
-      deadline: schema.deadline,
+      customerId: schema.customerId,
+      folderId,
+      jobDescription: schema.jobDescription,
       location: schema.location,
-      folderDate: schema.folderDate,
-      participants: schema.participants,
-      categories: [],
-      items: [],
+      eventDate: schema.eventDate,
+      paymentTerm: schema.paymentTerm,
       createdAt: schema.createdAt,
       updatedAt: schema.updatedAt,
     });
@@ -22,12 +19,11 @@ export class BudgetMapper {
   static toSchema(entity: Budget): Partial<BudgetSchema> {
     return {
       id: entity.id || undefined,
-      client: entity.client,
-      job: entity.job,
-      deadline: entity.deadline,
+      customerId: entity.customerId,
+      jobDescription: entity.jobDescription,
       location: entity.location,
-      folderDate: entity.folderDate,
-      participants: entity.participants,
+      eventDate: entity.eventDate,
+      paymentTerm: entity.paymentTerm,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     };

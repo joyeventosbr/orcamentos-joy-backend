@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IFolderRepository } from "@domain/budgets/repositories/folder/i-folder-repository";
-import { Folder } from "@domain/budgets/entities/folder.entity";
+import type { IFolderRepository } from "@domain/folders/repositories/i-folder-repository";
+import { Folder } from "@domain/folders/entities/folder.entity";
 import { Result } from "@shared/result";
 import { createFolderSchema } from "./create-folder.dto";
 import { ZError } from "@utils/index";

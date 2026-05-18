@@ -15,7 +15,7 @@ import { type FastifyReply } from "fastify";
 import { CreateCustomerUseCase } from "@application/budgets/usecases/customer/create/create-customer.usecase";
 import { DeleteCustomerUseCase } from "@application/budgets/usecases/customer/delete/delete-customer.usecase";
 import { UpdateCustomerUseCase } from "@application/budgets/usecases/customer/update/update-customer.usecase";
-import type { ICustomerRepository } from "@domain/budgets/repositories/customer/i-customer-repository";
+import type { ICustomerRepository } from "@domain/customers/repositories/i-customer-repository";
 import { CreateCustomerRequestApiDto } from "@api/dtos/customers/requests/create-customer-request.api.dto";
 import { UpdateCustomerRequestApiDto } from "@api/dtos/customers/requests/update-customer-request.api.dto";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";

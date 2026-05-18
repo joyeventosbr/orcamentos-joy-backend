@@ -17,7 +17,7 @@ import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete
 import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
 import { GetBudgetUseCase } from "@application/budgets/usecases/budget/get/get-budget.usecase";
 import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
-import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
+import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
 import { BudgetDetailResponseApiDto } from "@api/dtos/budgets/responses/budget/budget-detail-response.api.dto";

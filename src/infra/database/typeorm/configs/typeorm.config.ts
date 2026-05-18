@@ -8,7 +8,6 @@ import { BudgetCategorySchema } from "../schemas/budget-category.schema";
 import { BudgetLineItemSchema } from "../schemas/budget-line-item.schema";
 import { CustomerFolderSchema } from "../schemas/customer-folder.schema";
 import { FolderBudgetSchema } from "../schemas/folder-budget.schema";
-import { BudgetCategoryLinkSchema } from "../schemas/budget-category-link.schema";
 import { config } from "dotenv";
 
 config();
@@ -29,7 +28,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     BudgetLineItemSchema,
     CustomerFolderSchema,
     FolderBudgetSchema,
-    BudgetCategoryLinkSchema,
   ],
   synchronize: false,
   migrations: [__dirname + "/../migrations/*.{ts,js}"],

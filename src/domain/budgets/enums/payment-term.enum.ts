@@ -1,0 +1,7 @@
+export enum PaymentTerm {
+  THIRTY_DAYS = "30_DAYS",
+  FORTY_FIVE_DAYS = "45_DAYS",
+  SIXTY_DAYS = "60_DAYS",
+  NINETY_DAYS = "90_DAYS",
+  ONE_HUNDRED_TWENTY_DAYS = "120_DAYS",
+}

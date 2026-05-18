@@ -1,27 +1,25 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
+import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 import { BudgetLineItemRequestApiDto } from "./budget-line-item-request.api.dto";
 
 export class UpdateBudgetRequestApiDto {
   @ApiPropertyOptional()
+  customerId?: string;
+
+  @ApiPropertyOptional()
   folderId?: string;
 
   @ApiPropertyOptional()
-  client?: string;
-
-  @ApiPropertyOptional()
-  job?: string;
-
-  @ApiPropertyOptional()
-  deadline?: string;
+  jobDescription?: string;
 
   @ApiPropertyOptional()
   location?: string;
 
   @ApiPropertyOptional()
-  folderDate?: string;
+  eventDate?: string;
 
-  @ApiPropertyOptional()
-  participants?: number;
+  @ApiPropertyOptional({ enum: PaymentTerm })
+  paymentTerm?: PaymentTerm;
 
   @ApiPropertyOptional({ type: [BudgetLineItemRequestApiDto] })
   items?: BudgetLineItemRequestApiDto[];

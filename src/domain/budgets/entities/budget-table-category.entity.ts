@@ -1,5 +1,5 @@
-import { BudgetCategory } from "./budget-category.entity";
-import { BudgetTableRow } from "./budget-table-row.entity";
+import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
+import { BudgetTableRow } from "@domain/budgets/entities/budget-table-row.entity";
 
 export class BudgetTableCategory {
   private constructor(

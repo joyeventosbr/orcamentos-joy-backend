@@ -8,7 +8,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { Reflector } from "@nestjs/core";
 import { IS_PUBLIC_KEY } from "./decorators/public.decorator";
 import { REQUIRED_ROLE_KEY } from "./decorators/admin.decorator";
-import { type Role } from "@domain/users/types/user-role.type";
+import { type Role } from "@domain/users/enums/user-role.enum";
 
 type JwtUser = {
   userId: string;

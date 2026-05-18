@@ -1,9 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Budget } from "@domain/budgets/entities/budget.entity";
+import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
 import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
-import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
-import type { IBudgetRelationRepository } from "@domain/budgets/repositories/relation/i-budget-relation-repository";
+import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
 import { BudgetSchema } from "@infra/database/typeorm/schemas/budget.schema";
@@ -25,48 +26,19 @@ export class BudgetRepository implements IBudgetRepository {
         createdAt: new Date(),
       });
 
-      const folderBudget = FolderBudget.create({
-        folderId: data.folderId,
-        budgetId: saved.id,
-      });
-      if (folderBudget.isFailure()) {
-        return Result.failure(folderBudget.getError());
-      }
-
-      const folderBudgetResult =
-        await this.budgetRelationRepository.createFolderBudget(
-          folderBudget.getValue(),
-        );
+      const folderBudgetResult = await this.saveFolderBudget(data.folderId, saved.id);
       if (folderBudgetResult.isFailure()) {
         return Result.failure(folderBudgetResult.getError());
       }
 
-      const categoriesResult =
-        await this.budgetRelationRepository.replaceBudgetCategoryLinks(
-          saved.id,
-          data.categories,
-        );
-      if (categoriesResult.isFailure()) {
-        return Result.failure(categoriesResult.getError());
-      }
-
-      const itemsResult =
-        await this.budgetRelationRepository.replaceBudgetLineItems(
-          saved.id,
-          data.items,
-        );
-      if (itemsResult.isFailure()) {
-        return Result.failure(itemsResult.getError());
-      }
-
-      const createdBudget = await this.getHydratedBudget(saved.id);
-      return Result.success(createdBudget ?? BudgetMapper.toEntity(saved));
+      const createdBudget = await this.getBudget(saved.id);
+      return Result.success(createdBudget ?? BudgetMapper.toEntity(saved, data.folderId));
     } catch (error) {
       return Result.failure("Falha ao criar orçamento, erro: " + error);
     }
   }
 
-  async update(data: Budget): Promise<Result<Budget>> {
+  async update(data: Budget, items?: BudgetLineItem[]): Promise<Result<Budget>> {
     try {
       await this.budgetSchemaRepository.save({
         ...BudgetMapper.toSchema(data),
@@ -74,41 +46,20 @@ export class BudgetRepository implements IBudgetRepository {
         updatedAt: new Date(),
       });
 
-      const folderBudget = FolderBudget.create({
-        folderId: data.folderId,
-        budgetId: data.id,
-      });
-      if (folderBudget.isFailure()) {
-        return Result.failure(folderBudget.getError());
-      }
-
-      const folderBudgetResult =
-        await this.budgetRelationRepository.replaceFolderBudget(
-          folderBudget.getValue(),
-        );
+      const folderBudgetResult = await this.saveFolderBudget(data.folderId, data.id, true);
       if (folderBudgetResult.isFailure()) {
         return Result.failure(folderBudgetResult.getError());
       }
 
-      const categoriesResult =
-        await this.budgetRelationRepository.replaceBudgetCategoryLinks(
-          data.id,
-          data.categories,
-        );
-      if (categoriesResult.isFailure()) {
-        return Result.failure(categoriesResult.getError());
+      if (items !== undefined) {
+        const itemsResult =
+          await this.budgetRelationRepository.replaceBudgetLineItems(data.id, items);
+        if (itemsResult.isFailure()) {
+          return Result.failure(itemsResult.getError());
+        }
       }
 
-      const itemsResult =
-        await this.budgetRelationRepository.replaceBudgetLineItems(
-          data.id,
-          data.items,
-        );
-      if (itemsResult.isFailure()) {
-        return Result.failure(itemsResult.getError());
-      }
-
-      const updated = await this.getHydratedBudget(data.id);
+      const updated = await this.getBudget(data.id);
       if (!updated) return Result.failure("Orçamento não encontrado");
 
       return Result.success(updated);
@@ -128,7 +79,7 @@ export class BudgetRepository implements IBudgetRepository {
 
   async getById(id: string): Promise<Result<Budget | null>> {
     try {
-      return Result.success(await this.getHydratedBudget(id));
+      return Result.success(await this.getBudget(id));
     } catch (error) {
       return Result.failure("Falha ao buscar orçamento, erro: " + error);
     }
@@ -148,22 +99,7 @@ export class BudgetRepository implements IBudgetRepository {
           return Result.failure(folderIdResult.getError());
         }
 
-        result.push(
-          Budget.read({
-            id: budget.id,
-            folderId: folderIdResult.getValue() ?? "",
-            client: budget.client,
-            job: budget.job,
-            deadline: budget.deadline,
-            location: budget.location,
-            folderDate: budget.folderDate,
-            participants: budget.participants,
-            categories: [],
-            items: [],
-            createdAt: budget.createdAt,
-            updatedAt: budget.updatedAt,
-          }),
-        );
+        result.push(BudgetMapper.toEntity(budget, folderIdResult.getValue() ?? ""));
       }
 
       return Result.success(result);
@@ -172,11 +108,9 @@ export class BudgetRepository implements IBudgetRepository {
     }
   }
 
-  private async getHydratedBudget(id: string): Promise<Budget | null> {
+  private async getBudget(id: string): Promise<Budget | null> {
     const budget = await this.budgetSchemaRepository.findOne({ where: { id } });
-    if (!budget) {
-      return null;
-    }
+    if (!budget) return null;
 
     const folderIdResult =
       await this.budgetRelationRepository.getFolderIdByBudgetId(id);
@@ -184,31 +118,21 @@ export class BudgetRepository implements IBudgetRepository {
       throw new Error(folderIdResult.getError());
     }
 
-    const categoriesResult =
-      await this.budgetRelationRepository.getCategoriesByBudgetId(id);
-    if (categoriesResult.isFailure()) {
-      throw new Error(categoriesResult.getError());
+    return BudgetMapper.toEntity(budget, folderIdResult.getValue() ?? "");
+  }
+
+  private async saveFolderBudget(
+    folderId: string,
+    budgetId: string,
+    replace = false,
+  ): Promise<Result<FolderBudget>> {
+    const folderBudget = FolderBudget.create({ folderId, budgetId });
+    if (folderBudget.isFailure()) {
+      return Result.failure(folderBudget.getError());
     }
 
-    const itemsResult =
-      await this.budgetRelationRepository.getLineItemsByBudgetId(id);
-    if (itemsResult.isFailure()) {
-      throw new Error(itemsResult.getError());
-    }
-
-    return Budget.read({
-      id: budget.id,
-      folderId: folderIdResult.getValue() ?? "",
-      client: budget.client,
-      job: budget.job,
-      deadline: budget.deadline,
-      location: budget.location,
-      folderDate: budget.folderDate,
-      participants: budget.participants,
-      categories: categoriesResult.getValue(),
-      items: itemsResult.getValue(),
-      createdAt: budget.createdAt,
-      updatedAt: budget.updatedAt,
-    });
+    return replace
+      ? this.budgetRelationRepository.replaceFolderBudget(folderBudget.getValue())
+      : this.budgetRelationRepository.createFolderBudget(folderBudget.getValue());
   }
 }

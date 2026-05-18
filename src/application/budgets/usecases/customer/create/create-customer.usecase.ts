@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { ICustomerRepository } from "@domain/budgets/repositories/customer/i-customer-repository";
-import { Customer } from "@domain/budgets/entities/customer.entity";
+import type { ICustomerRepository } from "@domain/customers/repositories/i-customer-repository";
+import { Customer } from "@domain/customers/entities/customer.entity";
 import { Result } from "@shared/result";
 import { createCustomerSchema } from "./create-customer.dto";
 import { ZError } from "@utils/index";

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { ICustomerRepository } from "@domain/budgets/repositories/customer/i-customer-repository";
+import type { ICustomerRepository } from "@domain/customers/repositories/i-customer-repository";
 import { Result } from "@shared/result";
 import { deleteCustomerSchema } from "./delete-customer.dto";
 import { ZError } from "@utils/index";

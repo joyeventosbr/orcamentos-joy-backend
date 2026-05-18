@@ -1,4 +1,4 @@
-import { Role } from "@domain/users/types/user-role.type";
+import { Role } from "@domain/users/enums/user-role.enum";
 import dataSource from "@infra/database/typeorm/configs/migration.config";
 import { UserSchema } from "@infra/database/typeorm/schemas/user.schema";
 import { randomBytes, scryptSync } from "crypto";

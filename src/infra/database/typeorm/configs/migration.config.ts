@@ -8,7 +8,6 @@ import { BudgetCategorySchema } from "../schemas/budget-category.schema";
 import { BudgetLineItemSchema } from "../schemas/budget-line-item.schema";
 import { CustomerFolderSchema } from "../schemas/customer-folder.schema";
 import { FolderBudgetSchema } from "../schemas/folder-budget.schema";
-import { BudgetCategoryLinkSchema } from "../schemas/budget-category-link.schema";
 
 config();
 
@@ -28,7 +27,6 @@ export default new DataSource({
     BudgetLineItemSchema,
     CustomerFolderSchema,
     FolderBudgetSchema,
-    BudgetCategoryLinkSchema,
   ],
   migrations: [__dirname + "/../migrations/*.{ts,js}"],
   extra: {

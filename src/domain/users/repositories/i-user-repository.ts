@@ -1,4 +1,4 @@
-import { User } from "@domain/users/entities/user.entity";
+import { User } from "@domain/users/entities/user/user.entity";
 import { Result } from "@shared/result";
 
 export interface IUserRepository {

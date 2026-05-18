@@ -1,10 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Result } from "@shared/result";
 import { Budget } from "@domain/budgets/entities/budget.entity";
-import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
 import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
-import { BillingType } from "@domain/budgets/types/billing-type.type";
-import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
+import { BillingType } from "@domain/budgets/enums/billing-type.enum";
+import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { updateBudgetSchema, type UpdateBudgetDto } from "./update-budget.dto";
 import { ZError } from "@utils/index";
 
@@ -29,7 +28,6 @@ export class UpdateBudgetUseCase {
     if (!budget) return Result.failure("Orçamento não encontrado");
 
     let items: BudgetLineItem[] | undefined;
-    let categories: BudgetCategory[] | undefined;
     if (parsed.data.items !== undefined) {
       const itemsResult = this.createItems(parsed.data.id, parsed.data.items);
       if (itemsResult.isFailure()) {
@@ -37,33 +35,21 @@ export class UpdateBudgetUseCase {
       }
 
       items = itemsResult.getValue();
-      categories = this.getCategoriesFromItems(items);
     }
 
     const budgetResult = budget.update({
+      customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
-      client: parsed.data.client,
-      job: parsed.data.job,
-      deadline: parsed.data.deadline,
+      jobDescription: parsed.data.jobDescription,
       location: parsed.data.location,
-      folderDate: parsed.data.folderDate,
-      participants: parsed.data.participants,
-      categories,
-      items,
+      eventDate: parsed.data.eventDate,
+      paymentTerm: parsed.data.paymentTerm,
     });
     if (budgetResult.isFailure()) {
       return Result.failure(budgetResult.getError());
     }
 
-    return this.budgetRepository.update(budgetResult.getValue());
-  }
-
-  private getCategoriesFromItems(items: BudgetLineItem[]): BudgetCategory[] {
-    const categoryIds = [...new Set(items.map((item) => item.categoryId))];
-
-    return categoryIds.map((categoryId, index) =>
-      BudgetCategory.read({ id: categoryId, name: "", code: "", order: index }),
-    );
+    return this.budgetRepository.update(budgetResult.getValue(), items);
   }
 
   private createItems(

@@ -1,4 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 import { BudgetTableCategoryResponseApiDto } from "./budget-table-category-response.api.dto";
 
 export class BudgetDetailResponseApiDto {
@@ -6,25 +7,22 @@ export class BudgetDetailResponseApiDto {
   id!: string;
 
   @ApiProperty()
+  customerId!: string;
+
+  @ApiProperty()
   folderId!: string;
 
-  @ApiProperty()
-  client!: string;
+  @ApiPropertyOptional()
+  jobDescription?: string;
 
-  @ApiProperty()
-  job!: string;
+  @ApiPropertyOptional()
+  location?: string;
 
-  @ApiProperty()
-  deadline!: string;
+  @ApiPropertyOptional()
+  eventDate?: string;
 
-  @ApiProperty()
-  location!: string;
-
-  @ApiProperty()
-  folderDate!: string;
-
-  @ApiProperty()
-  participants!: number;
+  @ApiPropertyOptional({ enum: PaymentTerm })
+  paymentTerm?: PaymentTerm;
 
   @ApiProperty()
   createdAt!: Date;

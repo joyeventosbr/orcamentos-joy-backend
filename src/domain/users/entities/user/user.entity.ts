@@ -1,5 +1,5 @@
 import { Result } from "@shared/result";
-import { Role } from "../types/user-role.type";
+import { Role } from "@domain/users/enums/user-role.enum";
 
 export class User {
   private constructor(

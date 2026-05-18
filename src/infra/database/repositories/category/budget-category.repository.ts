@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
-import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/category/i-budget-category-repository";
+import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/i-budget-category-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
 import { BudgetCategorySchema } from "@infra/database/typeorm/schemas/budget-category.schema";

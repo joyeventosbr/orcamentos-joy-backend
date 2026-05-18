@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { User } from "@domain/users/entities/user.entity";
+import { User } from "@domain/users/entities/user/user.entity";
 import type { IUserRepository } from "@domain/users/repositories/i-user-repository";
-import { Role } from "@domain/users/types/user-role.type";
+import { Role } from "@domain/users/enums/user-role.enum";
 import { Result } from "@shared/result";
 import { PasswordHasherService } from "@infra/auth/password/password-hasher.service";
 import { ZError } from "@utils/index";

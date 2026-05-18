@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Result } from "@shared/result";
-import type { IBudgetRepository } from "@domain/budgets/repositories/budget/i-budget-repository";
+import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
+import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
 import { exportBudgetSchema } from "./export-budget.dto";
 import { ZError } from "@utils/index";
 
@@ -9,6 +10,8 @@ export class ExportBudgetUseCase {
   constructor(
     @Inject("IBudgetRepository")
     private readonly budgetRepository: IBudgetRepository,
+    @Inject("IBudgetRelationRepository")
+    private readonly budgetRelationRepository: IBudgetRelationRepository,
   ) {}
 
   async execute(input: unknown): Promise<
@@ -22,11 +25,15 @@ export class ExportBudgetUseCase {
     }
 
     const budgetResult = await this.budgetRepository.getById(parsed.data.id);
-
     if (budgetResult.isFailure()) return Result.failure(budgetResult.getError());
 
     const budget = budgetResult.getValue();
     if (!budget) return Result.failure("Orçamento não encontrado");
+
+    const itemsResult = await this.budgetRelationRepository.getLineItemsByBudgetId(
+      budget.id,
+    );
+    if (itemsResult.isFailure()) return Result.failure(itemsResult.getError());
 
     const header = [
       "id",
@@ -51,7 +58,7 @@ export class ExportBudgetUseCase {
       "faturamentoValorTotal",
     ].join(",");
 
-    const lines = budget.items.map((item) =>
+    const lines = itemsResult.getValue().map((item) =>
       [
         item.id,
         item.parentId ?? "",

@@ -1,4 +1,4 @@
-import { Folder } from "@domain/budgets/entities/folder.entity";
+import { Folder } from "@domain/folders/entities/folder.entity";
 import { Result } from "@shared/result";
 
 export interface IFolderRepository {

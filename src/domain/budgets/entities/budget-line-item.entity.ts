@@ -1,5 +1,5 @@
 import { Result } from "@shared/result";
-import { BillingType } from "@domain/budgets/types/billing-type.type";
+import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 
 export class BudgetLineItem {
   private constructor(

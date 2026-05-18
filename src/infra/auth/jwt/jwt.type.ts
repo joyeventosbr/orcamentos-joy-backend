@@ -1,4 +1,4 @@
-import type { Role } from "@domain/users/types/user-role.type";
+import type { Role } from "@domain/users/enums/user-role.enum";
 
 export type JwtPayload = {
   sub: string;

@@ -1,4 +1,4 @@
-import { Customer } from "@domain/budgets/entities/customer.entity";
+import { Customer } from "@domain/customers/entities/customer.entity";
 import { Result } from "@shared/result";
 
 export interface ICustomerRepository {

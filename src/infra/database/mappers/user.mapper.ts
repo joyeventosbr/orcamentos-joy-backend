@@ -1,4 +1,4 @@
-import { User } from "@domain/users/entities/user.entity";
+import { User } from "@domain/users/entities/user/user.entity";
 import { UserSchema } from "../typeorm/schemas/user.schema";
 
 export class UserMapper {

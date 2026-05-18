@@ -1,15 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
-import { BudgetCategoryLink } from "@domain/budgets/entities/budget-category-link.entity";
 import { BudgetLineItem } from "@domain/budgets/entities/budget-line-item.entity";
-import { CustomerFolder } from "@domain/budgets/entities/customer-folder.entity";
+import { CustomerFolder } from "@domain/folders/entities/customer-folder.entity";
 import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
-import { BillingType } from "@domain/budgets/types/billing-type.type";
-import type { IBudgetRelationRepository } from "@domain/budgets/repositories/relation/i-budget-relation-repository";
+import { BillingType } from "@domain/budgets/enums/billing-type.enum";
+import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
-import { BudgetCategoryLinkSchema } from "@infra/database/typeorm/schemas/budget-category-link.schema";
 import { BudgetLineItemSchema } from "@infra/database/typeorm/schemas/budget-line-item.schema";
 import { CustomerFolderSchema } from "@infra/database/typeorm/schemas/customer-folder.schema";
 import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
@@ -21,8 +18,6 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     private readonly customerFolderSchemaRepository: Repository<CustomerFolderSchema>,
     @InjectRepository(FolderBudgetSchema)
     private readonly folderBudgetSchemaRepository: Repository<FolderBudgetSchema>,
-    @InjectRepository(BudgetCategoryLinkSchema)
-    private readonly budgetCategoryLinkSchemaRepository: Repository<BudgetCategoryLinkSchema>,
     @InjectRepository(BudgetLineItemSchema)
     private readonly budgetLineItemSchemaRepository: Repository<BudgetLineItemSchema>,
   ) {}
@@ -67,28 +62,6 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     }
   }
 
-  async createBudgetCategoryLink(
-    data: BudgetCategoryLink,
-  ): Promise<Result<BudgetCategoryLink>> {
-    try {
-      const saved = await this.budgetCategoryLinkSchemaRepository.save({
-        budgetId: data.budgetId,
-        categoryId: data.categoryId,
-      });
-
-      return Result.success(
-        BudgetCategoryLink.read({
-          budgetId: saved.budgetId,
-          categoryId: saved.categoryId,
-        }),
-      );
-    } catch (error) {
-      return Result.failure(
-        "Falha ao vincular orçamento e categoria, erro: " + error,
-      );
-    }
-  }
-
   async replaceCustomerFolder(data: CustomerFolder): Promise<Result<CustomerFolder>> {
     await this.customerFolderSchemaRepository.delete({ folderId: data.folderId });
     return this.createCustomerFolder(data);
@@ -97,38 +70,6 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
   async replaceFolderBudget(data: FolderBudget): Promise<Result<FolderBudget>> {
     await this.folderBudgetSchemaRepository.delete({ budgetId: data.budgetId });
     return this.createFolderBudget(data);
-  }
-
-  async replaceBudgetCategoryLinks(
-    budgetId: string,
-    categories: BudgetCategory[],
-  ): Promise<Result<void>> {
-    try {
-      await this.budgetCategoryLinkSchemaRepository.delete({ budgetId });
-
-      if (categories.length > 0) {
-        const links: BudgetCategoryLink[] = [];
-        for (const category of categories) {
-          const link = BudgetCategoryLink.create({
-            budgetId,
-            categoryId: category.id,
-          });
-          if (link.isFailure()) {
-            return Result.failure(link.getError());
-          }
-
-          links.push(link.getValue());
-        }
-
-        await this.budgetCategoryLinkSchemaRepository.save(links);
-      }
-
-      return Result.success();
-    } catch (error) {
-      return Result.failure(
-        "Falha ao substituir categorias do orçamento, erro: " + error,
-      );
-    }
   }
 
   async replaceBudgetLineItems(
@@ -199,35 +140,6 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
     }
   }
 
-  async getCategoriesByBudgetId(
-    budgetId: string,
-  ): Promise<Result<BudgetCategory[]>> {
-    try {
-      const links = await this.budgetCategoryLinkSchemaRepository.find({
-        where: { budgetId },
-        relations: { category: true },
-      });
-
-      return Result.success(
-        links
-          .filter((link) => Boolean(link.category))
-          .map(
-            (link) =>
-              BudgetCategory.read({
-                id: link.category.id,
-                name: link.category.name,
-                code: link.category.code,
-                order: link.category.order,
-              }),
-          ),
-      );
-    } catch (error) {
-      return Result.failure(
-        "Falha ao buscar categorias do orçamento, erro: " + error,
-      );
-    }
-  }
-
   async getLineItemsByBudgetId(
     budgetId: string,
   ): Promise<Result<BudgetLineItem[]>> {
@@ -238,30 +150,29 @@ export class BudgetRelationRepository implements IBudgetRelationRepository {
       });
 
       return Result.success(
-        items.map(
-          (item) =>
-            BudgetLineItem.read({
-              id: item.id,
-              budgetId: item.budgetId,
-              categoryId: item.categoryId,
-              parentId: item.parentId,
-              order: item.order,
-              name: item.name,
-              description: item.description,
-              billingType: item.billingType as BillingType,
-              quantity: item.quantity,
-              dailyRates: item.dailyRates,
-              unitValue: item.unitValue,
-              totalValue: item.totalValue,
-              upfrontPayment: item.upfrontPayment,
-              installment30Days: item.installment30Days,
-              installment45Days: item.installment45Days,
-              installment60Days: item.installment60Days,
-              installment90Days: item.installment90Days,
-              installment120Days: item.installment120Days,
-              billingUnitValue: item.billingUnitValue,
-              billingTotalValue: item.billingTotalValue,
-            }),
+        items.map((item) =>
+          BudgetLineItem.read({
+            id: item.id,
+            budgetId: item.budgetId,
+            categoryId: item.categoryId,
+            parentId: item.parentId,
+            order: item.order,
+            name: item.name,
+            description: item.description,
+            billingType: item.billingType as BillingType,
+            quantity: item.quantity,
+            dailyRates: item.dailyRates,
+            unitValue: item.unitValue,
+            totalValue: item.totalValue,
+            upfrontPayment: item.upfrontPayment,
+            installment30Days: item.installment30Days,
+            installment45Days: item.installment45Days,
+            installment60Days: item.installment60Days,
+            installment90Days: item.installment90Days,
+            installment120Days: item.installment120Days,
+            billingUnitValue: item.billingUnitValue,
+            billingTotalValue: item.billingTotalValue,
+          }),
         ),
       );
     } catch (error) {

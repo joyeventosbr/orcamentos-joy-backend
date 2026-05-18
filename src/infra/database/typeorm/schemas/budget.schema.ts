@@ -1,27 +1,38 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
+import { CustomerSchema } from "./customer.schema";
 
 @Entity("tb_budgets")
 export class BudgetSchema {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column()
-  client!: string;
+  @Column({ name: "customer_id" })
+  customerId!: string;
 
-  @Column()
-  job!: string;
+  @ManyToOne(() => CustomerSchema, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "customer_id" })
+  customer!: CustomerSchema;
 
-  @Column()
-  deadline!: string;
+  @Column({ name: "job_description", nullable: true })
+  jobDescription?: string;
 
-  @Column()
-  location!: string;
+  @Column({ nullable: true })
+  location?: string;
 
-  @Column({ name: "folder_date" })
-  folderDate!: string;
+  @Column({ name: "event_date", nullable: true })
+  eventDate?: string;
 
-  @Column({ name: "participants", type: "int" })
-  participants!: number;
+  @Column({ name: "payment_term", nullable: true })
+  paymentTerm?: PaymentTerm;
 
   @Column({ name: "created_at" })
   createdAt!: Date;

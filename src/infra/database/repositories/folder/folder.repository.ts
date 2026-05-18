@@ -1,9 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Folder } from "@domain/budgets/entities/folder.entity";
-import { CustomerFolder } from "@domain/budgets/entities/customer-folder.entity";
-import type { IFolderRepository } from "@domain/budgets/repositories/folder/i-folder-repository";
-import type { IBudgetRelationRepository } from "@domain/budgets/repositories/relation/i-budget-relation-repository";
+import { Folder } from "@domain/folders/entities/folder.entity";
+import { CustomerFolder } from "@domain/folders/entities/customer-folder.entity";
+import type { IFolderRepository } from "@domain/folders/repositories/i-folder-repository";
+import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
 import { FolderSchema } from "@infra/database/typeorm/schemas/folder.schema";

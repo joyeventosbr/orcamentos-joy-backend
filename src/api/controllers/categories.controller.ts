@@ -15,7 +15,7 @@ import { type FastifyReply } from "fastify";
 import { CreateCategoryUseCase } from "@application/budgets/usecases/category/create/create-category.usecase";
 import { DeleteCategoryUseCase } from "@application/budgets/usecases/category/delete/delete-category.usecase";
 import { UpdateCategoryUseCase } from "@application/budgets/usecases/category/update/update-category.usecase";
-import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/category/i-budget-category-repository";
+import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/i-budget-category-repository";
 import { CreateCategoryRequestApiDto } from "@api/dtos/categories/requests/create-category-request.api.dto";
 import { UpdateCategoryRequestApiDto } from "@api/dtos/categories/requests/update-category-request.api.dto";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";

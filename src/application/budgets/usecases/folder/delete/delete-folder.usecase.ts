@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IFolderRepository } from "@domain/budgets/repositories/folder/i-folder-repository";
+import type { IFolderRepository } from "@domain/folders/repositories/i-folder-repository";
 import { Result } from "@shared/result";
 import { deleteFolderSchema } from "./delete-folder.dto";
 import { ZError } from "@utils/index";

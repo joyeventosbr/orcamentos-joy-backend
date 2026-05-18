@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/category/i-budget-category-repository";
+import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/i-budget-category-repository";
 import { Result } from "@shared/result";
 import { deleteCategorySchema } from "./delete-category.dto";
 import { ZError } from "@utils/index";

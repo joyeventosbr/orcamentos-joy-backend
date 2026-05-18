@@ -1,55 +1,32 @@
 import { Result } from "@shared/result";
-import { BudgetCategory } from "./budget-category.entity";
-import { BudgetLineItem } from "./budget-line-item.entity";
+import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 
 export class Budget {
   private constructor(
     public id: string,
+    public customerId: string,
     public folderId: string,
-    public client: string,
-    public job: string,
-    public deadline: string,
-    public location: string,
-    public folderDate: string,
-    public participants: number,
-    public categories: BudgetCategory[],
-    public items: BudgetLineItem[],
     public createdAt: Date,
+    public jobDescription?: string,
+    public location?: string,
+    public eventDate?: string,
+    public paymentTerm?: PaymentTerm,
     public updatedAt?: Date,
   ) {}
 
   static create(input: {
+    customerId: string;
     folderId: string;
-    client: string;
-    job: string;
-    deadline: string;
-    location: string;
-    folderDate: string;
-    participants: number;
-    categories: BudgetCategory[];
-    items: BudgetLineItem[];
   }): Result<Budget> {
+    if (!input.customerId?.trim())
+      return Result.failure("Cliente é obrigatório");
     if (!input.folderId?.trim()) return Result.failure("Pasta é obrigatória");
-    if (!input.client?.trim()) return Result.failure("Cliente é obrigatório");
-    if (!input.job?.trim()) return Result.failure("Job é obrigatório");
-    if (!input.deadline?.trim()) return Result.failure("Prazo é obrigatório");
-    if (!input.location?.trim()) return Result.failure("Local é obrigatório");
-    if (!input.folderDate?.trim()) return Result.failure("Data é obrigatória");
-    if (input.participants < 0)
-      return Result.failure("Número de participantes inválido");
 
     return Result.success(
       new Budget(
         "",
-        input.folderId,
-        input.client.trim(),
-        input.job.trim(),
-        input.deadline.trim(),
-        input.location.trim(),
-        input.folderDate.trim(),
-        input.participants,
-        input.categories,
-        input.items,
+        input.customerId.trim(),
+        input.folderId.trim(),
         new Date(),
       ),
     );
@@ -57,63 +34,52 @@ export class Budget {
 
   static read(input: {
     id: string;
+    customerId: string;
     folderId: string;
-    client: string;
-    job: string;
-    deadline: string;
-    location: string;
-    folderDate: string;
-    participants: number;
-    categories: BudgetCategory[];
-    items: BudgetLineItem[];
     createdAt: Date;
+    jobDescription?: string;
+    location?: string;
+    eventDate?: string;
+    paymentTerm?: PaymentTerm;
     updatedAt?: Date;
   }): Budget {
     return new Budget(
       input.id,
+      input.customerId,
       input.folderId,
-      input.client,
-      input.job,
-      input.deadline,
-      input.location,
-      input.folderDate,
-      input.participants,
-      input.categories,
-      input.items,
       input.createdAt,
+      input.jobDescription,
+      input.location,
+      input.eventDate,
+      input.paymentTerm,
       input.updatedAt,
     );
   }
 
   update(input: {
+    customerId?: string;
     folderId?: string;
-    client?: string;
-    job?: string;
-    deadline?: string;
+    jobDescription?: string;
     location?: string;
-    folderDate?: string;
-    participants?: number;
-    categories?: BudgetCategory[];
-    items?: BudgetLineItem[];
+    eventDate?: string;
+    paymentTerm?: PaymentTerm;
   }): Result<Budget> {
+    if (input.customerId !== undefined) {
+      if (!input.customerId.trim())
+        return Result.failure("Cliente é obrigatório");
+      this.customerId = input.customerId.trim();
+    }
+
     if (input.folderId !== undefined) {
       if (!input.folderId.trim()) return Result.failure("Pasta é obrigatória");
       this.folderId = input.folderId.trim();
     }
 
-    if (input.client !== undefined) {
-      if (!input.client.trim()) return Result.failure("Cliente é obrigatório");
-      this.client = input.client.trim();
-    }
-
-    if (input.job !== undefined) {
-      if (!input.job.trim()) return Result.failure("Job é obrigatório");
-      this.job = input.job.trim();
-    }
-
-    if (input.deadline !== undefined) {
-      if (!input.deadline.trim()) return Result.failure("Prazo é obrigatório");
-      this.deadline = input.deadline.trim();
+    if (input.jobDescription !== undefined) {
+      if (!input.jobDescription.trim()) {
+        return Result.failure("Descrição do trabalho é obrigatória");
+      }
+      this.jobDescription = input.jobDescription.trim();
     }
 
     if (input.location !== undefined) {
@@ -121,21 +87,18 @@ export class Budget {
       this.location = input.location.trim();
     }
 
-    if (input.folderDate !== undefined) {
-      if (!input.folderDate.trim()) return Result.failure("Data é obrigatória");
-      this.folderDate = input.folderDate.trim();
+    if (input.eventDate !== undefined) {
+      if (!input.eventDate.trim())
+        return Result.failure("Data do evento é obrigatória");
+      this.eventDate = input.eventDate.trim();
     }
 
-    if (input.participants !== undefined) {
-      if (input.participants < 0) {
-        return Result.failure("Número de participantes inválido");
+    if (input.paymentTerm !== undefined) {
+      if (!Object.values(PaymentTerm).includes(input.paymentTerm)) {
+        return Result.failure("Prazo de pagamento inválido");
       }
-
-      this.participants = input.participants;
+      this.paymentTerm = input.paymentTerm;
     }
-
-    if (input.categories !== undefined) this.categories = input.categories;
-    if (input.items !== undefined) this.items = input.items;
 
     this.updatedAt = new Date();
     return Result.success(this);
