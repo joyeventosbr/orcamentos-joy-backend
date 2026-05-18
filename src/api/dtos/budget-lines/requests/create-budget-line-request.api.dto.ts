@@ -20,42 +20,42 @@ export class CreateBudgetLineRequestApiDto {
   @ApiPropertyOptional()
   description?: string;
 
-  @ApiProperty({ enum: BillingType })
-  billingType!: BillingType;
+  @ApiPropertyOptional({ enum: BillingType })
+  billingType?: BillingType;
 
-  @ApiProperty()
-  quantity!: number;
+  @ApiPropertyOptional()
+  quantity?: number;
 
-  @ApiProperty()
-  dailyRates!: number;
+  @ApiPropertyOptional()
+  dailyRates?: number;
 
-  @ApiProperty()
-  unitValue!: number;
+  @ApiPropertyOptional()
+  unitValue?: number;
 
-  @ApiProperty()
-  totalValue!: number;
+  @ApiPropertyOptional()
+  totalValue?: number;
 
-  @ApiProperty()
-  upfrontPayment!: number;
+  @ApiPropertyOptional()
+  upfrontPayment?: number;
 
-  @ApiProperty()
-  installment30Days!: number;
+  @ApiPropertyOptional()
+  installment30Days?: number;
 
-  @ApiProperty()
-  installment45Days!: number;
+  @ApiPropertyOptional()
+  installment45Days?: number;
 
-  @ApiProperty()
-  installment60Days!: number;
+  @ApiPropertyOptional()
+  installment60Days?: number;
 
-  @ApiProperty()
-  installment90Days!: number;
+  @ApiPropertyOptional()
+  installment90Days?: number;
 
-  @ApiProperty()
-  installment120Days!: number;
+  @ApiPropertyOptional()
+  installment120Days?: number;
 
-  @ApiProperty()
-  billingUnitValue!: number;
+  @ApiPropertyOptional()
+  billingUnitValue?: number;
 
-  @ApiProperty()
-  billingTotalValue!: number;
+  @ApiPropertyOptional()
+  billingTotalValue?: number;
 }

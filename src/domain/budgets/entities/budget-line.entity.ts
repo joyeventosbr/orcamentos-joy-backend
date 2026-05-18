@@ -32,42 +32,42 @@ export class BudgetLine {
     order: number;
     name: string;
     description?: string;
-    billingType: BillingType;
-    quantity: number;
-    dailyRates: number;
-    unitValue: number;
-    totalValue: number;
-    upfrontPayment: number;
-    installment30Days: number;
-    installment45Days: number;
-    installment60Days: number;
-    installment90Days: number;
-    installment120Days: number;
-    billingUnitValue: number;
-    billingTotalValue: number;
+    billingType?: BillingType;
+    quantity?: number;
+    dailyRates?: number;
+    unitValue?: number;
+    totalValue?: number;
+    upfrontPayment?: number;
+    installment30Days?: number;
+    installment45Days?: number;
+    installment60Days?: number;
+    installment90Days?: number;
+    installment120Days?: number;
+    billingUnitValue?: number;
+    billingTotalValue?: number;
   }): Result<BudgetLine> {
-    const line = BudgetLine.read({
-      id: "",
-      budgetId: input.budgetId,
-      categoryId: input.categoryId,
-      parentId: input.parentId ?? null,
-      order: input.order,
-      name: input.name,
-      description: input.description ?? "",
-      billingType: input.billingType,
-      quantity: input.quantity,
-      dailyRates: input.dailyRates,
-      unitValue: input.unitValue,
-      totalValue: input.totalValue,
-      upfrontPayment: input.upfrontPayment,
-      installment30Days: input.installment30Days,
-      installment45Days: input.installment45Days,
-      installment60Days: input.installment60Days,
-      installment90Days: input.installment90Days,
-      installment120Days: input.installment120Days,
-      billingUnitValue: input.billingUnitValue,
-      billingTotalValue: input.billingTotalValue,
-    });
+    const line = new BudgetLine(
+      "",
+      input.budgetId,
+      input.categoryId,
+      input.parentId ?? null,
+      input.order,
+      input.name,
+      input.description ?? "",
+      input.billingType ?? BillingType.UNIT,
+      input.quantity ?? 0,
+      input.dailyRates ?? 0,
+      input.unitValue ?? 0,
+      input.totalValue ?? 0,
+      input.upfrontPayment ?? 0,
+      input.installment30Days ?? 0,
+      input.installment45Days ?? 0,
+      input.installment60Days ?? 0,
+      input.installment90Days ?? 0,
+      input.installment120Days ?? 0,
+      input.billingUnitValue ?? 0,
+      input.billingTotalValue ?? 0,
+    );
 
     return line.validate();
   }
