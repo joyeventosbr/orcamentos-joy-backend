@@ -91,7 +91,7 @@ async function run() {
     role: Role.ADMIN,
     createdAt: new Date(),
     updatedAt: new Date(),
-    cdCliente: undefined,
+    funcao: undefined,
   });
 
   await usersRepository.save(user);

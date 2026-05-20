@@ -21,8 +21,8 @@ export class UserSchema {
   @Column({ name: "created_at" })
   createdAt!: Date;
 
-  @Column({ name: "cd_cliente", nullable: true })
-  cdCliente?: string;
+  @Column({ name: "funcao", nullable: true })
+  funcao?: string;
 
   @Column({ name: "updated_at", nullable: true })
   updatedAt?: Date;

@@ -4,5 +4,5 @@ export type JwtPayload = {
   sub: string;
   email: string;
   role: Role;
-  cdCliente?: string;
+  funcao?: string;
 };

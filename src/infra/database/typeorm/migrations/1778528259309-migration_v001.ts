@@ -5,7 +5,7 @@ export class MigrationV0011778528259309 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "tb_users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "email" character varying NOT NULL, "password" character varying NOT NULL, "role" smallint NOT NULL DEFAULT '1', "created_at" TIMESTAMP NOT NULL, "cd_cliente" character varying, "updated_at" TIMESTAMP, CONSTRAINT "UQ_142ce3112f446974f1c96a5d3ff" UNIQUE ("email"), CONSTRAINT "PK_a2c23e0679749c22ffa6c2be910" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "tb_users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "email" character varying NOT NULL, "password" character varying NOT NULL, "role" smallint NOT NULL DEFAULT '1', "created_at" TIMESTAMP NOT NULL, "funcao" character varying, "updated_at" TIMESTAMP, CONSTRAINT "UQ_142ce3112f446974f1c96a5d3ff" UNIQUE ("email"), CONSTRAINT "PK_a2c23e0679749c22ffa6c2be910" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "tb_customers" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL, "updated_at" TIMESTAMP, CONSTRAINT "PK_edb1512762c7bc2e16aa57d588d" PRIMARY KEY ("id"))`,

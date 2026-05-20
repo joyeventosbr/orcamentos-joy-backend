@@ -9,7 +9,7 @@ export class User {
     public password: string,
     public role: Role,
     public createdAt: Date,
-    public cdCliente?: string,
+    public funcao?: string,
     public updatedAt?: Date,
   ) {}
 
@@ -18,13 +18,13 @@ export class User {
     email,
     password,
     role,
-    cdCliente,
+    funcao,
   }: {
     name: string;
     email: string;
     password: string;
     role: Role;
-    cdCliente?: string;
+    funcao?: string;
   }): Result<User> {
     if (!name?.trim()) {
       return Result.failure("Nome é obrigatório");
@@ -42,8 +42,8 @@ export class User {
       return Result.failure("Cargo é obrigatório");
     }
 
-    if (role === Role.CUSTOMER && !cdCliente?.trim()) {
-      return Result.failure("Código da cliente é obrigatório");
+    if (role === Role.CUSTOMER && !funcao?.trim()) {
+      return Result.failure("Função é obrigatória");
     }
 
     return Result.success(
@@ -54,7 +54,7 @@ export class User {
         password,
         role,
         new Date(),
-        cdCliente,
+        funcao?.trim(),
       ),
     );
   }
@@ -66,7 +66,7 @@ export class User {
     password: string;
     role: Role;
     createdAt: Date;
-    cdCliente?: string;
+    funcao?: string;
     updatedAt?: Date;
   }): User {
     return new User(
@@ -76,7 +76,7 @@ export class User {
       userData.password,
       userData.role,
       userData.createdAt,
-      userData.cdCliente,
+      userData.funcao,
       userData.updatedAt,
     );
   }

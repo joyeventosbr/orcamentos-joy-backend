@@ -11,5 +11,5 @@ export class RegisterUserRequestApiDto {
   password!: string;
 
   @ApiProperty()
-  cdCliente!: string;
+  funcao!: string;
 }

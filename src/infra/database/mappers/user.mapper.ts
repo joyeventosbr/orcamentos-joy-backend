@@ -10,7 +10,7 @@ export class UserMapper {
       password: schema.password,
       role: schema.role,
       createdAt: schema.createdAt,
-      cdCliente: schema.cdCliente,
+      funcao: schema.funcao,
       updatedAt: schema.updatedAt,
     });
   }
@@ -23,7 +23,7 @@ export class UserMapper {
     schema.password = entity.password;
     schema.role = entity.role;
     schema.createdAt = entity.createdAt;
-    schema.cdCliente = entity.cdCliente;
+    schema.funcao = entity.funcao;
     schema.updatedAt = entity.updatedAt;
 
     return schema;
