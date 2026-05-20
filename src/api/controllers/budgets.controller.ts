@@ -20,6 +20,7 @@ import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-re
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
 import { ExportBudgetResponseApiDto } from "@api/dtos/budgets/responses/export-budget-response.api.dto";
+import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 
 @ApiTags("budgets")
 @Controller("budgets")
@@ -47,6 +48,7 @@ export class BudgetsController {
   }
 
   @Post()
+  @Public()
   @ApiBody({ type: CreateBudgetRequestApiDto })
   async create(@Body() body: unknown, @Res() res: FastifyReply) {
     const result = await this.createBudgetUseCase.execute(body);

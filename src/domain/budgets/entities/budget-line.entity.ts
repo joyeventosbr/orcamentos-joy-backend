@@ -46,6 +46,45 @@ export class BudgetLine {
     billingUnitValue?: number;
     billingTotalValue?: number;
   }): Result<BudgetLine> {
+    if (!input.budgetId?.trim())
+      return Result.failure("Orçamento é obrigatório");
+    if (!input.categoryCode?.trim())
+      return Result.failure("Categoria da linha é obrigatória");
+    if (!input.name?.trim())
+      return Result.failure("Nome da linha é obrigatório");
+    if (
+      input.billingType &&
+      !Object.values(BillingType).includes(input.billingType)
+    ) {
+      return Result.failure("Tipo de faturamento inválido");
+    }
+
+    if (input.order < 0) return Result.failure("Ordem da linha inválida");
+    if (input.quantity && input.quantity < 0)
+      return Result.failure("Quantidade inválida");
+    if (input.dailyRates && input.dailyRates < 0)
+      return Result.failure("Diárias inválidas");
+    if (input.unitValue && input.unitValue < 0)
+      return Result.failure("Valor unitário inválido");
+    if (input.totalValue && input.totalValue < 0)
+      return Result.failure("Valor total inválido");
+    if (input.upfrontPayment && input.upfrontPayment < 0)
+      return Result.failure("Antecipação inválida");
+    if (input.installment30Days && input.installment30Days < 0)
+      return Result.failure("Parcela de 30 dias inválida");
+    if (input.installment45Days && input.installment45Days < 0)
+      return Result.failure("Parcela de 45 dias inválida");
+    if (input.installment60Days && input.installment60Days < 0)
+      return Result.failure("Parcela de 60 dias inválida");
+    if (input.installment90Days && input.installment90Days < 0)
+      return Result.failure("Parcela de 90 dias inválida");
+    if (input.installment120Days && input.installment120Days < 0)
+      return Result.failure("Parcela de 120 dias inválida");
+    if (input.billingUnitValue && input.billingUnitValue < 0)
+      return Result.failure("Valor unitário de faturamento inválido");
+    if (input.billingTotalValue && input.billingTotalValue < 0)
+      return Result.failure("Valor total de faturamento inválido");
+
     const line = new BudgetLine(
       "",
       input.budgetId,
@@ -69,7 +108,7 @@ export class BudgetLine {
       input.billingTotalValue ?? 0,
     );
 
-    return line.validate();
+    return Result.success(line);
   }
 
   static read(input: {
@@ -138,7 +177,8 @@ export class BudgetLine {
     billingUnitValue?: number;
     billingTotalValue?: number;
   }): Result<BudgetLine> {
-    if (input.categoryCode !== undefined) this.categoryCode = input.categoryCode;
+    if (input.categoryCode !== undefined)
+      this.categoryCode = input.categoryCode;
     if (input.parentId !== undefined) this.parentId = input.parentId;
     if (input.order !== undefined) this.order = input.order;
     if (input.name !== undefined) this.name = input.name;

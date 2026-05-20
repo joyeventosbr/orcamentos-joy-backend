@@ -27,6 +27,23 @@ export class BudgetLineRepository implements IBudgetLineRepository {
     }
   }
 
+  async createMany(data: BudgetLine[]): Promise<Result<BudgetLine[]>> {
+    try {
+      const saved = await this.budgetLineSchemaRepository.manager.transaction(
+        async (manager) =>
+          manager
+            .getRepository(BudgetLineSchema)
+            .save(data.map((line) => this.toSchema(line))),
+      );
+
+      return Result.success(saved.map((line) => this.toEntity(line)));
+    } catch (error) {
+      return Result.failure(
+        "Falha ao criar linhas do orçamento, erro: " + error,
+      );
+    }
+  }
+
   async update(data: BudgetLine): Promise<Result<BudgetLine>> {
     try {
       const saved = await this.budgetLineSchemaRepository.save(

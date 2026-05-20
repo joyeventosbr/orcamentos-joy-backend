@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Budget } from "@domain/budgets/entities/budget.entity";
-import { BudgetLine } from "@domain/budgets/entities/budget-line.entity";
 import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
@@ -10,7 +9,6 @@ import { Repository } from "typeorm";
 import { BudgetSchema } from "@infra/database/typeorm/schemas/budget.schema";
 import { BudgetMapper } from "@infra/database/mappers/budget.mapper";
 import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
-import { BudgetLineSchema } from "@infra/database/typeorm/schemas/budget-line.schema";
 
 @Injectable()
 export class BudgetRepository implements IBudgetRepository {
@@ -21,10 +19,7 @@ export class BudgetRepository implements IBudgetRepository {
     private readonly budgetRelationRepository: IBudgetRelationRepository,
   ) {}
 
-  async create(
-    data: Budget,
-    lines: BudgetLine[] = [],
-  ): Promise<Result<Budget>> {
+  async create(data: Budget): Promise<Result<Budget>> {
     try {
       const saved = await this.budgetSchemaRepository.manager.transaction(
         async (manager) => {
@@ -37,12 +32,6 @@ export class BudgetRepository implements IBudgetRepository {
             folderId: data.folderId,
             budgetId: budget.id,
           });
-
-          if (lines.length > 0) {
-            await manager
-              .getRepository(BudgetLineSchema)
-              .save(lines.map((line) => this.toBudgetLineSchema(line)));
-          }
 
           return budget;
         },
@@ -157,28 +146,4 @@ export class BudgetRepository implements IBudgetRepository {
         );
   }
 
-  private toBudgetLineSchema(data: BudgetLine): Partial<BudgetLineSchema> {
-    return {
-      id: data.id || undefined,
-      budgetId: data.budgetId,
-      categoryCode: data.categoryCode,
-      parentId: data.parentId,
-      order: data.order,
-      name: data.name,
-      description: data.description,
-      billingType: data.billingType,
-      quantity: data.quantity,
-      dailyRates: data.dailyRates,
-      unitValue: data.unitValue,
-      totalValue: data.totalValue,
-      upfrontPayment: data.upfrontPayment,
-      installment30Days: data.installment30Days,
-      installment45Days: data.installment45Days,
-      installment60Days: data.installment60Days,
-      installment90Days: data.installment90Days,
-      installment120Days: data.installment120Days,
-      billingUnitValue: data.billingUnitValue,
-      billingTotalValue: data.billingTotalValue,
-    };
-  }
 }
