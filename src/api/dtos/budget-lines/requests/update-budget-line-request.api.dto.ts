@@ -3,7 +3,7 @@ import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 
 export class UpdateBudgetLineRequestApiDto {
   @ApiPropertyOptional()
-  categoryId?: string;
+  categoryCode?: string;
 
   @ApiPropertyOptional({ nullable: true })
   parentId?: string | null;

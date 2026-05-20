@@ -68,7 +68,7 @@ export class BudgetLineRepository implements IBudgetLineRepository {
     try {
       const lines = await this.budgetLineSchemaRepository.find({
         where: { budgetId },
-        order: { categoryId: "ASC", parentId: "ASC", order: "ASC" },
+        order: { categoryCode: "ASC", parentId: "ASC", order: "ASC" },
       });
 
       return Result.success(lines.map((line) => this.toEntity(line)));
@@ -83,7 +83,7 @@ export class BudgetLineRepository implements IBudgetLineRepository {
     return {
       id: data.id || undefined,
       budgetId: data.budgetId,
-      categoryId: data.categoryId,
+      categoryCode: data.categoryCode,
       parentId: data.parentId,
       order: data.order,
       name: data.name,
@@ -108,7 +108,7 @@ export class BudgetLineRepository implements IBudgetLineRepository {
     return BudgetLine.read({
       id: data.id,
       budgetId: data.budgetId,
-      categoryId: data.categoryId,
+      categoryCode: data.categoryCode,
       parentId: data.parentId,
       order: data.order,
       name: data.name,

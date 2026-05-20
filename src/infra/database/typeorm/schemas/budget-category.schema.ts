@@ -8,10 +8,9 @@ export class BudgetCategorySchema {
   @Column()
   name!: string;
 
-  @Column()
+  @Column({ unique: true })
   code!: string;
 
   @Column({ name: "order", type: "int" })
   order!: number;
-
 }

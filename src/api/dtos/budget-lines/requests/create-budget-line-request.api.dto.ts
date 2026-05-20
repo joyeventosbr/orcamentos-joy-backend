@@ -6,7 +6,7 @@ export class CreateBudgetLineRequestApiDto {
   budgetId!: string;
 
   @ApiProperty()
-  categoryId!: string;
+  categoryCode!: string;
 
   @ApiPropertyOptional({ nullable: true })
   parentId?: string | null;

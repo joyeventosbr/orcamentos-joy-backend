@@ -39,7 +39,7 @@ export class ExportBudgetUseCase {
     const header = [
       "id",
       "parentId",
-      "categoriaId",
+      "categoriaCodigo",
       "orcamentoId",
       "ordem",
       "nome",
@@ -65,7 +65,7 @@ export class ExportBudgetUseCase {
         [
           line.id,
           line.parentId ?? "",
-          line.categoryId,
+          line.categoryCode,
           budget.id,
           line.order,
           line.name,

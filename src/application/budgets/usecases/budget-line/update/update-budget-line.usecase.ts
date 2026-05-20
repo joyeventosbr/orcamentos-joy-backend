@@ -26,7 +26,7 @@ export class UpdateBudgetLineUseCase {
     if (!line) return Result.failure("Linha do orçamento não encontrada");
 
     const lineResult = line.update({
-      categoryId: parsed.data.categoryId,
+      categoryCode: parsed.data.categoryCode,
       parentId: parsed.data.parentId,
       order: parsed.data.order,
       name: parsed.data.name,

@@ -22,13 +22,14 @@ export class BudgetLineSchema {
   @JoinColumn({ name: "budget_id" })
   budget!: BudgetSchema;
 
-  @Column({ name: "category_id" })
-  categoryId!: string;
+  @Column({ name: "category_code" })
+  categoryCode!: string;
 
   @ManyToOne(() => BudgetCategorySchema, {
     onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
-  @JoinColumn({ name: "category_id" })
+  @JoinColumn({ name: "category_code", referencedColumnName: "code" })
   category!: BudgetCategorySchema;
 
   @Column({ name: "parent_id", nullable: true })

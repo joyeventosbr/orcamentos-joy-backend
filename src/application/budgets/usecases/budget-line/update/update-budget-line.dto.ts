@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const updateBudgetLineSchema = z.object({
   id: z.string().trim().min(1),
-  categoryId: z.string().trim().min(1).optional(),
+  categoryCode: z.string().trim().min(1).optional(),
   parentId: z.string().trim().optional().nullable(),
   order: z.number().int().nonnegative().optional(),
   name: z.string().trim().min(1).optional(),

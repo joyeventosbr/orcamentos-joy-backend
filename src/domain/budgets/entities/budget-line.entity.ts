@@ -5,7 +5,7 @@ export class BudgetLine {
   private constructor(
     public id: string,
     public budgetId: string,
-    public categoryId: string,
+    public categoryCode: string,
     public parentId: string | null,
     public order: number,
     public name: string,
@@ -27,7 +27,7 @@ export class BudgetLine {
 
   static create(input: {
     budgetId: string;
-    categoryId: string;
+    categoryCode: string;
     parentId?: string | null;
     order: number;
     name: string;
@@ -49,7 +49,7 @@ export class BudgetLine {
     const line = new BudgetLine(
       "",
       input.budgetId,
-      input.categoryId,
+      input.categoryCode,
       input.parentId ?? null,
       input.order,
       input.name,
@@ -75,7 +75,7 @@ export class BudgetLine {
   static read(input: {
     id: string;
     budgetId: string;
-    categoryId: string;
+    categoryCode: string;
     parentId: string | null;
     order: number;
     name: string;
@@ -97,7 +97,7 @@ export class BudgetLine {
     return new BudgetLine(
       input.id,
       input.budgetId,
-      input.categoryId,
+      input.categoryCode,
       input.parentId,
       input.order,
       input.name,
@@ -119,7 +119,7 @@ export class BudgetLine {
   }
 
   update(input: {
-    categoryId?: string;
+    categoryCode?: string;
     parentId?: string | null;
     order?: number;
     name?: string;
@@ -138,7 +138,7 @@ export class BudgetLine {
     billingUnitValue?: number;
     billingTotalValue?: number;
   }): Result<BudgetLine> {
-    if (input.categoryId !== undefined) this.categoryId = input.categoryId;
+    if (input.categoryCode !== undefined) this.categoryCode = input.categoryCode;
     if (input.parentId !== undefined) this.parentId = input.parentId;
     if (input.order !== undefined) this.order = input.order;
     if (input.name !== undefined) this.name = input.name;
@@ -171,7 +171,7 @@ export class BudgetLine {
   private validate(): Result<BudgetLine> {
     if (!this.budgetId?.trim())
       return Result.failure("Orçamento é obrigatório");
-    if (!this.categoryId?.trim())
+    if (!this.categoryCode?.trim())
       return Result.failure("Categoria da linha é obrigatória");
     if (!this.name?.trim())
       return Result.failure("Nome da linha é obrigatório");
@@ -201,7 +201,7 @@ export class BudgetLine {
       return Result.failure("Valor total de faturamento inválido");
 
     this.budgetId = this.budgetId.trim();
-    this.categoryId = this.categoryId.trim();
+    this.categoryCode = this.categoryCode.trim();
     this.name = this.name.trim();
     this.description = this.description?.trim() ?? "";
 

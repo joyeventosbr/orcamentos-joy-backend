@@ -19,6 +19,16 @@ export class CreateCategoryUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
+    const existingCategory = await this.budgetCategoryRepository.getByCode(
+      parsed.data.code,
+    );
+    if (existingCategory.isFailure()) {
+      return Result.failure(existingCategory.getError());
+    }
+    if (existingCategory.getValue()) {
+      return Result.failure("Já existe uma categoria com este código");
+    }
+
     const categoryResult = BudgetCategory.create({
       name: parsed.data.name,
       code: parsed.data.code,

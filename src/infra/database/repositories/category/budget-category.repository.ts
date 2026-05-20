@@ -85,6 +85,28 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
     }
   }
 
+  async getByCode(code: string): Promise<Result<BudgetCategory | null>> {
+    try {
+      const category = await this.budgetCategorySchemaRepository.findOne({
+        where: { code },
+      });
+      if (!category) return Result.success(null);
+
+      return Result.success(
+        BudgetCategory.read({
+          id: category.id,
+          name: category.name,
+          code: category.code,
+          order: category.order,
+        }),
+      );
+    } catch (error) {
+      return Result.failure(
+        "Falha ao buscar categoria por código, erro: " + error,
+      );
+    }
+  }
+
   async getAll(): Promise<Result<BudgetCategory[]>> {
     try {
       const categories = await this.budgetCategorySchemaRepository.find({
