@@ -22,6 +22,7 @@ export class CreateBudgetUseCase {
     }
 
     const budgetResult = Budget.create({
+      name: parsed.data.name,
       customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
     });

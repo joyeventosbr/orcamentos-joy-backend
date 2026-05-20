@@ -4,6 +4,7 @@ import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 export class Budget {
   private constructor(
     public id: string,
+    public name: string,
     public customerId: string,
     public folderId: string,
     public createdAt: Date,
@@ -15,9 +16,12 @@ export class Budget {
   ) {}
 
   static create(input: {
+    name: string;
     customerId: string;
     folderId: string;
   }): Result<Budget> {
+    if (!input.name?.trim())
+      return Result.failure("Nome do orçamento é obrigatório");
     if (!input.customerId?.trim())
       return Result.failure("Cliente é obrigatório");
     if (!input.folderId?.trim()) return Result.failure("Pasta é obrigatória");
@@ -25,6 +29,7 @@ export class Budget {
     return Result.success(
       new Budget(
         "",
+        input.name.trim(),
         input.customerId.trim(),
         input.folderId.trim(),
         new Date(),
@@ -34,6 +39,7 @@ export class Budget {
 
   static read(input: {
     id: string;
+    name: string;
     customerId: string;
     folderId: string;
     createdAt: Date;
@@ -45,6 +51,7 @@ export class Budget {
   }): Budget {
     return new Budget(
       input.id,
+      input.name,
       input.customerId,
       input.folderId,
       input.createdAt,
@@ -57,6 +64,7 @@ export class Budget {
   }
 
   update(input: {
+    name?: string;
     customerId?: string;
     folderId?: string;
     jobDescription?: string;
@@ -64,6 +72,13 @@ export class Budget {
     eventDate?: string;
     paymentTerm?: PaymentTerm;
   }): Result<Budget> {
+    if (input.name !== undefined) {
+      if (!input.name.trim()) {
+        return Result.failure("Nome do orçamento é obrigatório");
+      }
+      this.name = input.name.trim();
+    }
+
     if (input.customerId !== undefined) {
       if (!input.customerId.trim())
         return Result.failure("Cliente é obrigatório");

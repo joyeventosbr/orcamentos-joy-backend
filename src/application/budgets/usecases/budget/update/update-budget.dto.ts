@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const updateBudgetSchema = z.object({
   id: z.string().trim().min(1),
+  name: z.string().trim().min(1).optional(),
   customerId: z.string().trim().min(1).optional(),
   folderId: z.string().trim().min(1).optional(),
   jobDescription: z.string().trim().min(1).optional(),

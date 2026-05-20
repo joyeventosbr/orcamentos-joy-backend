@@ -3,6 +3,9 @@ import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 
 export class UpdateBudgetRequestApiDto {
   @ApiPropertyOptional()
+  name?: string;
+
+  @ApiPropertyOptional()
   customerId?: string;
 
   @ApiPropertyOptional()

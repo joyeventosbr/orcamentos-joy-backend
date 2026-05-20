@@ -26,6 +26,7 @@ export class UpdateBudgetUseCase {
     if (!budget) return Result.failure("Orçamento não encontrado");
 
     const budgetResult = budget.update({
+      name: parsed.data.name,
       customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
       jobDescription: parsed.data.jobDescription,

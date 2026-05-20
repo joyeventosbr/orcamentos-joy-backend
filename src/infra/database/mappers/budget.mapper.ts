@@ -5,6 +5,7 @@ export class BudgetMapper {
   static toEntity(schema: BudgetSchema, folderId = ""): Budget {
     return Budget.read({
       id: schema.id,
+      name: schema.name,
       customerId: schema.customerId,
       folderId,
       jobDescription: schema.jobDescription,
@@ -19,6 +20,7 @@ export class BudgetMapper {
   static toSchema(entity: Budget): Partial<BudgetSchema> {
     return {
       id: entity.id || undefined,
+      name: entity.name,
       customerId: entity.customerId,
       jobDescription: entity.jobDescription,
       location: entity.location,

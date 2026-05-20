@@ -14,7 +14,7 @@ export class MigrationV0011778528259309 implements MigrationInterface {
       `CREATE TABLE "tb_folders" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL, "updated_at" TIMESTAMP, CONSTRAINT "PK_76ea32aacaec2ebd650509d307a" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "tb_budgets" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "customer_id" uuid NOT NULL, "job_description" character varying, "location" character varying, "event_date" character varying, "payment_term" character varying, "created_at" TIMESTAMP NOT NULL, "updated_at" TIMESTAMP, CONSTRAINT "PK_d06d41390f17faa1ed047e92896" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "tb_budgets" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "customer_id" uuid NOT NULL, "job_description" character varying, "location" character varying, "event_date" character varying, "payment_term" character varying, "created_at" TIMESTAMP NOT NULL, "updated_at" TIMESTAMP, CONSTRAINT "PK_d06d41390f17faa1ed047e92896" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "tb_budget_categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "code" character varying NOT NULL, "order" integer NOT NULL, CONSTRAINT "UQ_tb_budget_categories_code" UNIQUE ("code"), CONSTRAINT "PK_7ab2f6419c7a8281a911f09d525" PRIMARY KEY ("id"))`,

@@ -13,6 +13,9 @@ export class BudgetSchema {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
+  @Column()
+  name!: string;
+
   @Column({ name: "customer_id" })
   customerId!: string;
 
