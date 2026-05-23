@@ -1,28 +1,28 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { BudgetCategory } from "@domain/budgets/entities/budget-category.entity";
-import type { IBudgetCategoryRepository } from "@domain/budgets/repositories/i-budget-category-repository";
+import { Category } from "@domain/budgets/entities/category.entity";
+import type { ICategoryRepository } from "@domain/budgets/repositories/i-category-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
-import { BudgetCategorySchema } from "@infra/database/typeorm/schemas/budget-category.schema";
+import { CategorySchema } from "@infra/database/typeorm/schemas/category.schema";
 
 @Injectable()
-export class BudgetCategoryRepository implements IBudgetCategoryRepository {
+export class CategoryRepository implements ICategoryRepository {
   constructor(
-    @InjectRepository(BudgetCategorySchema)
-    private readonly budgetCategorySchemaRepository: Repository<BudgetCategorySchema>,
+    @InjectRepository(CategorySchema)
+    private readonly categorySchemaRepository: Repository<CategorySchema>,
   ) {}
 
-  async create(data: BudgetCategory): Promise<Result<BudgetCategory>> {
+  async create(data: Category): Promise<Result<Category>> {
     try {
-      const saved = await this.budgetCategorySchemaRepository.save({
+      const saved = await this.categorySchemaRepository.save({
         name: data.name,
         code: data.code,
         order: data.order,
       });
 
       return Result.success(
-        BudgetCategory.read({
+        Category.read({
           id: saved.id,
           name: saved.name,
           code: saved.code,
@@ -34,9 +34,9 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
     }
   }
 
-  async update(data: BudgetCategory): Promise<Result<BudgetCategory>> {
+  async update(data: Category): Promise<Result<Category>> {
     try {
-      const saved = await this.budgetCategorySchemaRepository.save({
+      const saved = await this.categorySchemaRepository.save({
         id: data.id,
         name: data.name,
         code: data.code,
@@ -44,7 +44,7 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
       });
 
       return Result.success(
-        BudgetCategory.read({
+        Category.read({
           id: saved.id,
           name: saved.name,
           code: saved.code,
@@ -58,22 +58,22 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
 
   async delete(id: string): Promise<Result<void>> {
     try {
-      await this.budgetCategorySchemaRepository.delete({ id });
+      await this.categorySchemaRepository.delete({ id });
       return Result.success();
     } catch (error) {
       return Result.failure("Falha ao remover categoria, erro: " + error);
     }
   }
 
-  async getById(id: string): Promise<Result<BudgetCategory | null>> {
+  async getById(id: string): Promise<Result<Category | null>> {
     try {
-      const category = await this.budgetCategorySchemaRepository.findOne({
+      const category = await this.categorySchemaRepository.findOne({
         where: { id },
       });
       if (!category) return Result.success(null);
 
       return Result.success(
-        BudgetCategory.read({
+        Category.read({
           id: category.id,
           name: category.name,
           code: category.code,
@@ -85,15 +85,15 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
     }
   }
 
-  async getByCode(code: string): Promise<Result<BudgetCategory | null>> {
+  async getByCode(code: string): Promise<Result<Category | null>> {
     try {
-      const category = await this.budgetCategorySchemaRepository.findOne({
+      const category = await this.categorySchemaRepository.findOne({
         where: { code },
       });
       if (!category) return Result.success(null);
 
       return Result.success(
-        BudgetCategory.read({
+        Category.read({
           id: category.id,
           name: category.name,
           code: category.code,
@@ -107,15 +107,15 @@ export class BudgetCategoryRepository implements IBudgetCategoryRepository {
     }
   }
 
-  async getAll(): Promise<Result<BudgetCategory[]>> {
+  async getAll(): Promise<Result<Category[]>> {
     try {
-      const categories = await this.budgetCategorySchemaRepository.find({
+      const categories = await this.categorySchemaRepository.find({
         order: { order: "ASC", name: "ASC" },
       });
 
       return Result.success(
         categories.map((category) =>
-          BudgetCategory.read({
+          Category.read({
             id: category.id,
             name: category.name,
             code: category.code,

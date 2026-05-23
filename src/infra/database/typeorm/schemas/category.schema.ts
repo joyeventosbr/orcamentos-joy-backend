@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("tb_budget_categories")
-export class BudgetCategorySchema {
+@Entity("tb_categories")
+export class CategorySchema {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 

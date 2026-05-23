@@ -8,10 +8,10 @@ export class MigrationV0031778790000000 implements MigrationInterface {
       DO $$
       BEGIN
         IF NOT EXISTS (
-          SELECT 1 FROM pg_constraint WHERE conname = 'UQ_tb_budget_categories_code'
+          SELECT 1 FROM pg_constraint WHERE conname = 'UQ_tb_categories_code'
         ) THEN
-          ALTER TABLE "tb_budget_categories"
-          ADD CONSTRAINT "UQ_tb_budget_categories_code" UNIQUE ("code");
+          ALTER TABLE "tb_categories"
+          ADD CONSTRAINT "UQ_tb_categories_code" UNIQUE ("code");
         END IF;
       END
       $$;
@@ -36,7 +36,7 @@ export class MigrationV0031778790000000 implements MigrationInterface {
 
           UPDATE "tb_budget_lines" line
           SET "category_code" = category."code"
-          FROM "tb_budget_categories" category
+          FROM "tb_categories" category
           WHERE line."category_id" = category."id";
 
           ALTER TABLE "tb_budget_lines"
@@ -84,7 +84,7 @@ export class MigrationV0031778790000000 implements MigrationInterface {
           ALTER TABLE "tb_budget_lines"
           ADD CONSTRAINT "FK_tb_budget_lines_category_code"
           FOREIGN KEY ("category_code")
-          REFERENCES "tb_budget_categories"("code")
+          REFERENCES "tb_categories"("code")
           ON DELETE CASCADE
           ON UPDATE CASCADE;
         END IF;
@@ -126,7 +126,7 @@ export class MigrationV0031778790000000 implements MigrationInterface {
 
           UPDATE "tb_budget_lines" line
           SET "category_id" = category."id"
-          FROM "tb_budget_categories" category
+          FROM "tb_categories" category
           WHERE line."category_code" = category."code";
 
           ALTER TABLE "tb_budget_lines"
@@ -148,7 +148,7 @@ export class MigrationV0031778790000000 implements MigrationInterface {
           ALTER TABLE "tb_budget_lines"
           ADD CONSTRAINT "FK_f35d88c3467fd7a1478ced1ff85"
           FOREIGN KEY ("category_id")
-          REFERENCES "tb_budget_categories"("id")
+          REFERENCES "tb_categories"("id")
           ON DELETE CASCADE
           ON UPDATE NO ACTION;
         END IF;

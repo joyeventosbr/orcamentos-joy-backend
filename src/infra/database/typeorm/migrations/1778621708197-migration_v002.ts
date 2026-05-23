@@ -4,7 +4,7 @@ export class MigrationV0021778621708197 implements MigrationInterface {
   name = "MigrationV0021778621708197";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`INSERT INTO public.tb_budget_categories ("name", code, "order")
+    await queryRunner.query(`INSERT INTO public.tb_categories ("name", code, "order")
             VALUES
             ('Local | Hotel | Sala', '1.1', 1),
             ('A&B', '1.2', 2),
@@ -23,6 +23,6 @@ export class MigrationV0021778621708197 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`delete from public.tb_budget_categories`);
+    await queryRunner.query(`delete from public.tb_categories`);
   }
 }

@@ -4,7 +4,7 @@ import { UserSchema } from "../schemas/user.schema";
 import { CustomerSchema } from "../schemas/customer.schema";
 import { FolderSchema } from "../schemas/folder.schema";
 import { BudgetSchema } from "../schemas/budget.schema";
-import { BudgetCategorySchema } from "../schemas/budget-category.schema";
+import { CategorySchema } from "../schemas/category.schema";
 import { BudgetLineSchema } from "../schemas/budget-line.schema";
 import { CustomerFolderSchema } from "../schemas/customer-folder.schema";
 import { FolderBudgetSchema } from "../schemas/folder-budget.schema";
@@ -24,7 +24,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     CustomerSchema,
     FolderSchema,
     BudgetSchema,
-    BudgetCategorySchema,
+    CategorySchema,
     BudgetLineSchema,
     CustomerFolderSchema,
     FolderBudgetSchema,

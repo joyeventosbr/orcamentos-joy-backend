@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { BudgetSchema } from "./budget.schema";
-import { BudgetCategorySchema } from "./budget-category.schema";
+import { CategorySchema } from "./category.schema";
 
 @Entity("tb_budget_lines")
 export class BudgetLineSchema {
@@ -25,12 +25,12 @@ export class BudgetLineSchema {
   @Column({ name: "category_code" })
   categoryCode!: string;
 
-  @ManyToOne(() => BudgetCategorySchema, {
+  @ManyToOne(() => CategorySchema, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
   @JoinColumn({ name: "category_code", referencedColumnName: "code" })
-  category!: BudgetCategorySchema;
+  category!: CategorySchema;
 
   @Column({ name: "parent_id", nullable: true })
   parentId!: string | null;

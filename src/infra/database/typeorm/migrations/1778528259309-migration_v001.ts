@@ -17,7 +17,7 @@ export class MigrationV0011778528259309 implements MigrationInterface {
       `CREATE TABLE "tb_budgets" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "customer_id" uuid NOT NULL, "job_description" character varying, "location" character varying, "event_date" character varying, "payment_term" character varying, "created_at" TIMESTAMP NOT NULL, "updated_at" TIMESTAMP, CONSTRAINT "PK_d06d41390f17faa1ed047e92896" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "tb_budget_categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "code" character varying NOT NULL, "order" integer NOT NULL, CONSTRAINT "UQ_tb_budget_categories_code" UNIQUE ("code"), CONSTRAINT "PK_7ab2f6419c7a8281a911f09d525" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "tb_categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "code" character varying NOT NULL, "order" integer NOT NULL, CONSTRAINT "UQ_tb_categories_code" UNIQUE ("code"), CONSTRAINT "PK_tb_categories" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "tb_budget_lines" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "budget_id" uuid NOT NULL, "category_code" character varying NOT NULL, "parent_id" uuid, "order" integer NOT NULL, "name" character varying NOT NULL, "description" character varying NOT NULL DEFAULT '', "billing_type" character varying NOT NULL, "quantity" double precision NOT NULL, "daily_rates" double precision NOT NULL, "unit_value" double precision NOT NULL, "total_value" double precision NOT NULL, "upfront_payment" double precision NOT NULL, "installment_30_days" double precision NOT NULL, "installment_45_days" double precision NOT NULL, "installment_60_days" double precision NOT NULL, "installment_90_days" double precision NOT NULL, "installment_120_days" double precision NOT NULL, "billing_unit_value" double precision NOT NULL, "billing_total_value" double precision NOT NULL, CONSTRAINT "PK_3e6e14dec0018aba832eeec40e4" PRIMARY KEY ("id"))`,
@@ -41,7 +41,7 @@ export class MigrationV0011778528259309 implements MigrationInterface {
       `ALTER TABLE "tb_budget_lines" ADD CONSTRAINT "FK_1c385d13fa74d0875a1653c0794" FOREIGN KEY ("budget_id") REFERENCES "tb_budgets"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "tb_budget_lines" ADD CONSTRAINT "FK_tb_budget_lines_category_code" FOREIGN KEY ("category_code") REFERENCES "tb_budget_categories"("code") ON DELETE CASCADE ON UPDATE CASCADE`,
+      `ALTER TABLE "tb_budget_lines" ADD CONSTRAINT "FK_tb_budget_lines_category_code" FOREIGN KEY ("category_code") REFERENCES "tb_categories"("code") ON DELETE CASCADE ON UPDATE CASCADE`,
     );
     await queryRunner.query(
       `ALTER TABLE "tb_budget_lines" ADD CONSTRAINT "FK_3e9f8fa934096c95bf4bed23322" FOREIGN KEY ("parent_id") REFERENCES "tb_budget_lines"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
@@ -94,7 +94,7 @@ export class MigrationV0011778528259309 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE "tb_customers_folders"`);
     await queryRunner.query(`DROP TABLE "tb_budget_lines"`);
-    await queryRunner.query(`DROP TABLE "tb_budget_categories"`);
+    await queryRunner.query(`DROP TABLE "tb_categories"`);
     await queryRunner.query(`DROP TABLE "tb_budgets"`);
     await queryRunner.query(`DROP TABLE "tb_folders"`);
     await queryRunner.query(`DROP TABLE "tb_customers"`);

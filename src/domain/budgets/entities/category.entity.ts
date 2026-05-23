@@ -1,6 +1,6 @@
 import { Result } from "@shared/result";
 
-export class BudgetCategory {
+export class Category {
   private constructor(
     public id: string,
     public name: string,
@@ -12,7 +12,7 @@ export class BudgetCategory {
     name: string;
     code: string;
     order: number;
-  }): Result<BudgetCategory> {
+  }): Result<Category> {
     if (!input.name?.trim()) {
       return Result.failure("Nome da categoria é obrigatório");
     }
@@ -26,7 +26,7 @@ export class BudgetCategory {
     }
 
     return Result.success(
-      new BudgetCategory("", input.name.trim(), input.code.trim(), input.order),
+      new Category("", input.name.trim(), input.code.trim(), input.order),
     );
   }
 
@@ -35,15 +35,15 @@ export class BudgetCategory {
     name: string;
     code: string;
     order: number;
-  }): BudgetCategory {
-    return new BudgetCategory(input.id, input.name, input.code, input.order);
+  }): Category {
+    return new Category(input.id, input.name, input.code, input.order);
   }
 
   update(input: {
     name?: string;
     code?: string;
     order?: number;
-  }): Result<BudgetCategory> {
+  }): Result<Category> {
     if (input.name !== undefined) {
       if (!input.name.trim()) {
         return Result.failure("Nome da categoria é obrigatório");
