@@ -5,7 +5,9 @@ export class BudgetDetailResponseDto {
   id!: string;
   name!: string;
   customerId!: string;
+  customerName!: string;
   folderId!: string;
+  folderName!: string;
   createdAt!: Date;
   jobDescription?: string;
   location?: string;

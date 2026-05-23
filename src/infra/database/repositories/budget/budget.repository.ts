@@ -9,11 +9,11 @@ import { Repository } from "typeorm";
 import { BudgetSchema } from "@infra/database/typeorm/schemas/budget.schema";
 import { BudgetMapper } from "@infra/database/mappers/budget.mapper";
 import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
-import { BudgetDetailResponseDto } from "@application/budgets/dtos/budget-detail/budget-detail-response.dto";
-import { BudgetLineDetailResponseDto } from "@application/budgets/dtos/budget-detail/budget-line-detail-response.dto";
+import { BudgetDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-detail-response.dto";
+import { BudgetLineDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-line-detail-response.dto";
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
-import { BudgetDetailRawQueryDto } from "@application/budgets/dtos/budget-detail/budget-detail-raw-query.dto";
+import { BudgetDetailRawQueryDto } from "./dtos/budget-detail-raw-query.dto";
 
 @Injectable()
 export class BudgetRepository implements IBudgetRepository {
@@ -105,12 +105,20 @@ export class BudgetRepository implements IBudgetRepository {
           "folderBudget",
           "folderBudget.budget_id = budget.id",
         )
+        .innerJoin(
+          "tb_customers",
+          "customer",
+          "customer.id = budget.customer_id",
+        )
+        .innerJoin("tb_folders", "folder", "folder.id = folderBudget.folder_id")
         .leftJoin("tb_budget_lines", "line", "line.budget_id = budget.id")
         .select([
           'budget.id AS "budget_id"',
           'budget.name AS "budget_name"',
           'budget.customer_id AS "budget_customer_id"',
+          'customer.name AS "budget_customer_name"',
           'folderBudget.folder_id AS "budget_folder_id"',
+          'folder.name AS "budget_folder_name"',
           'budget.job_description AS "budget_job_description"',
           'budget.location AS "budget_location"',
           'budget.event_date AS "budget_event_date"',
@@ -151,7 +159,9 @@ export class BudgetRepository implements IBudgetRepository {
         id: first.budget_id,
         name: first.budget_name,
         customerId: first.budget_customer_id,
+        customerName: first.budget_customer_name,
         folderId: first.budget_folder_id,
+        folderName: first.budget_folder_name,
         jobDescription: first.budget_job_description ?? undefined,
         location: first.budget_location ?? undefined,
         eventDate: first.budget_event_date ?? undefined,

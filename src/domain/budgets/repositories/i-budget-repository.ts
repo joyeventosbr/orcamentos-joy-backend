@@ -1,5 +1,5 @@
 import { Budget } from "@domain/budgets/entities/budget.entity";
-import { BudgetDetailResponseDto } from "@application/budgets/dtos/budget-detail/budget-detail-response.dto";
+import { BudgetDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-detail-response.dto";
 import { Result } from "@shared/result";
 
 export interface IBudgetRepository {
