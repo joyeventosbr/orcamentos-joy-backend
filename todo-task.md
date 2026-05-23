@@ -1,12 +1,10 @@
 # Todos
 
-[] criar linhas padroes do orcamento
-[] editar as linhas do orcamento
 [] cadastro dinamico do IOF
-[] duplicar - v1 v2
-[] exportar orcamento
-[] revisar regras com o kads
 [] listagem de usuario
+[] editar as linhas do orcamento
 [] Fluxos de adamento de status do orcamento
+[] exportar orcamento
+[] conferir campos de Resumo e Rentabilidade do orcamento
 
 concorrencia, aprovado, producao

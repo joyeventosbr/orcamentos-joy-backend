@@ -94,7 +94,7 @@ export class BudgetsController {
         .send({ error: result.getError() });
     }
 
-    return res.status(HttpStatus.OK).send({ success: true });
+    return res.status(HttpStatus.NO_CONTENT).send();
   }
 
   @Get(":id/export")

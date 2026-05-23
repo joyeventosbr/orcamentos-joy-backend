@@ -8,6 +8,7 @@ import { BudgetLinesController } from "./controllers/budget-lines.controller";
 import { CategoriesController } from "./controllers/categories.controller";
 import { CustomersController } from "./controllers/customers.controller";
 import { FoldersController } from "./controllers/folders.controller";
+import { SettingsController } from "./controllers/settings.controller";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FoldersController } from "./controllers/folders.controller";
     CategoriesController,
     CustomersController,
     FoldersController,
+    SettingsController,
   ],
 })
 export class ApiModule {}

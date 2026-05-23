@@ -19,6 +19,9 @@ import { DeleteCategoryUseCase } from "./budgets/usecases/category/delete/delete
 import { CreateCustomerUseCase } from "./budgets/usecases/customer/create/create-customer.usecase";
 import { UpdateCustomerUseCase } from "./budgets/usecases/customer/update/update-customer.usecase";
 import { DeleteCustomerUseCase } from "./budgets/usecases/customer/delete/delete-customer.usecase";
+import { CreateSettingUseCase } from "./settings/usecases/create/create-setting.usecase";
+import { UpdateSettingUseCase } from "./settings/usecases/update/update-setting.usecase";
+import { DeleteSettingUseCase } from "./settings/usecases/delete/delete-setting.usecase";
 
 @Module({
   imports: [InfraModule],
@@ -42,6 +45,9 @@ import { DeleteCustomerUseCase } from "./budgets/usecases/customer/delete/delete
     CreateCustomerUseCase,
     UpdateCustomerUseCase,
     DeleteCustomerUseCase,
+    CreateSettingUseCase,
+    UpdateSettingUseCase,
+    DeleteSettingUseCase,
   ],
   exports: [
     RegisterUserUseCase,
@@ -63,6 +69,9 @@ import { DeleteCustomerUseCase } from "./budgets/usecases/customer/delete/delete
     CreateCustomerUseCase,
     UpdateCustomerUseCase,
     DeleteCustomerUseCase,
+    CreateSettingUseCase,
+    UpdateSettingUseCase,
+    DeleteSettingUseCase,
   ],
 })
 export class UseCasesModule {}

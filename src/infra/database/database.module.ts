@@ -9,6 +9,7 @@ import { CategoryRepository } from "./repositories/category/category.repository"
 import { CustomerRepository } from "./repositories/customer/customer.repository";
 import { FolderRepository } from "./repositories/folder/folder.repository";
 import { BudgetRelationRepository } from "./repositories/relation/budget-relation.repository";
+import { SettingsRepository } from "./repositories/settings/settings.repository";
 
 @Module({
   imports: [
@@ -46,6 +47,10 @@ import { BudgetRelationRepository } from "./repositories/relation/budget-relatio
       provide: "IBudgetRelationRepository",
       useClass: BudgetRelationRepository,
     },
+    {
+      provide: "ISettingRepository",
+      useClass: SettingsRepository,
+    },
   ],
   exports: [
     "IUserRepository",
@@ -55,6 +60,7 @@ import { BudgetRelationRepository } from "./repositories/relation/budget-relatio
     "IFolderRepository",
     "ICategoryRepository",
     "IBudgetRelationRepository",
+    "ISettingRepository",
   ],
 })
 export class DatabaseModule {}

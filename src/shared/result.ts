@@ -12,8 +12,8 @@ export class Result<T> {
 
   constructor({ isSuccess, error, data }: ResultProps<T>) {
     this._isSuccess = isSuccess;
-    this.data = (data ?? {}) as T;
-    this.error = error ?? ({} as string);
+    this.data = data as T;
+    this.error = error ?? "";
   }
 
   getValue(): T {
