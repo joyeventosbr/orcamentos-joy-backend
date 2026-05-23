@@ -35,6 +35,7 @@ export class BudgetsController {
   ) {}
 
   @Get()
+  @Public()
   async getAll(@Res() res: FastifyReply) {
     const result = await this.budgetRepository.getAll();
 
@@ -110,7 +111,29 @@ export class BudgetsController {
     return res.status(HttpStatus.OK).send(result.getValue());
   }
 
+  @Get(":id/details")
+  @Public()
+  async getDetails(@Param("id") id: string, @Res() res: FastifyReply) {
+    const budgetResult = await this.budgetRepository.getByIdWithLines(id);
+
+    if (budgetResult.isFailure()) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ error: budgetResult.getError() });
+    }
+
+    const budget = budgetResult.getValue();
+    if (!budget) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .send({ error: "Orçamento não encontrado" });
+    }
+
+    return res.status(HttpStatus.OK).send(budget);
+  }
+
   @Get(":id")
+  @Public()
   async get(@Param("id") id: string, @Res() res: FastifyReply) {
     const result = await this.budgetRepository.getById(id);
 
