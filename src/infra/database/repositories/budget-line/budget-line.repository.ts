@@ -4,7 +4,7 @@ import { BudgetLine } from "@domain/budgets/entities/budget-line.entity";
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
 import { Result } from "@shared/result";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { BudgetLineSchema } from "@infra/database/typeorm/schemas/budget-line.schema";
 
 @Injectable()
@@ -40,6 +40,37 @@ export class BudgetLineRepository implements IBudgetLineRepository {
     } catch (error) {
       return Result.failure(
         "Falha ao criar linhas do orçamento, erro: " + error,
+      );
+    }
+  }
+
+  async bulkSave(data: {
+    create: BudgetLine[];
+    update: BudgetLine[];
+    deleteIds: string[];
+  }): Promise<Result<BudgetLine[]>> {
+    try {
+      const saved = await this.budgetLineSchemaRepository.manager.transaction(
+        async (manager) => {
+          const repository = manager.getRepository(BudgetLineSchema);
+
+          if (data.deleteIds.length > 0) {
+            await repository.delete({ id: In(data.deleteIds) });
+          }
+
+          const linesToSave = [...data.create, ...data.update];
+          if (linesToSave.length === 0) return [];
+
+          return repository.save(
+            linesToSave.map((line) => this.toSchema(line)),
+          );
+        },
+      );
+
+      return Result.success(saved.map((line) => this.toEntity(line)));
+    } catch (error) {
+      return Result.failure(
+        "Falha ao editar linhas do orçamento em massa, erro: " + error,
       );
     }
   }

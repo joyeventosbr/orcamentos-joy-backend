@@ -4,6 +4,11 @@ import { Result } from "@shared/result";
 export interface IBudgetLineRepository {
   create(data: BudgetLine): Promise<Result<BudgetLine>>;
   createMany(data: BudgetLine[]): Promise<Result<BudgetLine[]>>;
+  bulkSave(data: {
+    create: BudgetLine[];
+    update: BudgetLine[];
+    deleteIds: string[];
+  }): Promise<Result<BudgetLine[]>>;
   update(data: BudgetLine): Promise<Result<BudgetLine>>;
   delete(id: string): Promise<Result<void>>;
   getById(id: string): Promise<Result<BudgetLine | null>>;
