@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "@domain/users/entities/user/user.entity";
+import { UserListItemResponseDto } from "@domain/users/dtos/user-list-item-response.dto";
 import { IUserRepository } from "@domain/users/repositories/i-user-repository";
 import { Result } from "@shared/result";
 import { Repository } from "typeorm";
@@ -21,9 +22,7 @@ export class UserRepository implements IUserRepository {
 
       return Result.success(UserMapper.toEntity(savedUser));
     } catch (error) {
-      return Result.failure(
-        "Falha ao cadastrar usuário, erro: " + error?.message,
-      );
+      return Result.failure("Falha ao cadastrar usuário, erro: " + error);
     }
   }
 
@@ -40,7 +39,7 @@ export class UserRepository implements IUserRepository {
       return Result.success(UserMapper.toEntity(user));
     } catch (error) {
       return Result.failure(
-        "Falha ao buscar usuário por email, erro: " + error?.message,
+        "Falha ao buscar usuário por email, erro: " + error,
       );
     }
   }
@@ -55,9 +54,21 @@ export class UserRepository implements IUserRepository {
 
       return Result.success(UserMapper.toEntity(user));
     } catch (error) {
-      return Result.failure(
-        "Falha ao buscar usuário por ID, erro: " + error?.message,
+      return Result.failure("Falha ao buscar usuário por ID, erro: " + error);
+    }
+  }
+
+  async getAll(): Promise<Result<UserListItemResponseDto[]>> {
+    try {
+      const users = await this.userSchema.find({
+        order: { createdAt: "DESC" },
+      });
+
+      return Result.success(
+        users.map((user) => UserMapper.toListItemDto(user)),
       );
+    } catch (error) {
+      return Result.failure("Falha ao listar usuários, erro: " + error);
     }
   }
 }

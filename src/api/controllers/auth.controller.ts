@@ -1,4 +1,12 @@
-import { Body, Controller, HttpStatus, Post, Res } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Inject,
+  Post,
+  Res,
+} from "@nestjs/common";
 import { type FastifyReply } from "fastify";
 import {
   ApiBearerAuth,
@@ -16,6 +24,8 @@ import { AuthResponseApiDto } from "@api/dtos/auth/responses/auth-response.api.d
 import { LoginRequestApiDto } from "@api/dtos/auth/requests/login-request.api.dto";
 import { RegisterAdminRequestApiDto } from "@api/dtos/auth/requests/register-admin-request.api.dto";
 import { RegisterUserRequestApiDto } from "@api/dtos/auth/requests/register-user-request.api.dto";
+import { UserListItemResponseApiDto } from "@api/dtos/auth/responses/user-list-item-response.api.dto";
+import type { IUserRepository } from "@domain/users/repositories/i-user-repository";
 
 @ApiTags("auth")
 @ApiBearerAuth()
@@ -25,7 +35,24 @@ export class AuthController {
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly registerAdminUseCase: RegisterAdminUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
+    @Inject("IUserRepository")
+    private readonly userRepository: IUserRepository,
   ) {}
+
+  @Admin()
+  @Get("users")
+  @ApiOkResponse({ type: [UserListItemResponseApiDto] })
+  async getAllUsers(@Res() res: FastifyReply) {
+    const result = await this.userRepository.getAll();
+
+    if (result.isFailure()) {
+      return res.status(HttpStatus.BAD_REQUEST).send({
+        error: result.getError(),
+      });
+    }
+
+    return res.status(HttpStatus.OK).send(result.getValue());
+  }
 
   @Admin()
   @Post("register")

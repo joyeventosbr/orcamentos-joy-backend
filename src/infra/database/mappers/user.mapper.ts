@@ -1,4 +1,5 @@
 import { User } from "@domain/users/entities/user/user.entity";
+import { UserListItemResponseDto } from "@domain/users/dtos/user-list-item-response.dto";
 import { UserSchema } from "../typeorm/schemas/user.schema";
 
 export class UserMapper {
@@ -27,5 +28,17 @@ export class UserMapper {
     schema.updatedAt = entity.updatedAt;
 
     return schema;
+  }
+
+  static toListItemDto(schema: UserSchema): UserListItemResponseDto {
+    return {
+      id: schema.id,
+      name: schema.name,
+      email: schema.email,
+      role: schema.role,
+      funcao: schema.funcao,
+      createdAt: schema.createdAt,
+      updatedAt: schema.updatedAt,
+    };
   }
 }
