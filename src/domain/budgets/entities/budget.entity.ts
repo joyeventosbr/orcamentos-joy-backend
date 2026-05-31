@@ -1,5 +1,6 @@
 import { Result } from "@shared/result";
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
+import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 
 export class Budget {
   private constructor(
@@ -7,6 +8,7 @@ export class Budget {
     public name: string,
     public customerId: string,
     public folderId: string,
+    public status: BudgetStatus,
     public createdAt: Date,
     public jobDescription?: string,
     public location?: string,
@@ -32,6 +34,7 @@ export class Budget {
         input.name.trim(),
         input.customerId.trim(),
         input.folderId.trim(),
+        BudgetStatus.CONCORRENCIA,
         new Date(),
       ),
     );
@@ -42,6 +45,7 @@ export class Budget {
     name: string;
     customerId: string;
     folderId: string;
+    status: BudgetStatus;
     createdAt: Date;
     jobDescription?: string;
     location?: string;
@@ -54,6 +58,7 @@ export class Budget {
       input.name,
       input.customerId,
       input.folderId,
+      input.status,
       input.createdAt,
       input.jobDescription,
       input.location,
@@ -115,6 +120,22 @@ export class Budget {
       this.paymentTerm = input.paymentTerm;
     }
 
+    this.updatedAt = new Date();
+    return Result.success(this);
+  }
+
+  updateStatus(status: BudgetStatus): Result<Budget> {
+    if (!Object.values(BudgetStatus).includes(status)) {
+      return Result.failure("Status do orçamento inválido");
+    }
+
+    if (status < this.status) {
+      return Result.failure(
+        "Status do orçamento não pode voltar para uma etapa anterior",
+      );
+    }
+
+    this.status = status;
     this.updatedAt = new Date();
     return Result.success(this);
   }

@@ -1,4 +1,5 @@
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
+import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 import { BudgetLineDetailResponseDto } from "./budget-line-detail-response.dto";
 
 export class BudgetDetailResponseDto {
@@ -8,6 +9,7 @@ export class BudgetDetailResponseDto {
   customerName!: string;
   folderId!: string;
   folderName!: string;
+  status!: BudgetStatus;
   createdAt!: Date;
   jobDescription?: string;
   location?: string;

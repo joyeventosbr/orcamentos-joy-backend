@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
+import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 import { CustomerSchema } from "./customer.schema";
 
 @Entity("tb_budgets")
@@ -18,6 +19,9 @@ export class BudgetSchema {
 
   @Column({ name: "customer_id" })
   customerId!: string;
+
+  @Column({ type: "smallint", default: BudgetStatus.CONCORRENCIA })
+  status!: BudgetStatus;
 
   @ManyToOne(() => CustomerSchema, {
     onDelete: "CASCADE",

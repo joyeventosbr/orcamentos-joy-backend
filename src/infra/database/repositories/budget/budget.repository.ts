@@ -13,6 +13,7 @@ import { BudgetDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budg
 import { BudgetLineDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-line-detail-response.dto";
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
+import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 import { BudgetDetailRawQueryDto } from "./dtos/budget-detail-raw-query.dto";
 
 @Injectable()
@@ -77,6 +78,24 @@ export class BudgetRepository implements IBudgetRepository {
     }
   }
 
+  async updateStatus(data: Budget): Promise<Result<Budget>> {
+    try {
+      await this.budgetSchemaRepository.update(
+        { id: data.id },
+        { status: data.status, updatedAt: data.updatedAt ?? new Date() },
+      );
+
+      const updated = await this.getBudget(data.id);
+      if (!updated) return Result.failure("Orçamento não encontrado");
+
+      return Result.success(updated);
+    } catch (error) {
+      return Result.failure(
+        "Falha ao atualizar status do orçamento, erro: " + error,
+      );
+    }
+  }
+
   async delete(id: string): Promise<Result<void>> {
     try {
       await this.budgetSchemaRepository.delete({ id });
@@ -119,6 +138,7 @@ export class BudgetRepository implements IBudgetRepository {
           'customer.name AS "budget_customer_name"',
           'folderBudget.folder_id AS "budget_folder_id"',
           'folder.name AS "budget_folder_name"',
+          'budget.status AS "budget_status"',
           'budget.job_description AS "budget_job_description"',
           'budget.location AS "budget_location"',
           'budget.event_date AS "budget_event_date"',
@@ -162,6 +182,7 @@ export class BudgetRepository implements IBudgetRepository {
         customerName: first.budget_customer_name,
         folderId: first.budget_folder_id,
         folderName: first.budget_folder_name,
+        status: this.toBudgetStatus(first.budget_status),
         jobDescription: first.budget_job_description ?? undefined,
         location: first.budget_location ?? undefined,
         eventDate: first.budget_event_date ?? undefined,
@@ -185,6 +206,14 @@ export class BudgetRepository implements IBudgetRepository {
     if (value === null) return undefined;
     if (!Object.values(PaymentTerm).includes(value)) {
       throw new Error("Prazo de pagamento inválido retornado pelo banco");
+    }
+
+    return value;
+  }
+
+  private toBudgetStatus(value: BudgetStatus): BudgetStatus {
+    if (!Object.values(BudgetStatus).includes(value)) {
+      throw new Error("Status do orçamento inválido retornado pelo banco");
     }
 
     return value;

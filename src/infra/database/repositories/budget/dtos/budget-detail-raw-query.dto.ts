@@ -1,4 +1,5 @@
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
+import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 
 export class BudgetDetailRawQueryDto {
@@ -8,6 +9,7 @@ export class BudgetDetailRawQueryDto {
   budget_customer_name!: string;
   budget_folder_id!: string;
   budget_folder_name!: string;
+  budget_status!: BudgetStatus;
   budget_job_description!: string | null;
   budget_location!: string | null;
   budget_event_date!: string | null;

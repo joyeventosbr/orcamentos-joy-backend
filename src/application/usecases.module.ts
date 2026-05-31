@@ -5,6 +5,7 @@ import { LoginUserUseCase } from "./users/usecases/login/login-user.usecase";
 import { RegisterAdminUseCase } from "./users/usecases/register-admin/register-admin.usecase";
 import { CreateBudgetUseCase } from "./budgets/usecases/budget/create/create-budget.usecase";
 import { UpdateBudgetUseCase } from "./budgets/usecases/budget/update/update-budget.usecase";
+import { UpdateBudgetStatusUseCase } from "./budgets/usecases/budget/update-status/update-budget-status.usecase";
 import { DeleteBudgetUseCase } from "./budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "./budgets/usecases/budget/export/export-budget.usecase";
 import { CreateBudgetLineUseCase } from "./budgets/usecases/budget-line/create/create-budget-line.usecase";
@@ -32,6 +33,7 @@ import { DeleteSettingUseCase } from "./settings/usecases/delete/delete-setting.
     LoginUserUseCase,
     CreateBudgetUseCase,
     UpdateBudgetUseCase,
+    UpdateBudgetStatusUseCase,
     DeleteBudgetUseCase,
     ExportBudgetUseCase,
     CreateBudgetLineUseCase,
@@ -57,6 +59,7 @@ import { DeleteSettingUseCase } from "./settings/usecases/delete/delete-setting.
     LoginUserUseCase,
     CreateBudgetUseCase,
     UpdateBudgetUseCase,
+    UpdateBudgetStatusUseCase,
     DeleteBudgetUseCase,
     ExportBudgetUseCase,
     CreateBudgetLineUseCase,

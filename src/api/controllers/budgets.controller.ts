@@ -5,6 +5,7 @@ import {
   Get,
   HttpStatus,
   Inject,
+  Patch,
   Param,
   Post,
   Put,
@@ -16,9 +17,11 @@ import { CreateBudgetUseCase } from "@application/budgets/usecases/budget/create
 import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
 import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
+import { UpdateBudgetStatusUseCase } from "@application/budgets/usecases/budget/update-status/update-budget-status.usecase";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
+import { UpdateBudgetStatusRequestApiDto } from "@api/dtos/budgets/requests/update-budget-status-request.api.dto";
 import { ExportBudgetResponseApiDto } from "@api/dtos/budgets/responses/export-budget-response.api.dto";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 
@@ -28,6 +31,7 @@ export class BudgetsController {
   constructor(
     private readonly createBudgetUseCase: CreateBudgetUseCase,
     private readonly updateBudgetUseCase: UpdateBudgetUseCase,
+    private readonly updateBudgetStatusUseCase: UpdateBudgetStatusUseCase,
     private readonly deleteBudgetUseCase: DeleteBudgetUseCase,
     private readonly exportBudgetUseCase: ExportBudgetUseCase,
     @Inject("IBudgetRepository")
@@ -73,6 +77,27 @@ export class BudgetsController {
     const result = await this.updateBudgetUseCase.execute({
       ...(body as object),
       id,
+    });
+
+    if (result.isFailure()) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ error: result.getError() });
+    }
+
+    return res.status(HttpStatus.OK).send(result.getValue());
+  }
+
+  @Patch(":id/status")
+  @ApiBody({ type: UpdateBudgetStatusRequestApiDto })
+  async updateStatus(
+    @Param("id") id: string,
+    @Body() body: UpdateBudgetStatusRequestApiDto,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.updateBudgetStatusUseCase.execute({
+      id,
+      status: body.status,
     });
 
     if (result.isFailure()) {
