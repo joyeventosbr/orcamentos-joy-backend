@@ -165,6 +165,14 @@ export class BudgetRepository implements IBudgetRepository {
           'line.installment_120_days AS "line_installment_120_days"',
           'line.billing_unit_value AS "line_billing_unit_value"',
           'line.billing_total_value AS "line_billing_total_value"',
+          'line.supplier AS "line_supplier"',
+          'line.supplier_value AS "line_supplier_value"',
+          'line.percent_bv AS "line_percent_bv"',
+          'line.percent_nf_bv AS "line_percent_nf_bv"',
+          'line.bv_value AS "line_bv_value"',
+          'line.percent_nf_over AS "line_percent_nf_over"',
+          'line.over_value AS "line_over_value"',
+          'line.real_value AS "line_real_value"',
         ])
         .where("budget.id = :id", { id })
         .orderBy("line.category_code", "ASC")
@@ -297,6 +305,14 @@ export class BudgetRepository implements IBudgetRepository {
         row.line_billing_total_value,
         "billingTotalValue",
       ),
+      supplier: row.line_supplier,
+      supplierValue: row.line_supplier_value,
+      percentBv: row.line_percent_bv,
+      percentNfBv: row.line_percent_nf_bv,
+      bvValue: row.line_bv_value,
+      percentNfOver: row.line_percent_nf_over,
+      overValue: row.line_over_value,
+      realValue: row.line_real_value,
     };
   }
 

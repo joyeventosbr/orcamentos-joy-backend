@@ -58,4 +58,28 @@ export class BulkUpdateBudgetLineUpdateItemRequestApiDto {
 
   @ApiPropertyOptional()
   billingTotalValue?: number;
+
+  @ApiPropertyOptional()
+  supplier?: string;
+
+  @ApiPropertyOptional()
+  supplierValue?: number;
+
+  @ApiPropertyOptional()
+  percentBv?: number;
+
+  @ApiPropertyOptional()
+  percentNfBv?: number;
+
+  @ApiPropertyOptional()
+  bvValue?: number;
+
+  @ApiPropertyOptional()
+  percentNfOver?: number;
+
+  @ApiPropertyOptional()
+  overValue?: number;
+
+  @ApiPropertyOptional()
+  realValue?: number;
 }

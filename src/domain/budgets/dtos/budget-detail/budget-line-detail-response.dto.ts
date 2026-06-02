@@ -21,4 +21,12 @@ export class BudgetLineDetailResponseDto {
   installment120Days!: number;
   billingUnitValue!: number;
   billingTotalValue!: number;
+  supplier!: string | null;
+  supplierValue!: number | null;
+  percentBv!: number | null;
+  percentNfBv!: number | null;
+  bvValue!: number | null;
+  percentNfOver!: number | null;
+  overValue!: number | null;
+  realValue!: number | null;
 }

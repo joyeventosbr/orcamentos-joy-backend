@@ -67,6 +67,14 @@ export class BulkUpdateBudgetLinesUseCase {
         installment120Days: line.installment120Days,
         billingUnitValue: line.billingUnitValue,
         billingTotalValue: line.billingTotalValue,
+        supplier: line.supplier,
+        supplierValue: line.supplierValue,
+        percentBv: line.percentBv,
+        percentNfBv: line.percentNfBv,
+        bvValue: line.bvValue,
+        percentNfOver: line.percentNfOver,
+        overValue: line.overValue,
+        realValue: line.realValue,
       });
       if (updated.isFailure()) return Result.failure(updated.getError());
 

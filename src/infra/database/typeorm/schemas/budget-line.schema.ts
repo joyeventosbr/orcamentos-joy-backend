@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { BudgetSchema } from "./budget.schema";
 import { CategorySchema } from "./category.schema";
 
@@ -83,4 +89,28 @@ export class BudgetLineSchema {
 
   @Column({ name: "billing_total_value", type: "float" })
   billingTotalValue!: number;
+
+  @Column({ nullable: true })
+  supplier!: string | null;
+
+  @Column({ name: "supplier_value", type: "float", nullable: true })
+  supplierValue!: number | null;
+
+  @Column({ name: "percent_bv", type: "float", nullable: true })
+  percentBv!: number | null;
+
+  @Column({ name: "percent_nf_bv", type: "float", nullable: true })
+  percentNfBv!: number | null;
+
+  @Column({ name: "bv_value", type: "float", nullable: true })
+  bvValue!: number | null;
+
+  @Column({ name: "percent_nf_over", type: "float", nullable: true })
+  percentNfOver!: number | null;
+
+  @Column({ name: "over_value", type: "float", nullable: true })
+  overValue!: number | null;
+
+  @Column({ name: "real_value", type: "float", nullable: true })
+  realValue!: number | null;
 }

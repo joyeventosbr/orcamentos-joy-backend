@@ -36,4 +36,12 @@ export class BudgetDetailRawQueryDto {
   line_installment_120_days!: number | null;
   line_billing_unit_value!: number | null;
   line_billing_total_value!: number | null;
+  line_supplier!: string | null;
+  line_supplier_value!: number | null;
+  line_percent_bv!: number | null;
+  line_percent_nf_bv!: number | null;
+  line_bv_value!: number | null;
+  line_percent_nf_over!: number | null;
+  line_over_value!: number | null;
+  line_real_value!: number | null;
 }

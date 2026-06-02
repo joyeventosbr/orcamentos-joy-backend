@@ -57,6 +57,14 @@ export class ExportBudgetUseCase {
       "parcela120",
       "faturamentoValorUnitario",
       "faturamentoValorTotal",
+      "fornecedor",
+      "valorFornecedor",
+      "percentualBv",
+      "percentualNfBv",
+      "valorBv",
+      "percentualNfOver",
+      "valorOver",
+      "valorReal",
     ].join(",");
 
     const lines = linesResult
@@ -83,6 +91,14 @@ export class ExportBudgetUseCase {
           line.installment120Days,
           line.billingUnitValue,
           line.billingTotalValue,
+          line.supplier ?? "",
+          line.supplierValue ?? "",
+          line.percentBv ?? "",
+          line.percentNfBv ?? "",
+          line.bvValue ?? "",
+          line.percentNfOver ?? "",
+          line.overValue ?? "",
+          line.realValue ?? "",
         ]
           .map((value) => `"${String(value).replaceAll('"', '""')}"`)
           .join(","),

@@ -149,6 +149,14 @@ export class BudgetLineRepository implements IBudgetLineRepository {
       installment120Days: data.installment120Days,
       billingUnitValue: data.billingUnitValue,
       billingTotalValue: data.billingTotalValue,
+      supplier: data.supplier,
+      supplierValue: data.supplierValue,
+      percentBv: data.percentBv,
+      percentNfBv: data.percentNfBv,
+      bvValue: data.bvValue,
+      percentNfOver: data.percentNfOver,
+      overValue: data.overValue,
+      realValue: data.realValue,
     };
   }
 
@@ -174,6 +182,14 @@ export class BudgetLineRepository implements IBudgetLineRepository {
       installment120Days: data.installment120Days,
       billingUnitValue: data.billingUnitValue,
       billingTotalValue: data.billingTotalValue,
+      supplier: data.supplier,
+      supplierValue: data.supplierValue,
+      percentBv: data.percentBv,
+      percentNfBv: data.percentNfBv,
+      bvValue: data.bvValue,
+      percentNfOver: data.percentNfOver,
+      overValue: data.overValue,
+      realValue: data.realValue,
     });
   }
 }

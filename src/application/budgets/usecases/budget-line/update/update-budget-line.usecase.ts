@@ -44,6 +44,14 @@ export class UpdateBudgetLineUseCase {
       installment120Days: parsed.data.installment120Days,
       billingUnitValue: parsed.data.billingUnitValue,
       billingTotalValue: parsed.data.billingTotalValue,
+      supplier: parsed.data.supplier,
+      supplierValue: parsed.data.supplierValue,
+      percentBv: parsed.data.percentBv,
+      percentNfBv: parsed.data.percentNfBv,
+      bvValue: parsed.data.bvValue,
+      percentNfOver: parsed.data.percentNfOver,
+      overValue: parsed.data.overValue,
+      realValue: parsed.data.realValue,
     });
     if (lineResult.isFailure()) return Result.failure(lineResult.getError());
 
