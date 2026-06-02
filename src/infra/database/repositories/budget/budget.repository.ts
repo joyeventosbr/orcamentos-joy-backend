@@ -219,8 +219,10 @@ export class BudgetRepository implements IBudgetRepository {
     return value;
   }
 
-  private toBillingType(value: BillingType | null): BillingType {
-    if (value === null || !Object.values(BillingType).includes(value)) {
+  private toBillingType(value: BillingType | null): BillingType | null {
+    if (value === null) return null;
+
+    if (!Object.values(BillingType).includes(value)) {
       throw new Error("Tipo de faturamento inválido retornado pelo banco");
     }
 

@@ -161,7 +161,7 @@ export class BudgetLineRepository implements IBudgetLineRepository {
       order: data.order,
       name: data.name,
       description: data.description,
-      billingType: data.billingType as BillingType,
+      billingType: data.billingType as BillingType | null,
       quantity: data.quantity,
       dailyRates: data.dailyRates,
       unitValue: data.unitValue,

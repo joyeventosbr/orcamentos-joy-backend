@@ -26,7 +26,8 @@
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
     "migration:show": "npm run typeorm -- migration:show",
-    "seed:admin": "ts-node -r tsconfig-paths/register src/scripts/seed-admin.ts"
+    "seed:admin": "ts-node -r tsconfig-paths/register src/scripts/seed-admin.ts",
+    "seed:user": "ts-node -r tsconfig-paths/register src/scripts/seed-user.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",

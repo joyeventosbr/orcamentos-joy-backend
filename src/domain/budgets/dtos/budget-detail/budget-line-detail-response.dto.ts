@@ -8,7 +8,7 @@ export class BudgetLineDetailResponseDto {
   order!: number;
   name!: string;
   description!: string;
-  billingType!: BillingType;
+  billingType!: BillingType | null;
   quantity!: number;
   dailyRates!: number;
   unitValue!: number;

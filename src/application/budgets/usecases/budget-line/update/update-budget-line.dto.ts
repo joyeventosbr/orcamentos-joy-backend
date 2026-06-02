@@ -8,7 +8,7 @@ export const updateBudgetLineSchema = z.object({
   order: z.number().int().nonnegative().optional(),
   name: z.string().trim().min(1).optional(),
   description: z.string().optional(),
-  billingType: z.nativeEnum(BillingType).optional(),
+  billingType: z.nativeEnum(BillingType).optional().nullable(),
   quantity: z.number().nonnegative().optional(),
   dailyRates: z.number().nonnegative().optional(),
   unitValue: z.number().nonnegative().optional(),

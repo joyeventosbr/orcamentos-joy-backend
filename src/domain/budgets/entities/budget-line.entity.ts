@@ -1,5 +1,5 @@
-import { Result } from "@shared/result";
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
+import { Result } from "@shared/result";
 
 export class BudgetLine {
   private constructor(
@@ -10,7 +10,6 @@ export class BudgetLine {
     public order: number,
     public name: string,
     public description: string,
-    public billingType: BillingType,
     public quantity: number,
     public dailyRates: number,
     public unitValue: number,
@@ -23,6 +22,7 @@ export class BudgetLine {
     public installment120Days: number,
     public billingUnitValue: number,
     public billingTotalValue: number,
+    public billingType: BillingType | null,
   ) {}
 
   static create(input: {
@@ -32,7 +32,7 @@ export class BudgetLine {
     order: number;
     name: string;
     description?: string;
-    billingType?: BillingType;
+    billingType?: BillingType | null;
     quantity?: number;
     dailyRates?: number;
     unitValue?: number;
@@ -46,40 +46,21 @@ export class BudgetLine {
     billingUnitValue?: number;
     billingTotalValue?: number;
   }): Result<BudgetLine> {
-    if (!input.budgetId?.trim())
-      return Result.failure("Orçamento é obrigatório");
-    if (!input.categoryCode?.trim())
-      return Result.failure("Categoria da linha é obrigatória");
-    if (!input.name?.trim())
-      return Result.failure("Nome da linha é obrigatório");
-    if (
-      input.billingType &&
-      !Object.values(BillingType).includes(input.billingType)
-    ) {
-      return Result.failure("Tipo de faturamento inválido");
-    }
+    if (!input.budgetId?.trim()) return Result.failure("Orçamento é obrigatório");
+    if (!input.categoryCode?.trim()) return Result.failure("Categoria da linha é obrigatória");
+    if (!input.name?.trim()) return Result.failure("Nome da linha é obrigatório");
 
     if (input.order < 0) return Result.failure("Ordem da linha inválida");
-    if (input.quantity && input.quantity < 0)
-      return Result.failure("Quantidade inválida");
-    if (input.dailyRates && input.dailyRates < 0)
-      return Result.failure("Diárias inválidas");
-    if (input.unitValue && input.unitValue < 0)
-      return Result.failure("Valor unitário inválido");
-    if (input.totalValue && input.totalValue < 0)
-      return Result.failure("Valor total inválido");
-    if (input.upfrontPayment && input.upfrontPayment < 0)
-      return Result.failure("Antecipação inválida");
-    if (input.installment30Days && input.installment30Days < 0)
-      return Result.failure("Parcela de 30 dias inválida");
-    if (input.installment45Days && input.installment45Days < 0)
-      return Result.failure("Parcela de 45 dias inválida");
-    if (input.installment60Days && input.installment60Days < 0)
-      return Result.failure("Parcela de 60 dias inválida");
-    if (input.installment90Days && input.installment90Days < 0)
-      return Result.failure("Parcela de 90 dias inválida");
-    if (input.installment120Days && input.installment120Days < 0)
-      return Result.failure("Parcela de 120 dias inválida");
+    if (input.quantity && input.quantity < 0) return Result.failure("Quantidade inválida");
+    if (input.dailyRates && input.dailyRates < 0) return Result.failure("Diárias inválidas");
+    if (input.unitValue && input.unitValue < 0) return Result.failure("Valor unitário inválido");
+    if (input.totalValue && input.totalValue < 0) return Result.failure("Valor total inválido");
+    if (input.upfrontPayment && input.upfrontPayment < 0) return Result.failure("Antecipação inválida");
+    if (input.installment30Days && input.installment30Days < 0) return Result.failure("Parcela de 30 dias inválida");
+    if (input.installment45Days && input.installment45Days < 0) return Result.failure("Parcela de 45 dias inválida");
+    if (input.installment60Days && input.installment60Days < 0) return Result.failure("Parcela de 60 dias inválida");
+    if (input.installment90Days && input.installment90Days < 0) return Result.failure("Parcela de 90 dias inválida");
+    if (input.installment120Days && input.installment120Days < 0) return Result.failure("Parcela de 120 dias inválida");
     if (input.billingUnitValue && input.billingUnitValue < 0)
       return Result.failure("Valor unitário de faturamento inválido");
     if (input.billingTotalValue && input.billingTotalValue < 0)
@@ -93,7 +74,6 @@ export class BudgetLine {
       input.order,
       input.name,
       input.description ?? "",
-      input.billingType ?? BillingType.UNIT,
       input.quantity ?? 0,
       input.dailyRates ?? 0,
       input.unitValue ?? 0,
@@ -106,6 +86,7 @@ export class BudgetLine {
       input.installment120Days ?? 0,
       input.billingUnitValue ?? 0,
       input.billingTotalValue ?? 0,
+      input.billingType ?? null,
     );
 
     return Result.success(line);
@@ -119,7 +100,7 @@ export class BudgetLine {
     order: number;
     name: string;
     description: string;
-    billingType: BillingType;
+    billingType: BillingType | null;
     quantity: number;
     dailyRates: number;
     unitValue: number;
@@ -141,7 +122,6 @@ export class BudgetLine {
       input.order,
       input.name,
       input.description,
-      input.billingType,
       input.quantity,
       input.dailyRates,
       input.unitValue,
@@ -154,6 +134,7 @@ export class BudgetLine {
       input.installment120Days,
       input.billingUnitValue,
       input.billingTotalValue,
+      input.billingType,
     );
   }
 
@@ -163,7 +144,7 @@ export class BudgetLine {
     order?: number;
     name?: string;
     description?: string;
-    billingType?: BillingType;
+    billingType?: BillingType | null;
     quantity?: number;
     dailyRates?: number;
     unitValue?: number;
@@ -177,8 +158,7 @@ export class BudgetLine {
     billingUnitValue?: number;
     billingTotalValue?: number;
   }): Result<BudgetLine> {
-    if (input.categoryCode !== undefined)
-      this.categoryCode = input.categoryCode;
+    if (input.categoryCode !== undefined) this.categoryCode = input.categoryCode;
     if (input.parentId !== undefined) this.parentId = input.parentId;
     if (input.order !== undefined) this.order = input.order;
     if (input.name !== undefined) this.name = input.name;
@@ -188,36 +168,22 @@ export class BudgetLine {
     if (input.dailyRates !== undefined) this.dailyRates = input.dailyRates;
     if (input.unitValue !== undefined) this.unitValue = input.unitValue;
     if (input.totalValue !== undefined) this.totalValue = input.totalValue;
-    if (input.upfrontPayment !== undefined)
-      this.upfrontPayment = input.upfrontPayment;
-    if (input.installment30Days !== undefined)
-      this.installment30Days = input.installment30Days;
-    if (input.installment45Days !== undefined)
-      this.installment45Days = input.installment45Days;
-    if (input.installment60Days !== undefined)
-      this.installment60Days = input.installment60Days;
-    if (input.installment90Days !== undefined)
-      this.installment90Days = input.installment90Days;
-    if (input.installment120Days !== undefined)
-      this.installment120Days = input.installment120Days;
-    if (input.billingUnitValue !== undefined)
-      this.billingUnitValue = input.billingUnitValue;
-    if (input.billingTotalValue !== undefined)
-      this.billingTotalValue = input.billingTotalValue;
+    if (input.upfrontPayment !== undefined) this.upfrontPayment = input.upfrontPayment;
+    if (input.installment30Days !== undefined) this.installment30Days = input.installment30Days;
+    if (input.installment45Days !== undefined) this.installment45Days = input.installment45Days;
+    if (input.installment60Days !== undefined) this.installment60Days = input.installment60Days;
+    if (input.installment90Days !== undefined) this.installment90Days = input.installment90Days;
+    if (input.installment120Days !== undefined) this.installment120Days = input.installment120Days;
+    if (input.billingUnitValue !== undefined) this.billingUnitValue = input.billingUnitValue;
+    if (input.billingTotalValue !== undefined) this.billingTotalValue = input.billingTotalValue;
 
     return this.validate();
   }
 
   private validate(): Result<BudgetLine> {
-    if (!this.budgetId?.trim())
-      return Result.failure("Orçamento é obrigatório");
-    if (!this.categoryCode?.trim())
-      return Result.failure("Categoria da linha é obrigatória");
-    if (!this.name?.trim())
-      return Result.failure("Nome da linha é obrigatório");
-    if (!Object.values(BillingType).includes(this.billingType)) {
-      return Result.failure("Tipo de faturamento inválido");
-    }
+    if (!this.budgetId?.trim()) return Result.failure("Orçamento é obrigatório");
+    if (!this.categoryCode?.trim()) return Result.failure("Categoria da linha é obrigatória");
+    if (!this.name?.trim()) return Result.failure("Nome da linha é obrigatório");
 
     if (this.order < 0) return Result.failure("Ordem da linha inválida");
     if (this.quantity < 0) return Result.failure("Quantidade inválida");
@@ -225,20 +191,13 @@ export class BudgetLine {
     if (this.unitValue < 0) return Result.failure("Valor unitário inválido");
     if (this.totalValue < 0) return Result.failure("Valor total inválido");
     if (this.upfrontPayment < 0) return Result.failure("Antecipação inválida");
-    if (this.installment30Days < 0)
-      return Result.failure("Parcela de 30 dias inválida");
-    if (this.installment45Days < 0)
-      return Result.failure("Parcela de 45 dias inválida");
-    if (this.installment60Days < 0)
-      return Result.failure("Parcela de 60 dias inválida");
-    if (this.installment90Days < 0)
-      return Result.failure("Parcela de 90 dias inválida");
-    if (this.installment120Days < 0)
-      return Result.failure("Parcela de 120 dias inválida");
-    if (this.billingUnitValue < 0)
-      return Result.failure("Valor unitário de faturamento inválido");
-    if (this.billingTotalValue < 0)
-      return Result.failure("Valor total de faturamento inválido");
+    if (this.installment30Days < 0) return Result.failure("Parcela de 30 dias inválida");
+    if (this.installment45Days < 0) return Result.failure("Parcela de 45 dias inválida");
+    if (this.installment60Days < 0) return Result.failure("Parcela de 60 dias inválida");
+    if (this.installment90Days < 0) return Result.failure("Parcela de 90 dias inválida");
+    if (this.installment120Days < 0) return Result.failure("Parcela de 120 dias inválida");
+    if (this.billingUnitValue < 0) return Result.failure("Valor unitário de faturamento inválido");
+    if (this.billingTotalValue < 0) return Result.failure("Valor total de faturamento inválido");
 
     this.budgetId = this.budgetId.trim();
     this.categoryCode = this.categoryCode.trim();

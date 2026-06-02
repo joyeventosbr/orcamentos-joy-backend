@@ -1,5 +1,7 @@
 export enum BillingType {
-  UNIT = "UNIT",
-  DAILY = "DAILY",
-  FIXED = "FIXED",
+  VIA_CLIENTE = "VIA CLIENTE",
+  ND_OU_REPASSE = "ND OU REPASSE",
+  VIA_NF = "VIA NF",
+  OPCIONAL = "OPCIONAL",
+  EXCLUIDO = "EXCLUÍDO",
 }

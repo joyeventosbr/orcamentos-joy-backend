@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BudgetSchema } from "./budget.schema";
 import { CategorySchema } from "./category.schema";
 
@@ -51,8 +45,8 @@ export class BudgetLineSchema {
   @Column({ default: "" })
   description!: string;
 
-  @Column({ name: "billing_type" })
-  billingType!: string;
+  @Column({ name: "billing_type", type: "varchar", nullable: true })
+  billingType!: string | null;
 
   @Column({ type: "float" })
   quantity!: number;

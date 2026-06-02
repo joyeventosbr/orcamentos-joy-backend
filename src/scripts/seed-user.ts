@@ -11,6 +11,7 @@ type SeedArgs = {
   name: string;
   email: string;
   password: string;
+  funcao?: string;
   passwordGenerated: boolean;
 };
 
@@ -38,21 +39,22 @@ function parseArgs(argv: string[]): SeedArgs {
   }
 
   const name = (
-    process.env.ADMIN_NAME ??
+    process.env.USER_NAME ??
     map.get("name") ??
-    "Master Admin"
+    "Usuario Padrao"
   ).trim();
-  const email = (process.env.ADMIN_EMAIL ?? map.get("email") ?? "")
+  const email = (process.env.USER_EMAIL ?? map.get("email") ?? "")
     .trim()
     .toLowerCase();
-  const envPassword = process.env.ADMIN_PASSWORD?.trim();
+  const envPassword = process.env.USER_PASSWORD?.trim();
   const cliPassword = map.get("password")?.trim();
   const password = envPassword || cliPassword || generateStrongPassword();
+  const funcao = (process.env.USER_FUNCAO ?? map.get("funcao"))?.trim();
   const passwordGenerated = !envPassword && !cliPassword;
 
   if (!email) {
     throw new Error(
-      "Informe o email do admin via ADMIN_EMAIL no .env ou --email na linha de comando",
+      "Informe o email do usuario via USER_EMAIL no .env ou --email na linha de comando",
     );
   }
 
@@ -60,6 +62,7 @@ function parseArgs(argv: string[]): SeedArgs {
     name,
     email,
     password,
+    funcao,
     passwordGenerated,
   };
 }
@@ -79,7 +82,7 @@ async function run() {
   });
 
   if (existingUser) {
-    console.log(`Usuário já existe para o email: ${input.email}`);
+    console.log(`Usuario ja existe para o email: ${input.email}`);
     return;
   }
 
@@ -87,25 +90,25 @@ async function run() {
     name: input.name,
     email: input.email,
     password: hashPassword(input.password),
-    role: Role.ADMIN,
+    role: Role.CUSTOMER,
     createdAt: new Date(),
     updatedAt: new Date(),
-    funcao: undefined,
+    funcao: input.funcao,
   });
 
   await usersRepository.save(user);
-  console.log(`Usuário admin criado com sucesso: ${user.email}`);
+  console.log(`Usuario criado com sucesso: ${user.email}`);
   if (input.passwordGenerated) {
     console.log(`Senha gerada automaticamente: ${input.password}`);
     console.log(
-      "Defina ADMIN_PASSWORD no .env para controlar a senha em próximos ambientes.",
+      "Defina USER_PASSWORD no .env para controlar a senha em proximos ambientes.",
     );
   }
 }
 
 void run()
   .catch((error) => {
-    console.error("Erro ao criar usuário admin:", error);
+    console.error("Erro ao criar usuario:", error);
     process.exitCode = 1;
   })
   .finally(async () => {
