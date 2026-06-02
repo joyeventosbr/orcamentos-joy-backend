@@ -47,11 +47,7 @@ export class UpdateBudgetLineUseCase {
       supplier: parsed.data.supplier,
       supplierValue: parsed.data.supplierValue,
       percentBv: parsed.data.percentBv,
-      percentNfBv: parsed.data.percentNfBv,
-      bvValue: parsed.data.bvValue,
       percentNfOver: parsed.data.percentNfOver,
-      overValue: parsed.data.overValue,
-      realValue: parsed.data.realValue,
     });
     if (lineResult.isFailure()) return Result.failure(lineResult.getError());
 

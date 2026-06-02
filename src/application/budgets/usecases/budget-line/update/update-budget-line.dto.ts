@@ -21,14 +21,10 @@ export const updateBudgetLineSchema = z.object({
   installment120Days: z.number().nonnegative().optional(),
   billingUnitValue: z.number().nonnegative().optional(),
   billingTotalValue: z.number().nonnegative().optional(),
-  supplier: z.string().trim().optional(),
+  supplier: z.string().trim().optional().nullable(),
   supplierValue: z.number().nonnegative().optional(),
   percentBv: z.number().nonnegative().optional(),
-  percentNfBv: z.number().nonnegative().optional(),
-  bvValue: z.number().nonnegative().optional(),
   percentNfOver: z.number().nonnegative().optional(),
-  overValue: z.number().nonnegative().optional(),
-  realValue: z.number().nonnegative().optional(),
 });
 
 export type UpdateBudgetLineDto = z.infer<typeof updateBudgetLineSchema>;

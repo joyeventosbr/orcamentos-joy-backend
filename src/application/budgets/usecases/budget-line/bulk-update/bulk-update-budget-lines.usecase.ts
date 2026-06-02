@@ -70,11 +70,7 @@ export class BulkUpdateBudgetLinesUseCase {
         supplier: line.supplier,
         supplierValue: line.supplierValue,
         percentBv: line.percentBv,
-        percentNfBv: line.percentNfBv,
-        bvValue: line.bvValue,
         percentNfOver: line.percentNfOver,
-        overValue: line.overValue,
-        realValue: line.realValue,
       });
       if (updated.isFailure()) return Result.failure(updated.getError());
 

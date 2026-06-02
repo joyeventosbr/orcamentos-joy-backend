@@ -59,8 +59,8 @@ export class CreateBudgetLineRequestApiDto {
   @ApiPropertyOptional()
   billingTotalValue?: number;
 
-  @ApiPropertyOptional()
-  supplier?: string;
+  @ApiPropertyOptional({ nullable: true })
+  supplier?: string | null;
 
   @ApiPropertyOptional()
   supplierValue?: number;
@@ -69,17 +69,5 @@ export class CreateBudgetLineRequestApiDto {
   percentBv?: number;
 
   @ApiPropertyOptional()
-  percentNfBv?: number;
-
-  @ApiPropertyOptional()
-  bvValue?: number;
-
-  @ApiPropertyOptional()
   percentNfOver?: number;
-
-  @ApiPropertyOptional()
-  overValue?: number;
-
-  @ApiPropertyOptional()
-  realValue?: number;
 }
