@@ -18,6 +18,11 @@ export class DeleteCustomerUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    return this.customerRepository.delete(parsed.data.id);
+    const deleted = await this.customerRepository.delete(parsed.data.id);
+    if (deleted.isFailure()) {
+      return Result.failure(deleted.getError());
+    }
+
+    return Result.success(undefined);
   }
 }

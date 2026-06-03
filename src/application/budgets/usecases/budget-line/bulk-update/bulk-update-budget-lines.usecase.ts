@@ -129,7 +129,7 @@ export class BulkUpdateBudgetLinesUseCase {
       return Result.failure(savedUpdate.getError());
     }
 
-    return saved;
+    return Result.success(saved.getValue());
   }
 
   private validateDuplicatedIds(
@@ -143,26 +143,6 @@ export class BulkUpdateBudgetLinesUseCase {
         "A mesma linha não pode ser editada ou removida mais de uma vez",
       );
     }
-
-    return Result.success();
-  }
-
-  private async updateBudgetAudit(
-    budgetId: string,
-    updatedBy: string,
-  ): Promise<Result<void>> {
-    const budgetResult = await this.budgetRepository.getById(budgetId);
-    if (budgetResult.isFailure())
-      return Result.failure(budgetResult.getError());
-
-    const budget = budgetResult.getValue();
-    if (!budget) return Result.failure("Orçamento não encontrado");
-
-    const updated = budget.markUpdatedBy(updatedBy);
-    if (updated.isFailure()) return Result.failure(updated.getError());
-
-    const saved = await this.budgetRepository.updateAudit(updated.getValue());
-    if (saved.isFailure()) return Result.failure(saved.getError());
 
     return Result.success();
   }

@@ -43,9 +43,9 @@ export class DeleteBudgetLineUseCase {
     const updated = budget.markUpdatedBy(updatedBy);
     if (updated.isFailure()) return Result.failure(updated.getError());
 
-    const saved = await this.budgetRepository.updateAudit(updated.getValue());
+    const saved = await this.budgetRepository.updateAudit(budget);
     if (saved.isFailure()) return Result.failure(saved.getError());
 
-    return deleted;
+    return Result.success(undefined);
   }
 }

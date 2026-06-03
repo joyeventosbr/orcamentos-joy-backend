@@ -48,9 +48,7 @@ export class UpdateSettingUseCase {
       return Result.failure(updatedSetting.getError());
     }
 
-    const updated = await this.settingRepository.update(
-      updatedSetting.getValue(),
-    );
+    const updated = await this.settingRepository.update(setting);
     if (updated.isFailure()) {
       return Result.failure(updated.getError());
     }

@@ -23,6 +23,11 @@ export class DeleteSettingUseCase {
     if (!current.getValue())
       return Result.failure("Parametrização não encontrada");
 
-    return this.settingRepository.delete(parsed.data.id);
+    const deleted = await this.settingRepository.delete(parsed.data.id);
+    if (deleted.isFailure()) {
+      return Result.failure(deleted.getError());
+    }
+
+    return Result.success(undefined);
   }
 }

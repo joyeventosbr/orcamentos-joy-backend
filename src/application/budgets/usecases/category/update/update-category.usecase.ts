@@ -34,8 +34,13 @@ export class UpdateCategoryUseCase {
       return Result.failure(categoryResult.getError());
     }
 
-    return await this.categoryRepository.update(
+    const result = await this.categoryRepository.update(
       categoryResult.getValue(),
     );
+    if (result.isFailure()) {
+      return Result.failure(result.getError());
+    }
+
+    return Result.success(result.getValue());
   }
 }

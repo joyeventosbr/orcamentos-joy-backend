@@ -30,6 +30,11 @@ export class UpdateCustomerUseCase {
       return Result.failure(customerResult.getError());
     }
 
-    return this.customerRepository.update(customerResult.getValue());
+    const result = await this.customerRepository.update(customer);
+    if (result.isFailure()) {
+      return Result.failure(result.getError());
+    }
+
+    return Result.success(result.getValue());
   }
 }

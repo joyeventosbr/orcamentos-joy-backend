@@ -50,6 +50,6 @@ export class CreateBudgetLineUseCase {
       return Result.failure(`${saved.getError()}`);
     }
 
-    return created;
+    return Result.success(created.getValue());
   }
 }

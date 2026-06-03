@@ -34,6 +34,6 @@ export class UpdateBudgetStatusUseCase {
       return Result.failure(budgetStatusResult.getError());
     }
 
-    return this.budgetRepository.updateStatus(budgetStatusResult.getValue());
+    return this.budgetRepository.updateStatus(budget);
   }
 }

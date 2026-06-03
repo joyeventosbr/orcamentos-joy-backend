@@ -20,7 +20,8 @@ export class UpdateFolderUseCase {
     }
 
     const folderResult = await this.folderRepository.getById(parsed.data.id);
-    if (folderResult.isFailure()) return Result.failure(folderResult.getError());
+    if (folderResult.isFailure())
+      return Result.failure(folderResult.getError());
     const folder = folderResult.getValue();
     if (!folder) return Result.failure("Pasta não encontrada");
 
@@ -32,6 +33,11 @@ export class UpdateFolderUseCase {
       return Result.failure(folderUpdateResult.getError());
     }
 
-    return this.folderRepository.update(folderUpdateResult.getValue());
+    const result = await this.folderRepository.update(folder);
+    if (result.isFailure()) {
+      return Result.failure(result.getError());
+    }
+
+    return Result.success(result.getValue());
   }
 }

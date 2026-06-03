@@ -18,6 +18,11 @@ export class DeleteCategoryUseCase {
       return Result.failure(errors[0] ?? "Dados inválidos");
     }
 
-    return this.categoryRepository.delete(parsed.data.id);
+    const deleted = await this.categoryRepository.delete(parsed.data.id);
+    if (deleted.isFailure()) {
+      return Result.failure(deleted.getError());
+    }
+
+    return Result.success(undefined);
   }
 }

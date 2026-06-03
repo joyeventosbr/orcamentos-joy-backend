@@ -24,6 +24,13 @@ export class CreateCustomerUseCase {
       return Result.failure(customerResult.getError());
     }
 
-    return await this.customerRepository.create(customerResult.getValue());
+    const result = await this.customerRepository.create(
+      customerResult.getValue(),
+    );
+    if (result.isFailure()) {
+      return Result.failure(result.getError());
+    }
+
+    return Result.success(result.getValue());
   }
 }

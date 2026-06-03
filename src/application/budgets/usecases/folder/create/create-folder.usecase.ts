@@ -27,6 +27,11 @@ export class CreateFolderUseCase {
       return Result.failure(folderResult.getError());
     }
 
-    return this.folderRepository.create(folderResult.getValue());
+    const result = await this.folderRepository.create(folderResult.getValue());
+    if (result.isFailure()) {
+      return Result.failure(result.getError());
+    }
+
+    return Result.success(result.getValue());
   }
 }
