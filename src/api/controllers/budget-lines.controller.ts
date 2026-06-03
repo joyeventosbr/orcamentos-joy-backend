@@ -20,6 +20,8 @@ import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budge
 import { CreateBudgetLineRequestApiDto } from "@api/dtos/budget-lines/requests/create-budget-line-request.api.dto";
 import { UpdateBudgetLineRequestApiDto } from "@api/dtos/budget-lines/requests/update-budget-line-request.api.dto";
 import { BulkUpdateBudgetLinesRequestApiDto } from "@api/dtos/budget-lines/requests/bulk-update/bulk-update-budget-lines-request.api.dto";
+import { User } from "@infra/auth/jwt/decorators/user.decorator";
+import type { JwtPayload } from "@infra/auth/jwt/jwt.type";
 
 @ApiTags("budget-lines")
 @Controller("budget-lines")
@@ -51,8 +53,15 @@ export class BudgetLinesController {
 
   @Post()
   @ApiBody({ type: CreateBudgetLineRequestApiDto })
-  async create(@Body() body: unknown, @Res() res: FastifyReply) {
-    const result = await this.createBudgetLineUseCase.execute(body);
+  async create(
+    @Body() body: unknown,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.createBudgetLineUseCase.execute({
+      ...(body as object),
+      updatedBy: user.name,
+    });
 
     if (result.isFailure()) {
       return res
@@ -65,8 +74,15 @@ export class BudgetLinesController {
 
   @Put("bulk")
   @ApiBody({ type: BulkUpdateBudgetLinesRequestApiDto })
-  async bulkUpdate(@Body() body: unknown, @Res() res: FastifyReply) {
-    const result = await this.bulkUpdateBudgetLinesUseCase.execute(body);
+  async bulkUpdate(
+    @Body() body: unknown,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.bulkUpdateBudgetLinesUseCase.execute({
+      ...(body as object),
+      updatedBy: user.name,
+    });
 
     if (result.isFailure()) {
       return res
@@ -82,11 +98,13 @@ export class BudgetLinesController {
   async update(
     @Param("id") id: string,
     @Body() body: unknown,
+    @User() user: JwtPayload,
     @Res() res: FastifyReply,
   ) {
     const result = await this.updateBudgetLineUseCase.execute({
       ...(body as object),
       id,
+      updatedBy: user.name,
     });
 
     if (result.isFailure()) {
@@ -99,8 +117,15 @@ export class BudgetLinesController {
   }
 
   @Delete(":id")
-  async delete(@Param("id") id: string, @Res() res: FastifyReply) {
-    const result = await this.deleteBudgetLineUseCase.execute({ id });
+  async delete(
+    @Param("id") id: string,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.deleteBudgetLineUseCase.execute({
+      id,
+      updatedBy: user.name,
+    });
 
     if (result.isFailure()) {
       return res

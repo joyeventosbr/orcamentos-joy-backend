@@ -1,10 +1,12 @@
 import { z } from "zod";
-import { createBudgetLineSchema } from "../create/create-budget-line.dto";
-import { updateBudgetLineSchema } from "../update/update-budget-line.dto";
+import { createBudgetLineDataSchema } from "../create/create-budget-line.dto";
+import { updateBudgetLineDataSchema } from "../update/update-budget-line.dto";
 
 export const bulkUpdateBudgetLinesSchema = z.object({
-  create: z.array(createBudgetLineSchema).optional(),
-  update: z.array(updateBudgetLineSchema).optional(),
+  budgetId: z.string().trim().min(1),
+  updatedBy: z.string().trim().min(1),
+  create: z.array(createBudgetLineDataSchema).optional(),
+  update: z.array(updateBudgetLineDataSchema).optional(),
   delete: z.array(z.string().trim().min(1)).optional(),
 });
 

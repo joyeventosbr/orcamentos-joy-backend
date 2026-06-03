@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { BudgetLine } from "@domain/budgets/entities/budget-line.entity";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
+import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { Result } from "@shared/result";
 import { ZError } from "@utils/index";
 import { bulkUpdateBudgetLinesSchema } from "./bulk-update-budget-lines.dto";
@@ -10,6 +11,8 @@ export class BulkUpdateBudgetLinesUseCase {
   constructor(
     @Inject("IBudgetLineRepository")
     private readonly budgetLineRepository: IBudgetLineRepository,
+    @Inject("IBudgetRepository")
+    private readonly budgetRepository: IBudgetRepository,
   ) {}
 
   async execute(input: unknown): Promise<Result<BudgetLine[]>> {
@@ -32,6 +35,10 @@ export class BulkUpdateBudgetLinesUseCase {
 
     const linesToCreate: BudgetLine[] = [];
     for (const line of parsed.data.create ?? []) {
+      if (line.budgetId !== parsed.data.budgetId) {
+        return Result.failure("Linha não pertence ao orçamento informado");
+      }
+
       const lineResult = BudgetLine.create(line);
       if (lineResult.isFailure()) return Result.failure(lineResult.getError());
 
@@ -46,6 +53,9 @@ export class BulkUpdateBudgetLinesUseCase {
       const budgetLine = current.getValue();
       if (!budgetLine) {
         return Result.failure("Linha do orçamento não encontrada");
+      }
+      if (budgetLine.budgetId !== parsed.data.budgetId) {
+        return Result.failure("Linha não pertence ao orçamento informado");
       }
 
       const updated = budgetLine.update({
@@ -80,16 +90,46 @@ export class BulkUpdateBudgetLinesUseCase {
     for (const id of deleteIds) {
       const current = await this.budgetLineRepository.getById(id);
       if (current.isFailure()) return Result.failure(current.getError());
-      if (!current.getValue()) {
+      const budgetLine = current.getValue();
+      if (!budgetLine) {
         return Result.failure("Linha do orçamento não encontrada");
+      }
+      if (budgetLine.budgetId !== parsed.data.budgetId) {
+        return Result.failure("Linha não pertence ao orçamento informado");
       }
     }
 
-    return this.budgetLineRepository.bulkSave({
+    const saved = await this.budgetLineRepository.bulkSave({
       create: linesToCreate,
       update: linesToUpdate,
       deleteIds,
     });
+    if (saved.isFailure()) return Result.failure(saved.getError());
+
+    const hasChanges =
+      linesToCreate.length > 0 ||
+      linesToUpdate.length > 0 ||
+      deleteIds.length > 0;
+    if (!hasChanges) return saved;
+
+    const budgetId = parsed.data.budgetId;
+    const updatedBy = parsed.data.updatedBy;
+    const budgetResult = await this.budgetRepository.getById(budgetId);
+    if (budgetResult.isFailure())
+      return Result.failure(budgetResult.getError());
+
+    const budget = budgetResult.getValue();
+    if (!budget) return Result.failure("Orçamento não encontrado");
+
+    const updated = budget.markUpdatedBy(updatedBy);
+    if (updated.isFailure()) return Result.failure(updated.getError());
+
+    const savedUpdate = await this.budgetRepository.updateAudit(budget);
+    if (savedUpdate.isFailure()) {
+      return Result.failure(savedUpdate.getError());
+    }
+
+    return saved;
   }
 
   private validateDuplicatedIds(
@@ -103,6 +143,26 @@ export class BulkUpdateBudgetLinesUseCase {
         "A mesma linha não pode ser editada ou removida mais de uma vez",
       );
     }
+
+    return Result.success();
+  }
+
+  private async updateBudgetAudit(
+    budgetId: string,
+    updatedBy: string,
+  ): Promise<Result<void>> {
+    const budgetResult = await this.budgetRepository.getById(budgetId);
+    if (budgetResult.isFailure())
+      return Result.failure(budgetResult.getError());
+
+    const budget = budgetResult.getValue();
+    if (!budget) return Result.failure("Orçamento não encontrado");
+
+    const updated = budget.markUpdatedBy(updatedBy);
+    if (updated.isFailure()) return Result.failure(updated.getError());
+
+    const saved = await this.budgetRepository.updateAudit(updated.getValue());
+    if (saved.isFailure()) return Result.failure(saved.getError());
 
     return Result.success();
   }

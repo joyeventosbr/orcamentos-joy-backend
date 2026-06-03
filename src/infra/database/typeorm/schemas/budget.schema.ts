@@ -26,6 +26,12 @@ export class BudgetSchema {
   @Column({ type: "smallint", default: BudgetStatus.CONCORRENCIA })
   status!: BudgetStatus;
 
+  @Column({ name: "created_by" })
+  createdBy!: string;
+
+  @Column({ name: "updated_by", nullable: true })
+  updatedBy!: string | null;
+
   @ManyToOne(() => CustomerSchema, {
     onDelete: "CASCADE",
   })

@@ -10,6 +10,7 @@ export const updateBudgetSchema = z.object({
   location: z.string().trim().min(1).optional(),
   eventDate: z.string().trim().min(1).optional(),
   paymentTerm: z.nativeEnum(PaymentTerm).optional(),
+  updatedBy: z.string().trim().min(1),
 });
 
 export type UpdateBudgetDto = z.infer<typeof updateBudgetSchema>;

@@ -26,7 +26,10 @@ export class UpdateBudgetStatusUseCase {
     const budget = current.getValue();
     if (!budget) return Result.failure("Orçamento não encontrado");
 
-    const budgetStatusResult = budget.updateStatus(parsed.data.status);
+    const budgetStatusResult = budget.updateStatus(
+      parsed.data.status,
+      parsed.data.updatedBy,
+    );
     if (budgetStatusResult.isFailure()) {
       return Result.failure(budgetStatusResult.getError());
     }

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { BudgetLine } from "@domain/budgets/entities/budget-line.entity";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
+import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { Result } from "@shared/result";
 import { ZError } from "@utils/index";
 import { updateBudgetLineSchema } from "./update-budget-line.dto";
@@ -10,6 +11,8 @@ export class UpdateBudgetLineUseCase {
   constructor(
     @Inject("IBudgetLineRepository")
     private readonly budgetLineRepository: IBudgetLineRepository,
+    @Inject("IBudgetRepository")
+    private readonly budgetRepository: IBudgetRepository,
   ) {}
 
   async execute(input: unknown): Promise<Result<BudgetLine>> {
@@ -51,6 +54,26 @@ export class UpdateBudgetLineUseCase {
     });
     if (lineResult.isFailure()) return Result.failure(lineResult.getError());
 
-    return this.budgetLineRepository.update(lineResult.getValue());
+    const updatedLine = await this.budgetLineRepository.update(
+      lineResult.getValue(),
+    );
+    if (updatedLine.isFailure()) return Result.failure(updatedLine.getError());
+
+    const budgetId = updatedLine.getValue().budgetId;
+    const updatedBy = parsed.data.updatedBy;
+    const budgetResult = await this.budgetRepository.getById(budgetId);
+    if (budgetResult.isFailure())
+      return Result.failure(budgetResult.getError());
+
+    const budget = budgetResult.getValue();
+    if (!budget) return Result.failure("Orçamento não encontrado");
+
+    const updated = budget.markUpdatedBy(updatedBy);
+    if (updated.isFailure()) return Result.failure(updated.getError());
+
+    const saved = await this.budgetRepository.updateAudit(updated.getValue());
+    if (saved.isFailure()) return Result.failure(saved.getError());
+
+    return updatedLine;
   }
 }

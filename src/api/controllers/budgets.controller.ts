@@ -23,7 +23,9 @@ import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-bud
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
 import { UpdateBudgetStatusRequestApiDto } from "@api/dtos/budgets/requests/update-budget-status-request.api.dto";
 import { ExportBudgetResponseApiDto } from "@api/dtos/budgets/responses/export-budget-response.api.dto";
-import { Public } from "@infra/auth/jwt/decorators/public.decorator";
+import { User } from "@infra/auth/jwt/decorators/user.decorator";
+import type { JwtPayload } from "@infra/auth/jwt/jwt.type";
+import { Role } from "@domain/users/enums/user-role.enum";
 
 @ApiTags("budgets")
 @Controller("budgets")
@@ -39,8 +41,7 @@ export class BudgetsController {
   ) {}
 
   @Get()
-  @Public()
-  async getAll(@Res() res: FastifyReply) {
+  async getAll(@User() user: JwtPayload, @Res() res: FastifyReply) {
     const result = await this.budgetRepository.getAll();
 
     if (result.isFailure()) {
@@ -49,14 +50,24 @@ export class BudgetsController {
         .send({ error: result.getError() });
     }
 
-    return res.status(HttpStatus.OK).send(result.getValue());
+    return res
+      .status(HttpStatus.OK)
+      .send(
+        result.getValue().map((budget) => this.serializeBudget(budget, user)),
+      );
   }
 
   @Post()
-  @Public()
   @ApiBody({ type: CreateBudgetRequestApiDto })
-  async create(@Body() body: unknown, @Res() res: FastifyReply) {
-    const result = await this.createBudgetUseCase.execute(body);
+  async create(
+    @Body() body: unknown,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.createBudgetUseCase.execute({
+      ...(body as object),
+      createdBy: user.name,
+    });
 
     if (result.isFailure()) {
       return res
@@ -64,7 +75,9 @@ export class BudgetsController {
         .send({ error: result.getError() });
     }
 
-    return res.status(HttpStatus.CREATED).send(result.getValue());
+    return res
+      .status(HttpStatus.CREATED)
+      .send(this.serializeBudget(result.getValue(), user));
   }
 
   @Put(":id")
@@ -72,11 +85,13 @@ export class BudgetsController {
   async update(
     @Param("id") id: string,
     @Body() body: unknown,
+    @User() user: JwtPayload,
     @Res() res: FastifyReply,
   ) {
     const result = await this.updateBudgetUseCase.execute({
       ...(body as object),
       id,
+      updatedBy: user.name,
     });
 
     if (result.isFailure()) {
@@ -85,7 +100,9 @@ export class BudgetsController {
         .send({ error: result.getError() });
     }
 
-    return res.status(HttpStatus.OK).send(result.getValue());
+    return res
+      .status(HttpStatus.OK)
+      .send(this.serializeBudget(result.getValue(), user));
   }
 
   @Patch(":id/status")
@@ -93,11 +110,13 @@ export class BudgetsController {
   async updateStatus(
     @Param("id") id: string,
     @Body() body: UpdateBudgetStatusRequestApiDto,
+    @User() user: JwtPayload,
     @Res() res: FastifyReply,
   ) {
     const result = await this.updateBudgetStatusUseCase.execute({
       id,
       status: body.status,
+      updatedBy: user.name,
     });
 
     if (result.isFailure()) {
@@ -106,7 +125,9 @@ export class BudgetsController {
         .send({ error: result.getError() });
     }
 
-    return res.status(HttpStatus.OK).send(result.getValue());
+    return res
+      .status(HttpStatus.OK)
+      .send(this.serializeBudget(result.getValue(), user));
   }
 
   @Delete(":id")
@@ -137,8 +158,11 @@ export class BudgetsController {
   }
 
   @Get(":id/details")
-  @Public()
-  async getDetails(@Param("id") id: string, @Res() res: FastifyReply) {
+  async getDetails(
+    @Param("id") id: string,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
     const budgetResult = await this.budgetRepository.getByIdWithLines(id);
 
     if (budgetResult.isFailure()) {
@@ -154,12 +178,15 @@ export class BudgetsController {
         .send({ error: "Orçamento não encontrado" });
     }
 
-    return res.status(HttpStatus.OK).send(budget);
+    return res.status(HttpStatus.OK).send(this.serializeBudget(budget, user));
   }
 
   @Get(":id")
-  @Public()
-  async get(@Param("id") id: string, @Res() res: FastifyReply) {
+  async get(
+    @Param("id") id: string,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
     const result = await this.budgetRepository.getById(id);
 
     if (result.isFailure()) {
@@ -175,6 +202,14 @@ export class BudgetsController {
         .send({ error: "Orçamento não encontrado" });
     }
 
-    return res.status(HttpStatus.OK).send(budget);
+    return res.status(HttpStatus.OK).send(this.serializeBudget(budget, user));
+  }
+
+  private serializeBudget<
+    T extends { createdBy?: string; updatedBy?: string | null },
+  >(budget: T, user: JwtPayload): T | Omit<T, "createdBy" | "updatedBy"> {
+    if (user.role === Role.ADMIN) return budget;
+
+    return { ...budget, createdBy: undefined, updatedBy: undefined };
   }
 }

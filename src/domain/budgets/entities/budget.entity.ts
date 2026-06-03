@@ -10,6 +10,8 @@ export class Budget {
     public folderId: string,
     public taxNf: number,
     public status: BudgetStatus,
+    public createdBy: string,
+    public updatedBy: string | null,
     public createdAt: Date,
     public jobDescription?: string,
     public location?: string,
@@ -23,6 +25,7 @@ export class Budget {
     customerId: string;
     folderId: string;
     taxNf: number;
+    createdBy: string;
   }): Result<Budget> {
     if (!input.name?.trim())
       return Result.failure("Nome do orçamento é obrigatório");
@@ -32,6 +35,8 @@ export class Budget {
     if (!Number.isFinite(input.taxNf) || input.taxNf <= 0) {
       return Result.failure("Taxa NF é obrigatória");
     }
+    if (!input.createdBy?.trim())
+      return Result.failure("Usuário de criação é obrigatório");
 
     return Result.success(
       new Budget(
@@ -41,6 +46,8 @@ export class Budget {
         input.folderId.trim(),
         input.taxNf,
         BudgetStatus.CONCORRENCIA,
+        input.createdBy.trim(),
+        null,
         new Date(),
       ),
     );
@@ -53,6 +60,8 @@ export class Budget {
     folderId: string;
     taxNf: number;
     status: BudgetStatus;
+    createdBy: string;
+    updatedBy: string | null;
     createdAt: Date;
     jobDescription?: string;
     location?: string;
@@ -67,6 +76,8 @@ export class Budget {
       input.folderId,
       input.taxNf,
       input.status,
+      input.createdBy,
+      input.updatedBy,
       input.createdAt,
       input.jobDescription,
       input.location,
@@ -84,7 +95,11 @@ export class Budget {
     location?: string;
     eventDate?: string;
     paymentTerm?: PaymentTerm;
+    updatedBy: string;
   }): Result<Budget> {
+    if (!input.updatedBy?.trim())
+      return Result.failure("Usuário de atualização é obrigatório");
+
     if (input.name !== undefined) {
       if (!input.name.trim()) {
         return Result.failure("Nome do orçamento é obrigatório");
@@ -128,11 +143,13 @@ export class Budget {
       this.paymentTerm = input.paymentTerm;
     }
 
-    this.updatedAt = new Date();
-    return Result.success(this);
+    return this.markUpdatedBy(input.updatedBy);
   }
 
-  updateStatus(status: BudgetStatus): Result<Budget> {
+  updateStatus(status: BudgetStatus, updatedBy: string): Result<Budget> {
+    if (!updatedBy?.trim())
+      return Result.failure("Usuário de atualização é obrigatório");
+
     if (!Object.values(BudgetStatus).includes(status)) {
       return Result.failure("Status do orçamento inválido");
     }
@@ -144,7 +161,17 @@ export class Budget {
     }
 
     this.status = status;
+    return this.markUpdatedBy(updatedBy);
+  }
+
+  markUpdatedBy(updatedBy: string): Result<Budget> {
+    if (!updatedBy?.trim()) {
+      return Result.failure("Usuário de atualização é obrigatório");
+    }
+
+    this.updatedBy = updatedBy.trim();
     this.updatedAt = new Date();
-    return Result.success(this);
+
+    return Result.success();
   }
 }

@@ -54,6 +54,7 @@ export class LoginUserUseCase {
 
     const token = await this.tokenService.generateToken({
       sub: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
       funcao: user.funcao,

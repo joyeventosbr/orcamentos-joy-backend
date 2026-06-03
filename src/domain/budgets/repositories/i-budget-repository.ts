@@ -6,6 +6,7 @@ export interface IBudgetRepository {
   create(data: Budget): Promise<Result<Budget>>;
   update(data: Budget): Promise<Result<Budget>>;
   updateStatus(data: Budget): Promise<Result<Budget>>;
+  updateAudit(data: Budget): Promise<Result<Budget>>;
   delete(id: string): Promise<Result<void>>;
   getById(id: string): Promise<Result<Budget | null>>;
   getByIdWithLines(id: string): Promise<Result<BudgetDetailResponseDto | null>>;

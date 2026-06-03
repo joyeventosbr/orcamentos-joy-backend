@@ -61,6 +61,7 @@ export class CreateBudgetUseCase {
       customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
       taxNf,
+      createdBy: parsed.data.createdBy,
     });
     if (budgetResult.isFailure()) {
       return Result.failure(budgetResult.getError());

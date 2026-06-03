@@ -82,7 +82,11 @@ export class BudgetRepository implements IBudgetRepository {
     try {
       await this.budgetSchemaRepository.update(
         { id: data.id },
-        { status: data.status, updatedAt: data.updatedAt ?? new Date() },
+        {
+          status: data.status,
+          updatedBy: data.updatedBy,
+          updatedAt: data.updatedAt ?? new Date(),
+        },
       );
 
       const updated = await this.getBudget(data.id);
@@ -92,6 +96,27 @@ export class BudgetRepository implements IBudgetRepository {
     } catch (error) {
       return Result.failure(
         "Falha ao atualizar status do orçamento, erro: " + error,
+      );
+    }
+  }
+
+  async updateAudit(data: Budget): Promise<Result<Budget>> {
+    try {
+      await this.budgetSchemaRepository.update(
+        { id: data.id },
+        {
+          updatedBy: data.updatedBy,
+          updatedAt: data.updatedAt ?? new Date(),
+        },
+      );
+
+      const updated = await this.getBudget(data.id);
+      if (!updated) return Result.failure("Orçamento não encontrado");
+
+      return Result.success(updated);
+    } catch (error) {
+      return Result.failure(
+        "Falha ao atualizar auditoria do orçamento, erro: " + error,
       );
     }
   }
@@ -140,6 +165,8 @@ export class BudgetRepository implements IBudgetRepository {
           'folder.name AS "budget_folder_name"',
           'budget.tax_nf AS "budget_tax_nf"',
           'budget.status AS "budget_status"',
+          'budget.created_by AS "budget_created_by"',
+          'budget.updated_by AS "budget_updated_by"',
           'budget.job_description AS "budget_job_description"',
           'budget.location AS "budget_location"',
           'budget.event_date AS "budget_event_date"',
@@ -193,6 +220,8 @@ export class BudgetRepository implements IBudgetRepository {
         folderName: first.budget_folder_name,
         taxNf: first.budget_tax_nf,
         status: this.toBudgetStatus(first.budget_status),
+        createdBy: first.budget_created_by,
+        updatedBy: first.budget_updated_by,
         jobDescription: first.budget_job_description ?? undefined,
         location: first.budget_location ?? undefined,
         eventDate: first.budget_event_date ?? undefined,

@@ -75,9 +75,10 @@ export class RegisterUserUseCase {
     const user = createResult.getValue();
     const token = await this.tokenService.generateToken({
       sub: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       funcao: user.funcao,
     });
 

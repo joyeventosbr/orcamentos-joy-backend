@@ -33,6 +33,7 @@ export class UpdateBudgetUseCase {
       location: parsed.data.location,
       eventDate: parsed.data.eventDate,
       paymentTerm: parsed.data.paymentTerm,
+      updatedBy: parsed.data.updatedBy,
     });
     if (budgetResult.isFailure()) {
       return Result.failure(budgetResult.getError());

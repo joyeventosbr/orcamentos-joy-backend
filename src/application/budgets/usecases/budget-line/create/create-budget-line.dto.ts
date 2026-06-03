@@ -1,7 +1,7 @@
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 import { z } from "zod";
 
-export const createBudgetLineSchema = z.object({
+export const createBudgetLineDataSchema = z.object({
   budgetId: z.string().trim().min(1),
   categoryCode: z.string().trim().min(1),
   parentId: z.string().trim().optional().nullable(),
@@ -25,6 +25,10 @@ export const createBudgetLineSchema = z.object({
   supplierValue: z.number().nonnegative().optional(),
   percentBv: z.number().nonnegative().optional(),
   percentNfOver: z.number().nonnegative().optional(),
+});
+
+export const createBudgetLineSchema = createBudgetLineDataSchema.extend({
+  updatedBy: z.string().trim().min(1),
 });
 
 export type CreateBudgetLineDto = z.infer<typeof createBudgetLineSchema>;
