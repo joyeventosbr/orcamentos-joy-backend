@@ -13,6 +13,7 @@ export class BudgetDetailResponseDto {
   status!: BudgetStatus;
   isEditable!: boolean;
   parentId!: string | null;
+  version!: number;
   createdBy?: string;
   updatedBy?: string | null;
   createdAt!: Date;

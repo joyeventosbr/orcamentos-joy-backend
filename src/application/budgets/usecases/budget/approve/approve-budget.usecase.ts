@@ -35,6 +35,16 @@ export class ApproveBudgetUseCase {
     const budget = current.getValue();
     if (!budget) return Result.failure("Orçamento não encontrado");
 
+    const rootBudgetId = budget.parentId ?? budget.id;
+    const maxVersion =
+      await this.budgetRepository.getMaxVersionByRootId(rootBudgetId);
+    if (maxVersion.isFailure()) {
+      return Result.failure(maxVersion.getError());
+    }
+
+    const nextVersion = maxVersion.getValue() + 1;
+    const versionedName = `${this.getBaseName(budget.name)} v${nextVersion}`;
+
     const linesResult = await this.budgetLineRepository.getAllByBudgetId(
       budget.id,
     );
@@ -46,13 +56,14 @@ export class ApproveBudgetUseCase {
 
     if (budget.status === BudgetStatus.CONCORRENCIA) {
       const approvedCompetition = Budget.create({
-        name: budget.name,
+        name: versionedName,
         customerId: budget.customerId,
         folderId: budget.folderId,
         taxNf: budget.taxNf,
         createdBy: parsed.data.updatedBy,
+        version: nextVersion,
         status: BudgetStatus.APROVADO_CONCORRENCIA,
-        parentId: budget.id,
+        parentId: rootBudgetId,
         jobDescription: budget.jobDescription,
         location: budget.location,
         eventDate: budget.eventDate,
@@ -129,13 +140,14 @@ export class ApproveBudgetUseCase {
       createdBudgets.push(createdApprovedCompetition.getValue());
 
       const production = Budget.create({
-        name: budget.name,
+        name: versionedName,
         customerId: budget.customerId,
         folderId: budget.folderId,
         taxNf: budget.taxNf,
         createdBy: parsed.data.updatedBy,
+        version: nextVersion,
         status: BudgetStatus.PRODUCAO,
-        parentId: budget.id,
+        parentId: rootBudgetId,
         jobDescription: budget.jobDescription,
         location: budget.location,
         eventDate: budget.eventDate,
@@ -215,13 +227,14 @@ export class ApproveBudgetUseCase {
 
     if (budget.status === BudgetStatus.PRODUCAO) {
       const approvedProduction = Budget.create({
-        name: budget.name,
+        name: versionedName,
         customerId: budget.customerId,
         folderId: budget.folderId,
         taxNf: budget.taxNf,
         createdBy: parsed.data.updatedBy,
+        version: nextVersion,
         status: BudgetStatus.APROVADO_PRODUCAO,
-        parentId: budget.id,
+        parentId: rootBudgetId,
         jobDescription: budget.jobDescription,
         location: budget.location,
         eventDate: budget.eventDate,
@@ -299,5 +312,9 @@ export class ApproveBudgetUseCase {
     }
 
     return Result.failure("Status do orçamento não permite aprovação");
+  }
+
+  private getBaseName(name: string): string {
+    return name.replace(/\s+v\d+$/i, "").trim();
   }
 }

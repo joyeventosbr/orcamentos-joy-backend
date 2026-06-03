@@ -9,5 +9,6 @@ export interface IBudgetRepository {
   delete(id: string): Promise<Result<void>>;
   getById(id: string): Promise<Result<Budget | null>>;
   getByIdWithLines(id: string): Promise<Result<BudgetDetailResponseDto | null>>;
+  getMaxVersionByRootId(rootId: string): Promise<Result<number>>;
   getAll(): Promise<Result<Budget[]>>;
 }

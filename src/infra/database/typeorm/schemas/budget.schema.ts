@@ -32,6 +32,9 @@ export class BudgetSchema {
   @Column({ name: "parent_id", nullable: true, type: "uuid" })
   parentId!: string | null;
 
+  @Column()
+  version!: number;
+
   @ManyToOne(() => BudgetSchema, {
     onDelete: "SET NULL",
   })

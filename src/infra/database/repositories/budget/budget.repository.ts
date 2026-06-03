@@ -101,6 +101,23 @@ export class BudgetRepository implements IBudgetRepository {
     }
   }
 
+  async getMaxVersionByRootId(rootId: string): Promise<Result<number>> {
+    try {
+      const result = await this.budgetSchemaRepository
+        .createQueryBuilder("budget")
+        .select("MAX(budget.version)", "maxVersion")
+        .where("budget.id = :rootId", { rootId })
+        .orWhere("budget.parent_id = :rootId", { rootId })
+        .getRawOne<{ maxVersion: number | string | null }>();
+
+      return Result.success(Number(result?.maxVersion ?? 1));
+    } catch (error) {
+      return Result.failure(
+        "Falha ao buscar versão do orçamento, erro: " + error,
+      );
+    }
+  }
+
   async getByIdWithLines(
     id: string,
   ): Promise<Result<BudgetDetailResponseDto | null>> {
@@ -130,6 +147,7 @@ export class BudgetRepository implements IBudgetRepository {
           'budget.status AS "budget_status"',
           'budget.is_editable AS "budget_is_editable"',
           'budget.parent_id AS "budget_parent_id"',
+          'budget.version AS "budget_version"',
           'budget.created_by AS "budget_created_by"',
           'budget.updated_by AS "budget_updated_by"',
           'budget.job_description AS "budget_job_description"',
@@ -187,6 +205,7 @@ export class BudgetRepository implements IBudgetRepository {
         status: this.toBudgetStatus(first.budget_status),
         isEditable: first.budget_is_editable,
         parentId: first.budget_parent_id,
+        version: first.budget_version,
         createdBy: first.budget_created_by,
         updatedBy: first.budget_updated_by,
         jobDescription: first.budget_job_description ?? undefined,

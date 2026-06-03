@@ -12,6 +12,7 @@ export class Budget {
     public status: BudgetStatus,
     public isEditable: boolean,
     public parentId: string | null,
+    public version: number,
     public createdBy: string,
     public updatedBy: string | null,
     public createdAt: Date,
@@ -28,6 +29,7 @@ export class Budget {
     folderId: string;
     taxNf: number;
     createdBy: string;
+    version?: number;
     status?: BudgetStatus;
     parentId?: string | null;
     jobDescription?: string;
@@ -46,6 +48,11 @@ export class Budget {
     if (!input.createdBy?.trim())
       return Result.failure("Usuário de criação é obrigatório");
 
+    const version = input.version ?? 1;
+    if (!Number.isInteger(version) || version <= 0) {
+      return Result.failure("Versão do orçamento é obrigatória");
+    }
+
     const status = input.status ?? BudgetStatus.CONCORRENCIA;
     if (!Object.values(BudgetStatus).includes(status)) {
       return Result.failure("Status do orçamento inválido");
@@ -61,6 +68,7 @@ export class Budget {
         status,
         Budget.isEditableByStatus(status),
         input.parentId?.trim() ?? null,
+        version,
         input.createdBy.trim(),
         null,
         new Date(),
@@ -81,6 +89,7 @@ export class Budget {
     status: BudgetStatus;
     isEditable: boolean;
     parentId: string | null;
+    version: number;
     createdBy: string;
     updatedBy: string | null;
     createdAt: Date;
@@ -99,6 +108,7 @@ export class Budget {
       input.status,
       input.isEditable,
       input.parentId,
+      input.version,
       input.createdBy,
       input.updatedBy,
       input.createdAt,
