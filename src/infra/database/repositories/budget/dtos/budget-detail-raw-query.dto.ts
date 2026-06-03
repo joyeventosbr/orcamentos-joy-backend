@@ -12,6 +12,7 @@ export class BudgetDetailRawQueryDto {
   budget_tax_nf!: number;
   budget_status!: BudgetStatus;
   budget_is_editable!: boolean;
+  budget_is_deletable!: boolean;
   budget_parent_id!: string | null;
   budget_version!: number;
   budget_created_by!: string;

@@ -209,7 +209,7 @@ export class BudgetsController {
     @User() user: JwtPayload,
     @Res() res: FastifyReply,
   ) {
-    const result = await this.budgetRepository.getById(id);
+    const result = await this.budgetRepository.getByIdForRead(id);
 
     if (result.isFailure()) {
       return res

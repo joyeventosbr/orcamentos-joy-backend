@@ -1,14 +1,11 @@
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
-import { BudgetLineDetailResponseDto } from "./budget-line-detail-response.dto";
 
-export class BudgetDetailResponseDto {
+export class BudgetListItemResponseDto {
   id!: string;
   name!: string;
   customerId!: string;
-  customerName!: string;
   folderId!: string;
-  folderName!: string;
   taxNf!: number;
   status!: BudgetStatus;
   isEditable!: boolean;
@@ -23,5 +20,4 @@ export class BudgetDetailResponseDto {
   eventDate?: string;
   paymentTerm?: PaymentTerm;
   updatedAt?: Date;
-  lines!: BudgetLineDetailResponseDto[];
 }

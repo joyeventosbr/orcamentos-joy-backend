@@ -10,10 +10,12 @@ import { BudgetSchema } from "@infra/database/typeorm/schemas/budget.schema";
 import { BudgetMapper } from "@infra/database/mappers/budget.mapper";
 import { BudgetDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-detail-response.dto";
 import { BudgetLineDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-line-detail-response.dto";
+import { BudgetListItemResponseDto } from "@domain/budgets/dtos/budget-list/budget-list-item-response.dto";
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 import { PaymentTerm } from "@domain/budgets/enums/payment-term.enum";
 import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 import { BudgetDetailRawQueryDto } from "./dtos/budget-detail-raw-query.dto";
+import { BudgetListItemRawQueryDto } from "./dtos/budget-list-item-raw-query.dto";
 
 @Injectable()
 export class BudgetRepository implements IBudgetRepository {
@@ -101,6 +103,20 @@ export class BudgetRepository implements IBudgetRepository {
     }
   }
 
+  async getByIdForRead(
+    id: string,
+  ): Promise<Result<BudgetListItemResponseDto | null>> {
+    try {
+      const row = await this.createBudgetListQuery()
+        .where("budget.id = :id", { id })
+        .getRawOne<BudgetListItemRawQueryDto>();
+
+      return Result.success(row ? this.toBudgetListItemResponse(row) : null);
+    } catch (error) {
+      return Result.failure("Falha ao buscar orçamento, erro: " + error);
+    }
+  }
+
   async getMaxVersionByRootId(rootId: string): Promise<Result<number>> {
     try {
       const result = await this.budgetSchemaRepository
@@ -160,6 +176,11 @@ export class BudgetRepository implements IBudgetRepository {
           'budget.tax_nf AS "budget_tax_nf"',
           'budget.status AS "budget_status"',
           'budget.is_editable AS "budget_is_editable"',
+          `NOT EXISTS (
+            SELECT 1
+            FROM tb_budgets child
+            WHERE child.parent_id = budget.id
+          ) AS "budget_is_deletable"`,
           'budget.parent_id AS "budget_parent_id"',
           'budget.version AS "budget_version"',
           'budget.created_by AS "budget_created_by"',
@@ -218,6 +239,7 @@ export class BudgetRepository implements IBudgetRepository {
         taxNf: first.budget_tax_nf,
         status: this.toBudgetStatus(first.budget_status),
         isEditable: first.budget_is_editable,
+        isDeletable: first.budget_is_deletable,
         parentId: first.budget_parent_id,
         version: first.budget_version,
         createdBy: first.budget_created_by,
@@ -347,29 +369,77 @@ export class BudgetRepository implements IBudgetRepository {
     };
   }
 
-  async getAll(): Promise<Result<Budget[]>> {
+  async getAll(): Promise<Result<BudgetListItemResponseDto[]>> {
     try {
-      const budgets = await this.budgetSchemaRepository.find({
-        order: { createdAt: "DESC" },
-      });
-      const result: Budget[] = [];
+      const rows = await this.createBudgetListQuery()
+        .orderBy("budget.created_at", "DESC")
+        .getRawMany<BudgetListItemRawQueryDto>();
 
-      for (const budget of budgets) {
-        const folderIdResult =
-          await this.budgetRelationRepository.getFolderIdByBudgetId(budget.id);
-        if (folderIdResult.isFailure()) {
-          return Result.failure(folderIdResult.getError());
-        }
-
-        result.push(
-          BudgetMapper.toEntity(budget, folderIdResult.getValue() ?? ""),
-        );
-      }
-
-      return Result.success(result);
+      return Result.success(
+        rows.map((row) => this.toBudgetListItemResponse(row)),
+      );
     } catch (error) {
       return Result.failure("Falha ao listar orçamentos, erro: " + error);
     }
+  }
+
+  private createBudgetListQuery() {
+    return this.budgetSchemaRepository
+      .createQueryBuilder("budget")
+      .innerJoin(
+        "tb_folders_budgets",
+        "folderBudget",
+        "folderBudget.budget_id = budget.id",
+      )
+      .select([
+        'budget.id AS "budget_id"',
+        'budget.name AS "budget_name"',
+        'budget.customer_id AS "budget_customer_id"',
+        'folderBudget.folder_id AS "budget_folder_id"',
+        'budget.tax_nf AS "budget_tax_nf"',
+        'budget.status AS "budget_status"',
+        'budget.is_editable AS "budget_is_editable"',
+        `NOT EXISTS (
+          SELECT 1
+          FROM tb_budgets child
+          WHERE child.parent_id = budget.id
+        ) AS "budget_is_deletable"`,
+        'budget.parent_id AS "budget_parent_id"',
+        'budget.version AS "budget_version"',
+        'budget.created_by AS "budget_created_by"',
+        'budget.updated_by AS "budget_updated_by"',
+        'budget.job_description AS "budget_job_description"',
+        'budget.location AS "budget_location"',
+        'budget.event_date AS "budget_event_date"',
+        'budget.payment_term AS "budget_payment_term"',
+        'budget.created_at AS "budget_created_at"',
+        'budget.updated_at AS "budget_updated_at"',
+      ]);
+  }
+
+  private toBudgetListItemResponse(
+    row: BudgetListItemRawQueryDto,
+  ): BudgetListItemResponseDto {
+    return {
+      id: row.budget_id,
+      name: row.budget_name,
+      customerId: row.budget_customer_id,
+      folderId: row.budget_folder_id,
+      taxNf: row.budget_tax_nf,
+      status: this.toBudgetStatus(row.budget_status),
+      isEditable: row.budget_is_editable,
+      isDeletable: row.budget_is_deletable,
+      parentId: row.budget_parent_id,
+      version: row.budget_version,
+      createdBy: row.budget_created_by,
+      updatedBy: row.budget_updated_by,
+      jobDescription: row.budget_job_description ?? undefined,
+      location: row.budget_location ?? undefined,
+      eventDate: row.budget_event_date ?? undefined,
+      paymentTerm: this.toPaymentTerm(row.budget_payment_term),
+      createdAt: row.budget_created_at,
+      updatedAt: row.budget_updated_at ?? undefined,
+    };
   }
 
   private async getBudget(id: string): Promise<Budget | null> {
