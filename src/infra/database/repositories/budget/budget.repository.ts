@@ -118,6 +118,20 @@ export class BudgetRepository implements IBudgetRepository {
     }
   }
 
+  async hasChildren(id: string): Promise<Result<boolean>> {
+    try {
+      const count = await this.budgetSchemaRepository.count({
+        where: { parentId: id },
+      });
+
+      return Result.success(count > 0);
+    } catch (error) {
+      return Result.failure(
+        "Falha ao buscar vínculos do orçamento, erro: " + error,
+      );
+    }
+  }
+
   async getByIdWithLines(
     id: string,
   ): Promise<Result<BudgetDetailResponseDto | null>> {
