@@ -29,7 +29,7 @@ export class BudgetSchema {
   @Column({ name: "created_by" })
   createdBy!: string;
 
-  @Column({ name: "updated_by", nullable: true })
+  @Column({ name: "updated_by", nullable: true, type: "varchar", length: 255 })
   updatedBy!: string | null;
 
   @ManyToOne(() => CustomerSchema, {
