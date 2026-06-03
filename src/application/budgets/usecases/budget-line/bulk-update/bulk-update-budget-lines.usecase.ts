@@ -35,7 +35,7 @@ export class BulkUpdateBudgetLinesUseCase {
 
     const linesToCreate: BudgetLine[] = [];
     for (const line of parsed.data.create ?? []) {
-      if (line.budgetId !== parsed.data.budgetId) {
+      if (line.budgetId !== parsed.data.id) {
         return Result.failure("Linha não pertence ao orçamento informado");
       }
 
@@ -54,7 +54,7 @@ export class BulkUpdateBudgetLinesUseCase {
       if (!budgetLine) {
         return Result.failure("Linha do orçamento não encontrada");
       }
-      if (budgetLine.budgetId !== parsed.data.budgetId) {
+      if (budgetLine.budgetId !== parsed.data.id) {
         return Result.failure("Linha não pertence ao orçamento informado");
       }
 
@@ -94,7 +94,7 @@ export class BulkUpdateBudgetLinesUseCase {
       if (!budgetLine) {
         return Result.failure("Linha do orçamento não encontrada");
       }
-      if (budgetLine.budgetId !== parsed.data.budgetId) {
+      if (budgetLine.budgetId !== parsed.data.id) {
         return Result.failure("Linha não pertence ao orçamento informado");
       }
     }
@@ -112,7 +112,7 @@ export class BulkUpdateBudgetLinesUseCase {
       deleteIds.length > 0;
     if (!hasChanges) return saved;
 
-    const budgetId = parsed.data.budgetId;
+    const budgetId = parsed.data.id;
     const updatedBy = parsed.data.updatedBy;
     const budgetResult = await this.budgetRepository.getById(budgetId);
     if (budgetResult.isFailure())
