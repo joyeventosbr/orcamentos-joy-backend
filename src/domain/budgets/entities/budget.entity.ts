@@ -48,8 +48,8 @@ export class Budget {
     if (!input.createdBy?.trim())
       return Result.failure("Usuário de criação é obrigatório");
 
-    const version = input.version ?? 1;
-    if (!Number.isInteger(version) || version <= 0) {
+    const version = input.version ?? 0;
+    if (!Number.isInteger(version) || version < 0) {
       return Result.failure("Versão do orçamento é obrigatória");
     }
 

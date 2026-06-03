@@ -110,7 +110,7 @@ export class BudgetRepository implements IBudgetRepository {
         .orWhere("budget.parent_id = :rootId", { rootId })
         .getRawOne<{ maxVersion: number | string | null }>();
 
-      return Result.success(Number(result?.maxVersion ?? 1));
+      return Result.success(Number(result?.maxVersion ?? 0));
     } catch (error) {
       return Result.failure(
         "Falha ao buscar versão do orçamento, erro: " + error,
