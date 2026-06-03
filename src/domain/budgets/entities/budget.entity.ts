@@ -8,6 +8,7 @@ export class Budget {
     public name: string,
     public customerId: string,
     public folderId: string,
+    public taxNf: number,
     public status: BudgetStatus,
     public createdAt: Date,
     public jobDescription?: string,
@@ -21,12 +22,16 @@ export class Budget {
     name: string;
     customerId: string;
     folderId: string;
+    taxNf: number;
   }): Result<Budget> {
     if (!input.name?.trim())
       return Result.failure("Nome do orçamento é obrigatório");
     if (!input.customerId?.trim())
       return Result.failure("Cliente é obrigatório");
     if (!input.folderId?.trim()) return Result.failure("Pasta é obrigatória");
+    if (!Number.isFinite(input.taxNf) || input.taxNf <= 0) {
+      return Result.failure("Taxa NF é obrigatória");
+    }
 
     return Result.success(
       new Budget(
@@ -34,6 +39,7 @@ export class Budget {
         input.name.trim(),
         input.customerId.trim(),
         input.folderId.trim(),
+        input.taxNf,
         BudgetStatus.CONCORRENCIA,
         new Date(),
       ),
@@ -45,6 +51,7 @@ export class Budget {
     name: string;
     customerId: string;
     folderId: string;
+    taxNf: number;
     status: BudgetStatus;
     createdAt: Date;
     jobDescription?: string;
@@ -58,6 +65,7 @@ export class Budget {
       input.name,
       input.customerId,
       input.folderId,
+      input.taxNf,
       input.status,
       input.createdAt,
       input.jobDescription,

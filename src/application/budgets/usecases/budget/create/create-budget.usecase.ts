@@ -4,6 +4,7 @@ import { Budget } from "@domain/budgets/entities/budget.entity";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
 import type { IFolderRepository } from "@domain/folders/repositories/i-folder-repository";
+import type { ISettingRepository } from "@domain/settings/repositories/i-setting-repository";
 import { createBudgetSchema } from "./create-budget.dto";
 import { ZError } from "@utils/index";
 import { DefaultBudgetLinesFactory } from "@application/budgets/factories/default-budget-lines.factory";
@@ -17,6 +18,8 @@ export class CreateBudgetUseCase {
     private readonly budgetLineRepository: IBudgetLineRepository,
     @Inject("IFolderRepository")
     private readonly folderRepository: IFolderRepository,
+    @Inject("ISettingRepository")
+    private readonly settingRepository: ISettingRepository,
   ) {}
 
   async execute(input: unknown): Promise<Result<Budget>> {
@@ -43,10 +46,21 @@ export class CreateBudgetUseCase {
       return Result.failure("Pasta não pertence ao cliente informado");
     }
 
+    const taxNfSetting = await this.settingRepository.getByKey("TAX_NF");
+    if (taxNfSetting.isFailure()) {
+      return Result.failure(taxNfSetting.getError());
+    }
+
+    const taxNf = Number(taxNfSetting.getValue()?.value);
+    if (!Number.isFinite(taxNf) || taxNf <= 0) {
+      return Result.failure("Configuração TAX_NF inválida ou não encontrada");
+    }
+
     const budgetResult = Budget.create({
       name: parsed.data.name,
       customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
+      taxNf,
     });
     if (budgetResult.isFailure()) {
       return Result.failure(budgetResult.getError());

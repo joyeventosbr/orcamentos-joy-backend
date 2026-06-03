@@ -9,6 +9,7 @@ export class BudgetDetailResponseDto {
   customerName!: string;
   folderId!: string;
   folderName!: string;
+  taxNf!: number;
   status!: BudgetStatus;
   createdAt!: Date;
   jobDescription?: string;

@@ -20,6 +20,9 @@ export class BudgetSchema {
   @Column({ name: "customer_id" })
   customerId!: string;
 
+  @Column({ name: "tax_nf", type: "float" })
+  taxNf!: number;
+
   @Column({ type: "smallint", default: BudgetStatus.CONCORRENCIA })
   status!: BudgetStatus;
 

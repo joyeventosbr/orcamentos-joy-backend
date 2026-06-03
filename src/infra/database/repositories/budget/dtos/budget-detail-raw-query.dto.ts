@@ -9,6 +9,7 @@ export class BudgetDetailRawQueryDto {
   budget_customer_name!: string;
   budget_folder_id!: string;
   budget_folder_name!: string;
+  budget_tax_nf!: number;
   budget_status!: BudgetStatus;
   budget_job_description!: string | null;
   budget_location!: string | null;
