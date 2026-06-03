@@ -17,7 +17,7 @@ import { CreateBudgetUseCase } from "@application/budgets/usecases/budget/create
 import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
 import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
-import { UpdateBudgetStatusUseCase } from "@application/budgets/usecases/budget/update-status/update-budget-status.usecase";
+import { ApproveBudgetUseCase } from "@application/budgets/usecases/budget/approve/approve-budget.usecase";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
@@ -32,7 +32,7 @@ export class BudgetsController {
   constructor(
     private readonly createBudgetUseCase: CreateBudgetUseCase,
     private readonly updateBudgetUseCase: UpdateBudgetUseCase,
-    private readonly updateBudgetStatusUseCase: UpdateBudgetStatusUseCase,
+    private readonly approveBudgetUseCase: ApproveBudgetUseCase,
     private readonly deleteBudgetUseCase: DeleteBudgetUseCase,
     private readonly exportBudgetUseCase: ExportBudgetUseCase,
     @Inject("IBudgetRepository")
@@ -104,13 +104,13 @@ export class BudgetsController {
       .send(this.serializeBudget(result.getValue(), user));
   }
 
-  @Patch(":id/status")
-  async updateStatus(
+  @Patch(":id/approve")
+  async approve(
     @Param("id") id: string,
     @User() user: JwtPayload,
     @Res() res: FastifyReply,
   ) {
-    const result = await this.updateBudgetStatusUseCase.execute({
+    const result = await this.approveBudgetUseCase.execute({
       id,
       updatedBy: user.name,
     });
