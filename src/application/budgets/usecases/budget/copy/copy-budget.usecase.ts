@@ -52,7 +52,7 @@ export class CopyBudgetUseCase {
       folderId: budget.folderId,
       taxNf: budget.taxNf,
       createdBy: parsed.data.createdBy,
-      version: 1,
+      version: 0,
       status: budget.status,
       parentId: null,
       jobDescription: budget.jobDescription,
