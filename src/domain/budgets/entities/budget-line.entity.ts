@@ -56,7 +56,11 @@ export class BudgetLine {
     supplier?: string | null;
     supplierValue?: number;
     percentBv?: number;
+    percentNfBv?: number;
+    bvValue?: number;
     percentNfOver?: number;
+    overValue?: number;
+    realValue?: number;
   }): Result<BudgetLine> {
     if (!input.budgetId?.trim())
       return Result.failure("Orçamento é obrigatório");
@@ -94,8 +98,16 @@ export class BudgetLine {
       return Result.failure("Valor do fornecedor inválido");
     if (input.percentBv && input.percentBv < 0)
       return Result.failure("Percentual de BV inválido");
+    if (input.percentNfBv && input.percentNfBv < 0)
+      return Result.failure("Percentual de NF BV inválido");
+    if (input.bvValue && input.bvValue < 0)
+      return Result.failure("Valor de BV inválido");
     if (input.percentNfOver && input.percentNfOver < 0)
       return Result.failure("Percentual de NF over inválido");
+    if (input.overValue && input.overValue < 0)
+      return Result.failure("Valor de over inválido");
+    if (input.realValue && input.realValue < 0)
+      return Result.failure("Valor real inválido");
 
     const line = new BudgetLine(
       "",
@@ -121,11 +133,11 @@ export class BudgetLine {
       input.supplier?.trim() ?? null,
       input.supplierValue ?? null,
       input.percentBv ?? null,
-      null,
-      null,
+      input.percentNfBv ?? null,
+      input.bvValue ?? null,
       input.percentNfOver ?? null,
-      null,
-      null,
+      input.overValue ?? null,
+      input.realValue ?? null,
     );
 
     return line.computeDerivedValues();
@@ -215,7 +227,11 @@ export class BudgetLine {
     supplier?: string | null;
     supplierValue?: number;
     percentBv?: number;
+    percentNfBv?: number;
+    bvValue?: number;
     percentNfOver?: number;
+    overValue?: number;
+    realValue?: number;
   }): Result<BudgetLine> {
     if (input.categoryCode !== undefined)
       this.categoryCode = input.categoryCode;
@@ -249,8 +265,12 @@ export class BudgetLine {
     if (input.supplierValue !== undefined)
       this.supplierValue = input.supplierValue;
     if (input.percentBv !== undefined) this.percentBv = input.percentBv;
+    if (input.percentNfBv !== undefined) this.percentNfBv = input.percentNfBv;
+    if (input.bvValue !== undefined) this.bvValue = input.bvValue;
     if (input.percentNfOver !== undefined)
       this.percentNfOver = input.percentNfOver;
+    if (input.overValue !== undefined) this.overValue = input.overValue;
+    if (input.realValue !== undefined) this.realValue = input.realValue;
 
     return this.computeDerivedValues();
   }

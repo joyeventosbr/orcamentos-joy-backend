@@ -5,6 +5,7 @@ import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
+import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 import { Result } from "@shared/result";
 import { ZError } from "@utils/index";
 import { copyBudgetSchema } from "./copy-budget.dto";
@@ -33,6 +34,10 @@ export class CopyBudgetUseCase {
 
     const budget = current.getValue();
     if (!budget) return Result.failure("Orçamento não encontrado");
+
+    if (this.isApprovedStatus(budget.status)) {
+      return Result.failure("Orçamento aprovado não pode ser duplicado");
+    }
 
     const linesResult = await this.budgetLineRepository.getAllByBudgetId(
       budget.id,
@@ -103,7 +108,11 @@ export class CopyBudgetUseCase {
         supplier: line.supplier,
         supplierValue: line.supplierValue ?? undefined,
         percentBv: line.percentBv ?? undefined,
+        percentNfBv: line.percentNfBv ?? undefined,
+        bvValue: line.bvValue ?? undefined,
         percentNfOver: line.percentNfOver ?? undefined,
+        overValue: line.overValue ?? undefined,
+        realValue: line.realValue ?? undefined,
       }),
     );
     const invalidCopiedLine = copiedLines.find((line) => line.isFailure());
@@ -119,5 +128,12 @@ export class CopyBudgetUseCase {
     }
 
     return Result.success(createdCopy.getValue());
+  }
+
+  private isApprovedStatus(status: BudgetStatus): boolean {
+    return [
+      BudgetStatus.APROVADO_CONCORRENCIA,
+      BudgetStatus.APROVADO_PRODUCAO,
+    ].includes(status);
   }
 }
