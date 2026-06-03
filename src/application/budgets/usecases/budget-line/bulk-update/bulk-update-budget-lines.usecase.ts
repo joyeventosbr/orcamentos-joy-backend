@@ -33,6 +33,15 @@ export class BulkUpdateBudgetLinesUseCase {
       return Result.failure(duplicateIdsResult.getError());
     }
 
+    const budgetResult = await this.budgetRepository.getById(parsed.data.id);
+    if (budgetResult.isFailure())
+      return Result.failure(budgetResult.getError());
+
+    const budget = budgetResult.getValue();
+    if (!budget) return Result.failure("Orçamento não encontrado");
+    if (!budget.isEditable)
+      return Result.failure("Orçamento não pode ser editado");
+
     const linesToCreate: BudgetLine[] = [];
     for (const line of parsed.data.create ?? []) {
       if (line.budgetId !== parsed.data.id) {
@@ -112,14 +121,7 @@ export class BulkUpdateBudgetLinesUseCase {
       deleteIds.length > 0;
     if (!hasChanges) return saved;
 
-    const budgetId = parsed.data.id;
     const updatedBy = parsed.data.updatedBy;
-    const budgetResult = await this.budgetRepository.getById(budgetId);
-    if (budgetResult.isFailure())
-      return Result.failure(budgetResult.getError());
-
-    const budget = budgetResult.getValue();
-    if (!budget) return Result.failure("Orçamento não encontrado");
 
     const updated = budget.markUpdatedBy(updatedBy);
     if (updated.isFailure()) return Result.failure(updated.getError());

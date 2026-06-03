@@ -10,6 +10,8 @@ export class Budget {
     public folderId: string,
     public taxNf: number,
     public status: BudgetStatus,
+    public isEditable: boolean,
+    public parentId: string | null,
     public createdBy: string,
     public updatedBy: string | null,
     public createdAt: Date,
@@ -26,6 +28,12 @@ export class Budget {
     folderId: string;
     taxNf: number;
     createdBy: string;
+    status?: BudgetStatus;
+    parentId?: string | null;
+    jobDescription?: string;
+    location?: string;
+    eventDate?: string;
+    paymentTerm?: PaymentTerm;
   }): Result<Budget> {
     if (!input.name?.trim())
       return Result.failure("Nome do orçamento é obrigatório");
@@ -38,6 +46,11 @@ export class Budget {
     if (!input.createdBy?.trim())
       return Result.failure("Usuário de criação é obrigatório");
 
+    const status = input.status ?? BudgetStatus.CONCORRENCIA;
+    if (!Object.values(BudgetStatus).includes(status)) {
+      return Result.failure("Status do orçamento inválido");
+    }
+
     return Result.success(
       new Budget(
         "",
@@ -45,10 +58,16 @@ export class Budget {
         input.customerId.trim(),
         input.folderId.trim(),
         input.taxNf,
-        BudgetStatus.CONCORRENCIA,
+        status,
+        Budget.isEditableByStatus(status),
+        input.parentId?.trim() ?? null,
         input.createdBy.trim(),
         null,
         new Date(),
+        input.jobDescription?.trim(),
+        input.location?.trim(),
+        input.eventDate?.trim(),
+        input.paymentTerm,
       ),
     );
   }
@@ -60,6 +79,8 @@ export class Budget {
     folderId: string;
     taxNf: number;
     status: BudgetStatus;
+    isEditable: boolean;
+    parentId: string | null;
     createdBy: string;
     updatedBy: string | null;
     createdAt: Date;
@@ -76,6 +97,8 @@ export class Budget {
       input.folderId,
       input.taxNf,
       input.status,
+      input.isEditable,
+      input.parentId,
       input.createdBy,
       input.updatedBy,
       input.createdAt,
@@ -99,6 +122,9 @@ export class Budget {
   }): Result<Budget> {
     if (!input.updatedBy?.trim())
       return Result.failure("Usuário de atualização é obrigatório");
+    if (!this.isEditable) {
+      return Result.failure("Orçamento não pode ser editado");
+    }
 
     if (input.name !== undefined) {
       if (!input.name.trim()) {
@@ -146,24 +172,6 @@ export class Budget {
     return this.markUpdatedBy(input.updatedBy);
   }
 
-  updateStatus(status: BudgetStatus, updatedBy: string): Result<Budget> {
-    if (!updatedBy?.trim())
-      return Result.failure("Usuário de atualização é obrigatório");
-
-    if (!Object.values(BudgetStatus).includes(status)) {
-      return Result.failure("Status do orçamento inválido");
-    }
-
-    if (status < this.status) {
-      return Result.failure(
-        "Status do orçamento não pode voltar para uma etapa anterior",
-      );
-    }
-
-    this.status = status;
-    return this.markUpdatedBy(updatedBy);
-  }
-
   markUpdatedBy(updatedBy: string): Result<Budget> {
     if (!updatedBy?.trim()) {
       return Result.failure("Usuário de atualização é obrigatório");
@@ -172,6 +180,13 @@ export class Budget {
     this.updatedBy = updatedBy.trim();
     this.updatedAt = new Date();
 
-    return Result.success();
+    return Result.success(this);
+  }
+
+  private static isEditableByStatus(status: BudgetStatus): boolean {
+    return ![
+      BudgetStatus.APROVADO_CONCORRENCIA,
+      BudgetStatus.APROVADO_PRODUCAO,
+    ].includes(status);
   }
 }

@@ -11,6 +11,8 @@ export class BudgetDetailRawQueryDto {
   budget_folder_name!: string;
   budget_tax_nf!: number;
   budget_status!: BudgetStatus;
+  budget_is_editable!: boolean;
+  budget_parent_id!: string | null;
   budget_created_by!: string;
   budget_updated_by!: string | null;
   budget_job_description!: string | null;

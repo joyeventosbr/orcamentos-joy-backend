@@ -1,12 +1,12 @@
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
 import { z } from "zod";
 
-export const updateBudgetLineDataSchema = z.object({
-  id: z.string().trim().min(1),
-  categoryCode: z.string().trim().min(1).optional(),
+export const bulkCreateBudgetLineSchema = z.object({
+  budgetId: z.string().trim().min(1),
+  categoryCode: z.string().trim().min(1),
   parentId: z.string().trim().optional().nullable(),
-  order: z.number().int().nonnegative().optional(),
-  name: z.string().trim().min(1).optional(),
+  order: z.number().int().nonnegative(),
+  name: z.string().trim().min(1),
   description: z.string().optional(),
   billingType: z.nativeEnum(BillingType).optional().nullable(),
   quantity: z.number().nonnegative().optional(),
@@ -27,8 +27,6 @@ export const updateBudgetLineDataSchema = z.object({
   percentNfOver: z.number().nonnegative().optional(),
 });
 
-export const updateBudgetLineSchema = updateBudgetLineDataSchema.extend({
-  updatedBy: z.string().trim().min(1),
-});
-
-export type UpdateBudgetLineDto = z.infer<typeof updateBudgetLineSchema>;
+export type BulkCreateBudgetLineDto = z.infer<
+  typeof bulkCreateBudgetLineSchema
+>;

@@ -8,7 +8,6 @@ import { Result } from "@shared/result";
 import { Repository } from "typeorm";
 import { BudgetSchema } from "@infra/database/typeorm/schemas/budget.schema";
 import { BudgetMapper } from "@infra/database/mappers/budget.mapper";
-import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
 import { BudgetDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-detail-response.dto";
 import { BudgetLineDetailResponseDto } from "@domain/budgets/dtos/budget-detail/budget-line-detail-response.dto";
 import { BillingType } from "@domain/budgets/enums/billing-type.enum";
@@ -27,26 +26,12 @@ export class BudgetRepository implements IBudgetRepository {
 
   async create(data: Budget): Promise<Result<Budget>> {
     try {
-      const saved = await this.budgetSchemaRepository.manager.transaction(
-        async (manager) => {
-          const budget = await manager.getRepository(BudgetSchema).save({
-            ...BudgetMapper.toSchema(data),
-            createdAt: data.createdAt,
-          });
+      const saved = await this.budgetSchemaRepository.save({
+        ...BudgetMapper.toSchema(data),
+        createdAt: data.createdAt,
+      });
 
-          await manager.getRepository(FolderBudgetSchema).save({
-            folderId: data.folderId,
-            budgetId: budget.id,
-          });
-
-          return budget;
-        },
-      );
-
-      const createdBudget = await this.getBudget(saved.id);
-      return Result.success(
-        createdBudget ?? BudgetMapper.toEntity(saved, data.folderId),
-      );
+      return Result.success(BudgetMapper.toEntity(saved, data.folderId));
     } catch (error) {
       return Result.failure("Falha ao criar orçamento, erro: " + error);
     }
@@ -75,28 +60,6 @@ export class BudgetRepository implements IBudgetRepository {
       return Result.success(updated);
     } catch (error) {
       return Result.failure("Falha ao atualizar orçamento, erro: " + error);
-    }
-  }
-
-  async updateStatus(data: Budget): Promise<Result<Budget>> {
-    try {
-      await this.budgetSchemaRepository.update(
-        { id: data.id },
-        {
-          status: data.status,
-          updatedBy: data.updatedBy,
-          updatedAt: data.updatedAt ?? new Date(),
-        },
-      );
-
-      const updated = await this.getBudget(data.id);
-      if (!updated) return Result.failure("Orçamento não encontrado");
-
-      return Result.success(updated);
-    } catch (error) {
-      return Result.failure(
-        "Falha ao atualizar status do orçamento, erro: " + error,
-      );
     }
   }
 
@@ -165,6 +128,8 @@ export class BudgetRepository implements IBudgetRepository {
           'folder.name AS "budget_folder_name"',
           'budget.tax_nf AS "budget_tax_nf"',
           'budget.status AS "budget_status"',
+          'budget.is_editable AS "budget_is_editable"',
+          'budget.parent_id AS "budget_parent_id"',
           'budget.created_by AS "budget_created_by"',
           'budget.updated_by AS "budget_updated_by"',
           'budget.job_description AS "budget_job_description"',
@@ -220,6 +185,8 @@ export class BudgetRepository implements IBudgetRepository {
         folderName: first.budget_folder_name,
         taxNf: first.budget_tax_nf,
         status: this.toBudgetStatus(first.budget_status),
+        isEditable: first.budget_is_editable,
+        parentId: first.budget_parent_id,
         createdBy: first.budget_created_by,
         updatedBy: first.budget_updated_by,
         jobDescription: first.budget_job_description ?? undefined,

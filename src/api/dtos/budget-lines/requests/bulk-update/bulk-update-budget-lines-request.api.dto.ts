@@ -4,7 +4,7 @@ import { BulkUpdateBudgetLineUpdateItemRequestApiDto } from "./bulk-update-budge
 
 export class BulkUpdateBudgetLinesRequestApiDto {
   @ApiProperty()
-  budgetId!: string;
+  id!: string;
 
   @ApiPropertyOptional({ type: [CreateBudgetLineRequestApiDto] })
   create?: CreateBudgetLineRequestApiDto[];

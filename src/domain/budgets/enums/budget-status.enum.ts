@@ -1,5 +1,6 @@
 export enum BudgetStatus {
   CONCORRENCIA = 1,
-  APROVADO = 2,
+  APROVADO_CONCORRENCIA = 2,
   PRODUCAO = 3,
+  APROVADO_PRODUCAO = 4,
 }

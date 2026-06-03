@@ -1,10 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Result } from "@shared/result";
 import { Budget } from "@domain/budgets/entities/budget.entity";
+import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
+import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
 import type { IFolderRepository } from "@domain/folders/repositories/i-folder-repository";
 import type { ISettingRepository } from "@domain/settings/repositories/i-setting-repository";
+import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
 import { createBudgetSchema } from "./create-budget.dto";
 import { ZError } from "@utils/index";
 import { DefaultBudgetLinesFactory } from "@application/budgets/factories/default-budget-lines.factory";
@@ -16,6 +19,8 @@ export class CreateBudgetUseCase {
     private readonly budgetRepository: IBudgetRepository,
     @Inject("IBudgetLineRepository")
     private readonly budgetLineRepository: IBudgetLineRepository,
+    @Inject("IBudgetRelationRepository")
+    private readonly budgetRelationRepository: IBudgetRelationRepository,
     @Inject("IFolderRepository")
     private readonly folderRepository: IFolderRepository,
     @Inject("ISettingRepository")
@@ -62,6 +67,7 @@ export class CreateBudgetUseCase {
       folderId: parsed.data.folderId,
       taxNf,
       createdBy: parsed.data.createdBy,
+      status: BudgetStatus.CONCORRENCIA,
     });
     if (budgetResult.isFailure()) {
       return Result.failure(budgetResult.getError());
@@ -75,6 +81,22 @@ export class CreateBudgetUseCase {
     }
 
     const budget = createdBudget.getValue();
+    const folderBudget = FolderBudget.create({
+      folderId: parsed.data.folderId,
+      budgetId: budget.id,
+    });
+    if (folderBudget.isFailure()) {
+      return Result.failure(folderBudget.getError());
+    }
+
+    const linkedFolderBudget =
+      await this.budgetRelationRepository.createFolderBudget(
+        folderBudget.getValue(),
+      );
+    if (linkedFolderBudget.isFailure()) {
+      return Result.failure(linkedFolderBudget.getError());
+    }
+
     const linesResult = DefaultBudgetLinesFactory.create(budget.id);
     if (linesResult.isFailure()) {
       return Result.failure(linesResult.getError());

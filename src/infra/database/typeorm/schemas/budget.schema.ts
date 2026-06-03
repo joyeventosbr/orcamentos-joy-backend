@@ -26,6 +26,18 @@ export class BudgetSchema {
   @Column({ type: "smallint", default: BudgetStatus.CONCORRENCIA })
   status!: BudgetStatus;
 
+  @Column({ name: "is_editable" })
+  isEditable!: boolean;
+
+  @Column({ name: "parent_id", nullable: true, type: "uuid" })
+  parentId!: string | null;
+
+  @ManyToOne(() => BudgetSchema, {
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "parent_id" })
+  parent!: BudgetSchema | null;
+
   @Column({ name: "created_by" })
   createdBy!: string;
 

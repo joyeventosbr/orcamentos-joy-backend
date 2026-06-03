@@ -1,24 +1,17 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpStatus,
   Inject,
   Param,
-  Post,
   Put,
   Res,
 } from "@nestjs/common";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { type FastifyReply } from "fastify";
-import { CreateBudgetLineUseCase } from "@application/budgets/usecases/budget-line/create/create-budget-line.usecase";
-import { UpdateBudgetLineUseCase } from "@application/budgets/usecases/budget-line/update/update-budget-line.usecase";
-import { DeleteBudgetLineUseCase } from "@application/budgets/usecases/budget-line/delete/delete-budget-line.usecase";
 import { BulkUpdateBudgetLinesUseCase } from "@application/budgets/usecases/budget-line/bulk-update/bulk-update-budget-lines.usecase";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
-import { CreateBudgetLineRequestApiDto } from "@api/dtos/budget-lines/requests/create-budget-line-request.api.dto";
-import { UpdateBudgetLineRequestApiDto } from "@api/dtos/budget-lines/requests/update-budget-line-request.api.dto";
 import { BulkUpdateBudgetLinesRequestApiDto } from "@api/dtos/budget-lines/requests/bulk-update/bulk-update-budget-lines-request.api.dto";
 import { User } from "@infra/auth/jwt/decorators/user.decorator";
 import type { JwtPayload } from "@infra/auth/jwt/jwt.type";
@@ -27,9 +20,6 @@ import type { JwtPayload } from "@infra/auth/jwt/jwt.type";
 @Controller("budget-lines")
 export class BudgetLinesController {
   constructor(
-    private readonly createBudgetLineUseCase: CreateBudgetLineUseCase,
-    private readonly updateBudgetLineUseCase: UpdateBudgetLineUseCase,
-    private readonly deleteBudgetLineUseCase: DeleteBudgetLineUseCase,
     private readonly bulkUpdateBudgetLinesUseCase: BulkUpdateBudgetLinesUseCase,
     @Inject("IBudgetLineRepository")
     private readonly budgetLineRepository: IBudgetLineRepository,
@@ -51,27 +41,6 @@ export class BudgetLinesController {
     return res.status(HttpStatus.OK).send(result.getValue());
   }
 
-  @Post()
-  @ApiBody({ type: CreateBudgetLineRequestApiDto })
-  async create(
-    @Body() body: unknown,
-    @User() user: JwtPayload,
-    @Res() res: FastifyReply,
-  ) {
-    const result = await this.createBudgetLineUseCase.execute({
-      ...(body as object),
-      updatedBy: user.name,
-    });
-
-    if (result.isFailure()) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send({ error: result.getError() });
-    }
-
-    return res.status(HttpStatus.CREATED).send(result.getValue());
-  }
-
   @Put("bulk")
   @ApiBody({ type: BulkUpdateBudgetLinesRequestApiDto })
   async bulkUpdate(
@@ -91,48 +60,5 @@ export class BudgetLinesController {
     }
 
     return res.status(HttpStatus.OK).send(result.getValue());
-  }
-
-  @Put(":id")
-  @ApiBody({ type: UpdateBudgetLineRequestApiDto })
-  async update(
-    @Param("id") id: string,
-    @Body() body: unknown,
-    @User() user: JwtPayload,
-    @Res() res: FastifyReply,
-  ) {
-    const result = await this.updateBudgetLineUseCase.execute({
-      ...(body as object),
-      id,
-      updatedBy: user.name,
-    });
-
-    if (result.isFailure()) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send({ error: result.getError() });
-    }
-
-    return res.status(HttpStatus.OK).send(result.getValue());
-  }
-
-  @Delete(":id")
-  async delete(
-    @Param("id") id: string,
-    @User() user: JwtPayload,
-    @Res() res: FastifyReply,
-  ) {
-    const result = await this.deleteBudgetLineUseCase.execute({
-      id,
-      updatedBy: user.name,
-    });
-
-    if (result.isFailure()) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send({ error: result.getError() });
-    }
-
-    return res.status(HttpStatus.NO_CONTENT).send();
   }
 }

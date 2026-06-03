@@ -21,7 +21,6 @@ import { UpdateBudgetStatusUseCase } from "@application/budgets/usecases/budget/
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
-import { UpdateBudgetStatusRequestApiDto } from "@api/dtos/budgets/requests/update-budget-status-request.api.dto";
 import { ExportBudgetResponseApiDto } from "@api/dtos/budgets/responses/export-budget-response.api.dto";
 import { User } from "@infra/auth/jwt/decorators/user.decorator";
 import type { JwtPayload } from "@infra/auth/jwt/jwt.type";
@@ -106,16 +105,13 @@ export class BudgetsController {
   }
 
   @Patch(":id/status")
-  @ApiBody({ type: UpdateBudgetStatusRequestApiDto })
   async updateStatus(
     @Param("id") id: string,
-    @Body() body: UpdateBudgetStatusRequestApiDto,
     @User() user: JwtPayload,
     @Res() res: FastifyReply,
   ) {
     const result = await this.updateBudgetStatusUseCase.execute({
       id,
-      status: body.status,
       updatedBy: user.name,
     });
 
@@ -127,7 +123,9 @@ export class BudgetsController {
 
     return res
       .status(HttpStatus.OK)
-      .send(this.serializeBudget(result.getValue(), user));
+      .send(
+        result.getValue().map((budget) => this.serializeBudget(budget, user)),
+      );
   }
 
   @Delete(":id")

@@ -11,6 +11,8 @@ export class BudgetDetailResponseDto {
   folderName!: string;
   taxNf!: number;
   status!: BudgetStatus;
+  isEditable!: boolean;
+  parentId!: string | null;
   createdBy?: string;
   updatedBy?: string | null;
   createdAt!: Date;
