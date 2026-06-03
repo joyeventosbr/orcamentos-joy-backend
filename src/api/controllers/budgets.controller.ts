@@ -14,6 +14,7 @@ import {
 import { ApiBody, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { type FastifyReply } from "fastify";
 import { CreateBudgetUseCase } from "@application/budgets/usecases/budget/create/create-budget.usecase";
+import { CopyBudgetUseCase } from "@application/budgets/usecases/budget/copy/copy-budget.usecase";
 import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete/delete-budget.usecase";
 import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
 import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
@@ -31,6 +32,7 @@ import { Role } from "@domain/users/enums/user-role.enum";
 export class BudgetsController {
   constructor(
     private readonly createBudgetUseCase: CreateBudgetUseCase,
+    private readonly copyBudgetUseCase: CopyBudgetUseCase,
     private readonly updateBudgetUseCase: UpdateBudgetUseCase,
     private readonly approveBudgetUseCase: ApproveBudgetUseCase,
     private readonly deleteBudgetUseCase: DeleteBudgetUseCase,
@@ -65,6 +67,28 @@ export class BudgetsController {
   ) {
     const result = await this.createBudgetUseCase.execute({
       ...(body as object),
+      createdBy: user.name,
+    });
+
+    if (result.isFailure()) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ error: result.getError() });
+    }
+
+    return res
+      .status(HttpStatus.CREATED)
+      .send(this.serializeBudget(result.getValue(), user));
+  }
+
+  @Post(":id/copy")
+  async copy(
+    @Param("id") id: string,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.copyBudgetUseCase.execute({
+      id,
       createdBy: user.name,
     });
 
