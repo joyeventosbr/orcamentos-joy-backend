@@ -42,7 +42,23 @@ export class ApproveBudgetUseCase {
       return Result.failure(maxVersion.getError());
     }
 
-    const nextVersion = maxVersion.getValue() + 1;
+    let versionBase = maxVersion.getValue();
+
+    if (budget.status === BudgetStatus.PRODUCAO && budget.parentId) {
+      const parentResult = await this.budgetRepository.getById(budget.parentId);
+      if (parentResult.isFailure()) {
+        return Result.failure(parentResult.getError());
+      }
+
+      const parentBudget = parentResult.getValue();
+      if (!parentBudget) {
+        return Result.failure("Orçamento pai não encontrado");
+      }
+
+      versionBase = Math.max(versionBase, parentBudget.version);
+    }
+
+    const nextVersion = versionBase + 1;
     const versionedName =
       nextVersion > 1
         ? `${this.getBaseName(budget.name)} v${nextVersion}`
