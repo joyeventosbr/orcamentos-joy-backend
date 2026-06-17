@@ -54,7 +54,7 @@ export class CopyBudgetUseCase {
       createdBy: parsed.data.createdBy,
       version: 0,
       status: budget.status,
-      parentId: null,
+      parentId: budget.parentId,
       jobDescription: budget.jobDescription,
       location: budget.location,
       eventDate: budget.eventDate,
