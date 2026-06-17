@@ -7,6 +7,9 @@ import {
 import helmet from "@fastify/helmet";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import multipart from "@fastify/multipart";
+import { config } from "dotenv";
+
+config();
 
 const port = Number(process.env.PORT) || 10000;
 const corsOrigin = process.env.CORS_ORIGIN ?? "*";
