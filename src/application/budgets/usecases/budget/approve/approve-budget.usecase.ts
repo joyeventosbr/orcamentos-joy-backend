@@ -61,7 +61,7 @@ export class ApproveBudgetUseCase {
     const nextVersion = versionBase + 1;
     const versionedName =
       nextVersion > 1
-        ? `${this.getBaseName(budget.name)} v${nextVersion}`
+        ? `${this.getBaseName(budget.name)}`
         : this.getBaseName(budget.name);
 
     const linesResult = await this.budgetLineRepository.getAllByBudgetId(
