@@ -19,11 +19,13 @@ import { DeleteBudgetUseCase } from "@application/budgets/usecases/budget/delete
 import { ExportBudgetUseCase } from "@application/budgets/usecases/budget/export/export-budget.usecase";
 import { UpdateBudgetUseCase } from "@application/budgets/usecases/budget/update/update-budget.usecase";
 import { ApproveBudgetUseCase } from "@application/budgets/usecases/budget/approve/approve-budget.usecase";
+import { ApproveBudgetToProductionUseCase } from "@application/budgets/usecases/budget/approve-to-production/approve-budget-to-production.usecase";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import { CreateBudgetRequestApiDto } from "@api/dtos/budgets/requests/create-budget-request.api.dto";
 import { UpdateBudgetRequestApiDto } from "@api/dtos/budgets/requests/update-budget-request.api.dto";
 import { ExportBudgetResponseApiDto } from "@api/dtos/budgets/responses/export-budget-response.api.dto";
 import { User } from "@infra/auth/jwt/decorators/user.decorator";
+import { Admin } from "@infra/auth/jwt/decorators/admin.decorator";
 import type { JwtPayload } from "@infra/auth/jwt/jwt.type";
 import { Role } from "@domain/users/enums/user-role.enum";
 
@@ -35,6 +37,7 @@ export class BudgetsController {
     private readonly copyBudgetUseCase: CopyBudgetUseCase,
     private readonly updateBudgetUseCase: UpdateBudgetUseCase,
     private readonly approveBudgetUseCase: ApproveBudgetUseCase,
+    private readonly approveBudgetToProductionUseCase: ApproveBudgetToProductionUseCase,
     private readonly deleteBudgetUseCase: DeleteBudgetUseCase,
     private readonly exportBudgetUseCase: ExportBudgetUseCase,
     @Inject("IBudgetRepository")
@@ -150,6 +153,29 @@ export class BudgetsController {
       .send(
         result.getValue().map((budget) => this.serializeBudget(budget, user)),
       );
+  }
+
+  @Admin()
+  @Patch(":id/approve-to-production")
+  async approveToProduction(
+    @Param("id") id: string,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.approveBudgetToProductionUseCase.execute({
+      id,
+      updatedBy: user.name,
+    });
+
+    if (result.isFailure()) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ error: result.getError() });
+    }
+
+    return res
+      .status(HttpStatus.OK)
+      .send(this.serializeBudget(result.getValue(), user));
   }
 
   @Delete(":id")
