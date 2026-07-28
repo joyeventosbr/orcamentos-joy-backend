@@ -157,6 +157,7 @@ export class BudgetLineRepository implements IBudgetLineRepository {
       percentNfOver: data.percentNfOver,
       overValue: data.overValue,
       realValue: data.realValue,
+      nfReceived: data.nfReceived,
     };
   }
 
@@ -190,6 +191,7 @@ export class BudgetLineRepository implements IBudgetLineRepository {
       percentNfOver: data.percentNfOver,
       overValue: data.overValue,
       realValue: data.realValue,
+      nfReceived: data.nfReceived,
     });
   }
 }

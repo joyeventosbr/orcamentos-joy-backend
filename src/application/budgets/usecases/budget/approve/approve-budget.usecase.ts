@@ -117,6 +117,7 @@ export class ApproveBudgetUseCase {
           supplierValue: line.supplierValue ?? undefined,
           percentBv: line.percentBv ?? undefined,
           percentNfOver: line.percentNfOver ?? undefined,
+          nfReceived: line.nfReceived,
         }),
       );
       const invalidApprovedCompetitionLine = approvedCompetitionLines.find(
@@ -201,6 +202,7 @@ export class ApproveBudgetUseCase {
           supplierValue: line.supplierValue ?? undefined,
           percentBv: line.percentBv ?? undefined,
           percentNfOver: line.percentNfOver ?? undefined,
+          nfReceived: line.nfReceived,
         }),
       );
       const invalidProductionLine = productionLines.find((line) =>
@@ -288,6 +290,7 @@ export class ApproveBudgetUseCase {
           supplierValue: line.supplierValue ?? undefined,
           percentBv: line.percentBv ?? undefined,
           percentNfOver: line.percentNfOver ?? undefined,
+          nfReceived: line.nfReceived,
         }),
       );
       const invalidApprovedProductionLine = approvedProductionLines.find(

@@ -219,6 +219,7 @@ export class BudgetRepository implements IBudgetRepository {
           'line.percent_nf_over AS "line_percent_nf_over"',
           'line.over_value AS "line_over_value"',
           'line.real_value AS "line_real_value"',
+          'line.nf_received AS "line_nf_received"',
         ])
         .where("budget.id = :id", { id })
         .orderBy("line.category_code", "ASC")
@@ -366,6 +367,7 @@ export class BudgetRepository implements IBudgetRepository {
       percentNfOver: row.line_percent_nf_over,
       overValue: row.line_over_value,
       realValue: row.line_real_value,
+      nfReceived: row.line_nf_received ?? false,
     };
   }
 

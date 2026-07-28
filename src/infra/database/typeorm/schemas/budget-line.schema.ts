@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { BudgetSchema } from "./budget.schema";
 import { CategorySchema } from "./category.schema";
 
@@ -107,4 +113,7 @@ export class BudgetLineSchema {
 
   @Column({ name: "real_value", type: "float", nullable: true })
   realValue!: number | null;
+
+  @Column({ name: "nf_received", default: false })
+  nfReceived!: boolean;
 }

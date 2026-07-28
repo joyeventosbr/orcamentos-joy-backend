@@ -70,4 +70,7 @@ export class CreateBudgetLineRequestApiDto {
 
   @ApiPropertyOptional()
   percentNfOver?: number;
+
+  @ApiPropertyOptional()
+  nfReceived?: boolean;
 }

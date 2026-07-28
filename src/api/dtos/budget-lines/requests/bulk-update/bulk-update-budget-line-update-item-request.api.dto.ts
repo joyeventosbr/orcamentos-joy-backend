@@ -70,4 +70,7 @@ export class BulkUpdateBudgetLineUpdateItemRequestApiDto {
 
   @ApiPropertyOptional()
   percentNfOver?: number;
+
+  @ApiPropertyOptional()
+  nfReceived?: boolean;
 }

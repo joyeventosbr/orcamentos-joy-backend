@@ -66,6 +66,7 @@ export class ExportBudgetUseCase {
       "percentualNfOver",
       "valorOver",
       "valorReal",
+      "nfRecebida",
     ].join(",");
 
     const lines = linesResult
@@ -101,6 +102,7 @@ export class ExportBudgetUseCase {
           line.percentNfOver ?? "",
           line.overValue ?? "",
           line.realValue ?? "",
+          line.nfReceived,
         ]
           .map((value) => `"${String(value).replaceAll('"', '""')}"`)
           .join(","),

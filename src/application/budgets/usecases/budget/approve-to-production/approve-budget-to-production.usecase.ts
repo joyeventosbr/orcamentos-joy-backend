@@ -135,6 +135,7 @@ export class ApproveBudgetToProductionUseCase {
         percentNfBv: line.percentNfBv ?? undefined,
         bvValue: line.bvValue ?? undefined,
         percentNfOver: line.percentNfOver ?? undefined,
+        nfReceived: line.nfReceived,
         overValue: line.overValue ?? undefined,
         realValue: line.realValue ?? undefined,
       }),
