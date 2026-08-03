@@ -71,4 +71,13 @@ export class UserRepository implements IUserRepository {
       return Result.failure("Falha ao listar usuários, erro: " + error);
     }
   }
+
+  async delete(id: string): Promise<Result<void>> {
+    try {
+      await this.userSchema.delete({ id });
+      return Result.success(undefined);
+    } catch (error) {
+      return Result.failure("Falha ao remover usuário, erro: " + error);
+    }
+  }
 }

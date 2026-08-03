@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Inject,
+  Param,
   Post,
   Res,
 } from "@nestjs/common";
@@ -17,8 +19,11 @@ import {
 } from "@nestjs/swagger";
 import { RegisterUserUseCase } from "@application/users/usecases/register/register-user.usecase";
 import { LoginUserUseCase } from "@application/users/usecases/login/login-user.usecase";
+import { DeleteUserUseCase } from "@application/users/usecases/delete/delete-user.usecase";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 import { Admin } from "@infra/auth/jwt/decorators/admin.decorator";
+import { User } from "@infra/auth/jwt/decorators/user.decorator";
+import type { JwtPayload } from "@infra/auth/jwt/jwt.type";
 import { RegisterAdminUseCase } from "@application/users/usecases/register-admin/register-admin.usecase";
 import { AuthResponseApiDto } from "@api/dtos/auth/responses/auth-response.api.dto";
 import { LoginRequestApiDto } from "@api/dtos/auth/requests/login-request.api.dto";
@@ -35,6 +40,7 @@ export class AuthController {
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly registerAdminUseCase: RegisterAdminUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
+    private readonly deleteUserUseCase: DeleteUserUseCase,
     @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
   ) {}
@@ -52,6 +58,28 @@ export class AuthController {
     }
 
     return res.status(HttpStatus.OK).send(result.getValue());
+  }
+
+  @Admin()
+  @Delete("users/:id")
+  async deleteUser(
+    @Param("id") id: string,
+    @User() user: JwtPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.deleteUserUseCase.execute({
+      id,
+      requesterId: user.sub,
+      requesterRole: user.role,
+    });
+
+    if (result.isFailure()) {
+      return res.status(HttpStatus.BAD_REQUEST).send({
+        error: result.getError(),
+      });
+    }
+
+    return res.status(HttpStatus.NO_CONTENT).send();
   }
 
   @Admin()
