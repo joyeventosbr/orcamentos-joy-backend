@@ -3,6 +3,7 @@ import { InfraModule } from "@infra/infra.module";
 import { RegisterUserUseCase } from "./users/usecases/register/register-user.usecase";
 import { LoginUserUseCase } from "./users/usecases/login/login-user.usecase";
 import { RegisterAdminUseCase } from "./users/usecases/register-admin/register-admin.usecase";
+import { DeleteUserUseCase } from "./users/usecases/delete/delete-user.usecase";
 import { CreateBudgetUseCase } from "./budgets/usecases/budget/create/create-budget.usecase";
 import { CopyBudgetUseCase } from "./budgets/usecases/budget/copy/copy-budget.usecase";
 import { UpdateBudgetUseCase } from "./budgets/usecases/budget/update/update-budget.usecase";
@@ -30,6 +31,7 @@ import { DeleteSettingUseCase } from "./settings/usecases/delete/delete-setting.
     RegisterUserUseCase,
     RegisterAdminUseCase,
     LoginUserUseCase,
+    DeleteUserUseCase,
     CreateBudgetUseCase,
     CopyBudgetUseCase,
     UpdateBudgetUseCase,
@@ -55,6 +57,7 @@ import { DeleteSettingUseCase } from "./settings/usecases/delete/delete-setting.
     RegisterUserUseCase,
     RegisterAdminUseCase,
     LoginUserUseCase,
+    DeleteUserUseCase,
     CreateBudgetUseCase,
     CopyBudgetUseCase,
     UpdateBudgetUseCase,
