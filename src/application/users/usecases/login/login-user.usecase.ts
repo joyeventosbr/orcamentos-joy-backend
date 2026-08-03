@@ -57,7 +57,7 @@ export class LoginUserUseCase {
       name: user.name,
       email: user.email,
       role: user.role,
-      funcao: user.funcao,
+      roleDescription: user.roleDescription,
     });
 
     return Result.success({
