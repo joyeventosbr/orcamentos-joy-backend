@@ -19,6 +19,7 @@ import type { IFolderRepository } from "@domain/folders/repositories/i-folder-re
 import { CreateFolderRequestApiDto } from "@api/dtos/folders/requests/create-folder-request.api.dto";
 import { UpdateFolderRequestApiDto } from "@api/dtos/folders/requests/update-folder-request.api.dto";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";
+import { Admin } from "@infra/auth/jwt/decorators/admin.decorator";
 
 @ApiTags("folders")
 @Controller("folders")
@@ -80,7 +81,7 @@ export class FoldersController {
   }
 
   @Delete(":id")
-  @Public()
+  @Admin()
   async delete(@Param("id") id: string, @Res() res: FastifyReply) {
     const result = await this.deleteFolderUseCase.execute({ id });
     if (result.isFailure()) {
