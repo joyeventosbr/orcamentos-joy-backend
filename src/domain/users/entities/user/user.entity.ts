@@ -9,7 +9,7 @@ export class User {
     public password: string,
     public role: Role,
     public createdAt: Date,
-    public funcao?: string,
+    public roleDescription?: string,
     public updatedAt?: Date,
   ) {}
 
@@ -18,13 +18,13 @@ export class User {
     email,
     password,
     role,
-    funcao,
+    roleDescription,
   }: {
     name: string;
     email: string;
     password: string;
     role: Role;
-    funcao?: string;
+    roleDescription?: string;
   }): Result<User> {
     if (!name?.trim()) {
       return Result.failure("Nome é obrigatório");
@@ -42,7 +42,7 @@ export class User {
       return Result.failure("Cargo é obrigatório");
     }
 
-    if (role === Role.CUSTOMER && !funcao?.trim()) {
+    if (role === Role.CUSTOMER && !roleDescription?.trim()) {
       return Result.failure("Função é obrigatória");
     }
 
@@ -54,7 +54,7 @@ export class User {
         password,
         role,
         new Date(),
-        funcao?.trim(),
+        roleDescription?.trim(),
       ),
     );
   }
@@ -66,7 +66,7 @@ export class User {
     password: string;
     role: Role;
     createdAt: Date;
-    funcao?: string;
+    roleDescription?: string;
     updatedAt?: Date;
   }): User {
     return new User(
@@ -76,7 +76,7 @@ export class User {
       userData.password,
       userData.role,
       userData.createdAt,
-      userData.funcao,
+      userData.roleDescription,
       userData.updatedAt,
     );
   }

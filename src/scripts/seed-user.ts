@@ -11,7 +11,7 @@ type SeedArgs = {
   name: string;
   email: string;
   password: string;
-  funcao?: string;
+  roleDescription?: string;
   passwordGenerated: boolean;
 };
 
@@ -49,7 +49,9 @@ function parseArgs(argv: string[]): SeedArgs {
   const envPassword = process.env.USER_PASSWORD?.trim();
   const cliPassword = map.get("password")?.trim();
   const password = envPassword || cliPassword || generateStrongPassword();
-  const funcao = (process.env.USER_FUNCAO ?? map.get("funcao"))?.trim();
+  const roleDescription = (
+    process.env.USER_ROLE_DESCRIPTION ?? map.get("roleDescription")
+  )?.trim();
   const passwordGenerated = !envPassword && !cliPassword;
 
   if (!email) {
@@ -62,7 +64,7 @@ function parseArgs(argv: string[]): SeedArgs {
     name,
     email,
     password,
-    funcao,
+    roleDescription,
     passwordGenerated,
   };
 }
@@ -93,7 +95,7 @@ async function run() {
     role: Role.CUSTOMER,
     createdAt: new Date(),
     updatedAt: new Date(),
-    funcao: input.funcao,
+    roleDescription: input.roleDescription,
   });
 
   await usersRepository.save(user);

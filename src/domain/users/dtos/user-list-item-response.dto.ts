@@ -5,7 +5,7 @@ export class UserListItemResponseDto {
   name!: string;
   email!: string;
   role!: Role;
-  funcao?: string;
+  roleDescription?: string;
   createdAt!: Date;
   updatedAt?: Date;
 }

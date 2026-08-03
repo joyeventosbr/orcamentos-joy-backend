@@ -60,7 +60,7 @@ export class RegisterUserUseCase {
       email: resultData.data.email,
       password: await this.passwordHasherService.hash(resultData.data.password),
       role: Role.CUSTOMER,
-      funcao: resultData.data.funcao,
+      roleDescription: resultData.data.roleDescription,
     });
 
     if (newUser.isFailure()) {
@@ -79,7 +79,7 @@ export class RegisterUserUseCase {
       email: user.email,
       role: user.role,
 
-      funcao: user.funcao,
+      roleDescription: user.roleDescription,
     });
 
     return Result.success({

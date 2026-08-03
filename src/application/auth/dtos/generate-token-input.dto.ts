@@ -5,5 +5,5 @@ export type GenerateTokenInputDto = {
   name: string;
   email: string;
   role: Role;
-  funcao?: string;
+  roleDescription?: string;
 };

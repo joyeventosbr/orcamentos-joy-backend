@@ -11,7 +11,7 @@ export class UserMapper {
       password: schema.password,
       role: schema.role,
       createdAt: schema.createdAt,
-      funcao: schema.funcao,
+      roleDescription: schema.roleDescription,
       updatedAt: schema.updatedAt,
     });
   }
@@ -24,7 +24,7 @@ export class UserMapper {
     schema.password = entity.password;
     schema.role = entity.role;
     schema.createdAt = entity.createdAt;
-    schema.funcao = entity.funcao;
+    schema.roleDescription = entity.roleDescription;
     schema.updatedAt = entity.updatedAt;
 
     return schema;
@@ -36,7 +36,7 @@ export class UserMapper {
       name: schema.name,
       email: schema.email,
       role: schema.role,
-      funcao: schema.funcao,
+      roleDescription: schema.roleDescription,
       createdAt: schema.createdAt,
       updatedAt: schema.updatedAt,
     };
