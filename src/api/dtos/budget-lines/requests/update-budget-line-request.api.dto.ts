@@ -69,5 +69,5 @@ export class UpdateBudgetLineRequestApiDto {
   percentNfOver?: number;
 
   @ApiPropertyOptional()
-  nfReceived?: boolean;
+  nfReceived?: string | null;
 }

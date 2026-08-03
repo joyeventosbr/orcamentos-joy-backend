@@ -25,7 +25,7 @@ export const bulkCreateBudgetLineSchema = z.object({
   supplierValue: z.number().nonnegative().optional(),
   percentBv: z.number().nonnegative().optional(),
   percentNfOver: z.number().nonnegative().optional(),
-  nfReceived: z.boolean().optional(),
+  nfReceived: z.string().trim().optional().nullable(),
 });
 
 export type BulkCreateBudgetLineDto = z.infer<
