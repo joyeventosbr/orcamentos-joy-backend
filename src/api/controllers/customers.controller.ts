@@ -19,6 +19,7 @@ import type { ICustomerRepository } from "@domain/customers/repositories/i-custo
 import { CreateCustomerRequestApiDto } from "@api/dtos/customers/requests/create-customer-request.api.dto";
 import { UpdateCustomerRequestApiDto } from "@api/dtos/customers/requests/update-customer-request.api.dto";
 import { Public } from "@infra/auth/jwt/decorators/public.decorator";
+import { Admin } from "@infra/auth/jwt/decorators/admin.decorator";
 
 @ApiTags("customers")
 @Controller("customers")
@@ -80,7 +81,7 @@ export class CustomersController {
   }
 
   @Delete(":id")
-  @Public()
+  @Admin()
   async delete(@Param("id") id: string, @Res() res: FastifyReply) {
     const result = await this.deleteCustomerUseCase.execute({ id });
     if (result.isFailure()) {

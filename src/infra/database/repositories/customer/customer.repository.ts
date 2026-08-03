@@ -3,8 +3,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Customer } from "@domain/customers/entities/customer.entity";
 import type { ICustomerRepository } from "@domain/customers/repositories/i-customer-repository";
 import { Result } from "@shared/result";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { CustomerSchema } from "@infra/database/typeorm/schemas/customer.schema";
+import { BudgetSchema } from "@infra/database/typeorm/schemas/budget.schema";
+import { CustomerFolderSchema } from "@infra/database/typeorm/schemas/customer-folder.schema";
+import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
+import { FolderSchema } from "@infra/database/typeorm/schemas/folder.schema";
 
 @Injectable()
 export class CustomerRepository implements ICustomerRepository {
@@ -57,7 +61,41 @@ export class CustomerRepository implements ICustomerRepository {
 
   async delete(id: string): Promise<Result<void>> {
     try {
-      await this.customerSchemaRepository.delete({ id });
+      await this.customerSchemaRepository.manager.transaction(
+        async (manager) => {
+          const customerFolderRepository =
+            manager.getRepository(CustomerFolderSchema);
+          const folderBudgetRepository =
+            manager.getRepository(FolderBudgetSchema);
+          const budgetRepository = manager.getRepository(BudgetSchema);
+          const folderRepository = manager.getRepository(FolderSchema);
+
+          const folderRelations = await customerFolderRepository.find({
+            where: { customerId: id },
+          });
+          const folderIds = folderRelations.map(
+            (relation) => relation.folderId,
+          );
+
+          if (folderIds.length > 0) {
+            const budgetRelations = await folderBudgetRepository.find({
+              where: { folderId: In(folderIds) },
+            });
+            const budgetIds = budgetRelations.map(
+              (relation) => relation.budgetId,
+            );
+
+            if (budgetIds.length > 0) {
+              await budgetRepository.delete({ id: In(budgetIds) });
+            }
+
+            await folderRepository.delete({ id: In(folderIds) });
+          }
+
+          await budgetRepository.delete({ customerId: id });
+          await manager.getRepository(CustomerSchema).delete({ id });
+        },
+      );
       return Result.success();
     } catch (error) {
       return Result.failure("Falha ao remover cliente, erro: " + error);

@@ -5,7 +5,9 @@ import { CustomerFolder } from "@domain/folders/entities/customer-folder.entity"
 import type { IFolderRepository } from "@domain/folders/repositories/i-folder-repository";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
 import { Result } from "@shared/result";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
+import { BudgetSchema } from "@infra/database/typeorm/schemas/budget.schema";
+import { FolderBudgetSchema } from "@infra/database/typeorm/schemas/folder-budget.schema";
 import { FolderSchema } from "@infra/database/typeorm/schemas/folder.schema";
 
 @Injectable()
@@ -86,7 +88,22 @@ export class FolderRepository implements IFolderRepository {
 
   async delete(id: string): Promise<Result<void>> {
     try {
-      await this.folderSchemaRepository.delete({ id });
+      await this.folderSchemaRepository.manager.transaction(async (manager) => {
+        const folderBudgetRepository =
+          manager.getRepository(FolderBudgetSchema);
+        const budgetRepository = manager.getRepository(BudgetSchema);
+
+        const budgetRelations = await folderBudgetRepository.find({
+          where: { folderId: id },
+        });
+        const budgetIds = budgetRelations.map((relation) => relation.budgetId);
+
+        if (budgetIds.length > 0) {
+          await budgetRepository.delete({ id: In(budgetIds) });
+        }
+
+        await manager.getRepository(FolderSchema).delete({ id });
+      });
       return Result.success();
     } catch (error) {
       return Result.failure("Falha ao remover pasta, erro: " + error);
@@ -95,7 +112,9 @@ export class FolderRepository implements IFolderRepository {
 
   async getById(id: string): Promise<Result<Folder | null>> {
     try {
-      const folder = await this.folderSchemaRepository.findOne({ where: { id } });
+      const folder = await this.folderSchemaRepository.findOne({
+        where: { id },
+      });
       if (!folder) return Result.success(null);
 
       const customerIdResult =
@@ -127,7 +146,9 @@ export class FolderRepository implements IFolderRepository {
 
       for (const folder of folders) {
         const customerIdResult =
-          await this.budgetRelationRepository.getCustomerIdByFolderId(folder.id);
+          await this.budgetRelationRepository.getCustomerIdByFolderId(
+            folder.id,
+          );
         if (customerIdResult.isFailure()) {
           return Result.failure(customerIdResult.getError());
         }
