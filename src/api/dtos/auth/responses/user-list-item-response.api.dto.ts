@@ -16,7 +16,7 @@ export class UserListItemResponseApiDto extends UserListItemResponseDto {
   declare role: Role;
 
   @ApiPropertyOptional()
-  declare funcao?: string;
+  declare roleDescription?: string;
 
   @ApiProperty({ type: String, format: "date-time" })
   declare createdAt: Date;
