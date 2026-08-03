@@ -114,6 +114,6 @@ export class BudgetLineSchema {
   @Column({ name: "real_value", type: "float", nullable: true })
   realValue!: number | null;
 
-  @Column({ name: "nf_received", default: false })
-  nfReceived!: boolean;
+  @Column({ name: "nf_received", nullable: true, type: "varchar" })
+  nfReceived!: string | null;
 }
