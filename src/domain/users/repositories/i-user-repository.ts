@@ -7,4 +7,5 @@ export interface IUserRepository {
   getByEmail(email: string): Promise<Result<User | null>>;
   getById(id: string): Promise<Result<User | null>>;
   getAll(): Promise<Result<UserListItemResponseDto[]>>;
+  delete(id: string): Promise<Result<void>>;
 }
