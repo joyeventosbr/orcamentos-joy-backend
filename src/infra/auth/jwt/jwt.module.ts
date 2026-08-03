@@ -11,7 +11,7 @@ import { JwtTokenService } from "./jwt-token.service";
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: "1h" },
+      signOptions: { expiresIn: "8d" },
     }),
   ],
   providers: [
