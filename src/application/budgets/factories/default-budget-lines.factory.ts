@@ -10,7 +10,10 @@ type DefaultLineTemplate = {
 };
 
 export class DefaultBudgetLinesFactory {
-  private static resolveName(name: string, description: string): { name: string; description: string } {
+  private static resolveName(
+    name: string,
+    description: string,
+  ): { name: string; description: string } {
     const trimmedName = name.trim();
     if (trimmedName) {
       return { name: trimmedName, description: description.trim() };
@@ -21,7 +24,12 @@ export class DefaultBudgetLinesFactory {
 
   private static buildTemplates(): DefaultLineTemplate[] {
     const templates: DefaultLineTemplate[] = [];
-    const add = (categoryCode: string, name: string, description = "", billingType?: BillingType) => {
+    const add = (
+      categoryCode: string,
+      name: string,
+      description = "",
+      billingType?: BillingType,
+    ) => {
       templates.push({ categoryCode, name, description, billingType });
     };
 
@@ -146,7 +154,11 @@ export class DefaultBudgetLinesFactory {
     add("1.8", "Valet");
     add("1.8", "RSVP", "Atendimento por 30 dias");
     add("1.8", "Disparo e-mail MKT");
-    add("1.8", "Gerenciamento de Uploads", "Qdo possuir upload de arquivos, landing page simples");
+    add(
+      "1.8",
+      "Gerenciamento de Uploads",
+      "Qdo possuir upload de arquivos, landing page simples",
+    );
 
     // 1.9 - Logística
     add("1.9", "Transfer terrestre");
@@ -173,7 +185,11 @@ export class DefaultBudgetLinesFactory {
     add("2.1", "Verba de produção");
     add("2.1", "Rádios HT");
     add("2.1", "Clear com");
-    add("2.1", "Logística equipe", "Transporte equipe, evento e material evento");
+    add(
+      "2.1",
+      "Logística equipe",
+      "Transporte equipe, evento e material evento",
+    );
     add("2.1", "Visita Técnica", "aéreo, terrestre, hospedagem");
     add("2.1", "Produtor Executivo");
     add("2.1", "Produtor", "Montagem e desmontagem");
@@ -184,7 +200,11 @@ export class DefaultBudgetLinesFactory {
     add("2.1", "Diretor artístico online", "qdo evento é híbrido");
     add("2.1", "Roteiro MC", "Considerar dias de evento - R$ 4.500,00/ dia");
     add("2.1", "Conteúdo Site");
-    add("2.1", "Curadoria Site", "de acordo com cada assunto - avaliar a cada projeto");
+    add(
+      "2.1",
+      "Curadoria Site",
+      "de acordo com cada assunto - avaliar a cada projeto",
+    );
     add("2.1", "Projeto Técnico Cenográfico", "valor Ademir");
     add("2.1", "Eletricista", "avaliar necessidades ceno/técnica");
     add("2.1", "Pacote Criação", "KV");
@@ -210,7 +230,10 @@ export class DefaultBudgetLinesFactory {
 
     for (const template of this.buildTemplates()) {
       order += 1;
-      const { name, description } = this.resolveName(template.name, template.description ?? "");
+      const { name, description } = this.resolveName(
+        template.name,
+        template.description ?? "",
+      );
 
       const lineResult = BudgetLine.create({
         budgetId,
@@ -219,8 +242,8 @@ export class DefaultBudgetLinesFactory {
         name,
         description,
         billingType: template.billingType,
-        quantity: 0,
-        dailyRates: 0,
+        quantity: 1,
+        dailyRates: 1,
         unitValue: 0,
         totalValue: 0,
         upfrontPayment: 0,
