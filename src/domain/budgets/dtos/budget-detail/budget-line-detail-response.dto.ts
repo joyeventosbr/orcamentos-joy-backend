@@ -29,5 +29,5 @@ export class BudgetLineDetailResponseDto {
   percentNfOver!: number | null;
   overValue!: number | null;
   realValue!: number | null;
-  nfReceived!: boolean;
+  nfReceived!: string | null;
 }

@@ -31,7 +31,7 @@ export class BudgetLine {
     public percentNfOver: number | null,
     public overValue: number | null,
     public realValue: number | null,
-    public nfReceived: boolean,
+    public nfReceived: string | null,
   ) {}
 
   static create(input: {
@@ -62,7 +62,7 @@ export class BudgetLine {
     percentNfOver?: number;
     overValue?: number;
     realValue?: number;
-    nfReceived?: boolean;
+    nfReceived?: string | null;
   }): Result<BudgetLine> {
     if (!input.budgetId?.trim())
       return Result.failure("Orçamento é obrigatório");
@@ -140,7 +140,7 @@ export class BudgetLine {
       input.percentNfOver ?? null,
       input.overValue ?? null,
       input.realValue ?? null,
-      input.nfReceived ?? false,
+      input.nfReceived?.trim() ?? null,
     );
 
     return line.computeDerivedValues();
@@ -175,7 +175,7 @@ export class BudgetLine {
     percentNfOver: number | null;
     overValue: number | null;
     realValue: number | null;
-    nfReceived: boolean;
+    nfReceived: string | null;
   }): BudgetLine {
     return new BudgetLine(
       input.id,
@@ -237,7 +237,7 @@ export class BudgetLine {
     percentNfOver?: number;
     overValue?: number;
     realValue?: number;
-    nfReceived?: boolean;
+    nfReceived?: string | null;
   }): Result<BudgetLine> {
     if (input.categoryCode !== undefined)
       this.categoryCode = input.categoryCode;
@@ -277,7 +277,9 @@ export class BudgetLine {
       this.percentNfOver = input.percentNfOver;
     if (input.overValue !== undefined) this.overValue = input.overValue;
     if (input.realValue !== undefined) this.realValue = input.realValue;
-    if (input.nfReceived !== undefined) this.nfReceived = input.nfReceived;
+    if (input.nfReceived !== undefined) {
+      this.nfReceived = input.nfReceived?.trim() ?? null;
+    }
 
     return this.computeDerivedValues();
   }

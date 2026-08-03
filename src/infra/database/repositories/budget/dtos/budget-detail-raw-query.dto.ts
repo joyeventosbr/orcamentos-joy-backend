@@ -51,5 +51,5 @@ export class BudgetDetailRawQueryDto {
   line_percent_nf_over!: number | null;
   line_over_value!: number | null;
   line_real_value!: number | null;
-  line_nf_received!: boolean | null;
+  line_nf_received!: string | null;
 }

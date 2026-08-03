@@ -367,7 +367,7 @@ export class BudgetRepository implements IBudgetRepository {
       percentNfOver: row.line_percent_nf_over,
       overValue: row.line_over_value,
       realValue: row.line_real_value,
-      nfReceived: row.line_nf_received ?? false,
+      nfReceived: row.line_nf_received,
     };
   }
 
