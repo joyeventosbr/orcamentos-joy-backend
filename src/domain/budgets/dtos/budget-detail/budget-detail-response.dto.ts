@@ -10,6 +10,7 @@ export class BudgetDetailResponseDto {
   folderId!: string;
   folderName!: string;
   taxNf!: number;
+  projectedValue!: number;
   status!: BudgetStatus;
   isEditable!: boolean;
   isDeletable!: boolean;

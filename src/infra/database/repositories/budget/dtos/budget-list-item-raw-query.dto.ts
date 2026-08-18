@@ -7,6 +7,7 @@ export class BudgetListItemRawQueryDto {
   budget_customer_id!: string;
   budget_folder_id!: string;
   budget_tax_nf!: number;
+  budget_projected_value!: number;
   budget_status!: BudgetStatus;
   budget_is_editable!: boolean;
   budget_is_deletable!: boolean;

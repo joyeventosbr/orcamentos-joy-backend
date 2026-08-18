@@ -12,6 +12,9 @@ export class UpdateBudgetRequestApiDto {
   folderId?: string;
 
   @ApiPropertyOptional()
+  projectedValue?: number;
+
+  @ApiPropertyOptional()
   jobDescription?: string;
 
   @ApiPropertyOptional()

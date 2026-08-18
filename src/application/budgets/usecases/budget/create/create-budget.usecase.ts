@@ -66,6 +66,7 @@ export class CreateBudgetUseCase {
       customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
       taxNf,
+      projectedValue: parsed.data.projectedValue,
       createdBy: parsed.data.createdBy,
       status: BudgetStatus.CONCORRENCIA,
     });
