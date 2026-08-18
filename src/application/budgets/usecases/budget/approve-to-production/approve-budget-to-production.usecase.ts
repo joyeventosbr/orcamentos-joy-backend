@@ -73,6 +73,7 @@ export class ApproveBudgetToProductionUseCase {
       customerId: budget.customerId,
       folderId: budget.folderId,
       taxNf: budget.taxNf,
+      projectedValue: budget.projectedValue,
       createdBy: parsed.data.updatedBy,
       version: 0,
       status: BudgetStatus.PRODUCAO,

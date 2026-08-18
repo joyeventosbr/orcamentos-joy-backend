@@ -23,6 +23,9 @@ export class BudgetSchema {
   @Column({ name: "tax_nf", type: "float" })
   taxNf!: number;
 
+  @Column({ name: "projected_value", type: "float", default: 0 })
+  projectedValue!: number;
+
   @Column({ type: "smallint", default: BudgetStatus.CONCORRENCIA })
   status!: BudgetStatus;
 

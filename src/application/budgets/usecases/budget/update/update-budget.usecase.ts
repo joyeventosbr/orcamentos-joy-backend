@@ -29,6 +29,7 @@ export class UpdateBudgetUseCase {
       name: parsed.data.name,
       customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
+      projectedValue: parsed.data.projectedValue,
       jobDescription: parsed.data.jobDescription,
       location: parsed.data.location,
       eventDate: parsed.data.eventDate,
