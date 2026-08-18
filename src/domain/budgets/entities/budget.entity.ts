@@ -9,6 +9,7 @@ export class Budget {
     public customerId: string,
     public folderId: string,
     public taxNf: number,
+    public projectedValue: number,
     public status: BudgetStatus,
     public isEditable: boolean,
     public parentId: string | null,
@@ -28,6 +29,7 @@ export class Budget {
     customerId: string;
     folderId: string;
     taxNf: number;
+    projectedValue?: number;
     createdBy: string;
     version?: number;
     status?: BudgetStatus;
@@ -44,6 +46,10 @@ export class Budget {
     if (!input.folderId?.trim()) return Result.failure("Pasta é obrigatória");
     if (!Number.isFinite(input.taxNf) || input.taxNf <= 0) {
       return Result.failure("Taxa NF é obrigatória");
+    }
+    const projectedValue = input.projectedValue ?? 0;
+    if (!Number.isFinite(projectedValue) || projectedValue < 0) {
+      return Result.failure("Valor projetado inválido");
     }
     if (!input.createdBy?.trim())
       return Result.failure("Usuário de criação é obrigatório");
@@ -65,6 +71,7 @@ export class Budget {
         input.customerId.trim(),
         input.folderId.trim(),
         input.taxNf,
+        projectedValue,
         status,
         Budget.isEditableByStatus(status),
         input.parentId?.trim() ?? null,
@@ -86,6 +93,7 @@ export class Budget {
     customerId: string;
     folderId: string;
     taxNf: number;
+    projectedValue: number;
     status: BudgetStatus;
     isEditable: boolean;
     parentId: string | null;
@@ -105,6 +113,7 @@ export class Budget {
       input.customerId,
       input.folderId,
       input.taxNf,
+      input.projectedValue,
       input.status,
       input.isEditable,
       input.parentId,
@@ -124,6 +133,7 @@ export class Budget {
     name?: string;
     customerId?: string;
     folderId?: string;
+    projectedValue?: number;
     jobDescription?: string;
     location?: string;
     eventDate?: string;
@@ -152,6 +162,13 @@ export class Budget {
     if (input.folderId !== undefined) {
       if (!input.folderId.trim()) return Result.failure("Pasta é obrigatória");
       this.folderId = input.folderId.trim();
+    }
+
+    if (input.projectedValue !== undefined) {
+      if (!Number.isFinite(input.projectedValue) || input.projectedValue < 0) {
+        return Result.failure("Valor projetado inválido");
+      }
+      this.projectedValue = input.projectedValue;
     }
 
     if (input.jobDescription !== undefined) {

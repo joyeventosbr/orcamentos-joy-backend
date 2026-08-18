@@ -51,6 +51,7 @@ export class CopyBudgetUseCase {
       customerId: budget.customerId,
       folderId: budget.folderId,
       taxNf: budget.taxNf,
+      projectedValue: budget.projectedValue,
       createdBy: parsed.data.createdBy,
       version: budget.version + 1,
       status: budget.status,
