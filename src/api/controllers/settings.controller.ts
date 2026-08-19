@@ -21,7 +21,6 @@ import { UpdateSettingRequestApiDto } from "@api/dtos/settings/requests/update-s
 import { SettingErrorApiResponseDto } from "@api/dtos/settings/responses/setting-error-api-response.dto";
 import { SettingResponseDto } from "@domain/settings/dtos/setting-response.dto";
 import type { ISettingRepository } from "@domain/settings/repositories/i-setting-repository";
-import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 
 @ApiTags("settings")
 @Controller("settings")
@@ -35,7 +34,6 @@ export class SettingsController {
   ) {}
 
   @Post()
-  @Public()
   @ApiBody({ type: CreateSettingRequestApiDto })
   @ApiResponse({ status: 201, type: SettingResponseDto })
   @ApiResponse({ status: 409, type: SettingErrorApiResponseDto })
@@ -54,7 +52,6 @@ export class SettingsController {
   }
 
   @Get()
-  @Public()
   @ApiResponse({ status: 200, type: [SettingResponseDto] })
   async getAll(@Res() res: FastifyReply) {
     const result = await this.settingRepository.getAll();
@@ -74,7 +71,6 @@ export class SettingsController {
   }
 
   @Get("key/:key")
-  @Public()
   @ApiResponse({ status: 200, type: SettingResponseDto })
   @ApiResponse({ status: 404, type: SettingErrorApiResponseDto })
   async getByKey(@Param("key") key: string, @Res() res: FastifyReply) {
@@ -96,7 +92,6 @@ export class SettingsController {
   }
 
   @Get(":id")
-  @Public()
   @ApiResponse({ status: 200, type: SettingResponseDto })
   @ApiResponse({ status: 404, type: SettingErrorApiResponseDto })
   async getById(@Param("id") id: string, @Res() res: FastifyReply) {
@@ -118,7 +113,6 @@ export class SettingsController {
   }
 
   @Patch(":id")
-  @Public()
   @ApiBody({ type: UpdateSettingRequestApiDto })
   @ApiResponse({ status: 200, type: SettingResponseDto })
   @ApiResponse({ status: 404, type: SettingErrorApiResponseDto })
@@ -143,7 +137,6 @@ export class SettingsController {
   }
 
   @Delete(":id")
-  @Public()
   @ApiResponse({ status: 204 })
   @ApiResponse({ status: 404, type: SettingErrorApiResponseDto })
   async delete(@Param("id") id: string, @Res() res: FastifyReply) {

@@ -18,7 +18,6 @@ import { UpdateCustomerUseCase } from "@application/budgets/usecases/customer/up
 import type { ICustomerRepository } from "@domain/customers/repositories/i-customer-repository";
 import { CreateCustomerRequestApiDto } from "@api/dtos/customers/requests/create-customer-request.api.dto";
 import { UpdateCustomerRequestApiDto } from "@api/dtos/customers/requests/update-customer-request.api.dto";
-import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 import { Admin } from "@infra/auth/jwt/decorators/admin.decorator";
 
 @ApiTags("customers")
@@ -33,7 +32,6 @@ export class CustomersController {
   ) {}
 
   @Get()
-  @Public()
   async getAll(@Res() res: FastifyReply) {
     const result = await this.customerRepository.getAll();
     if (result.isFailure()) {
@@ -47,7 +45,6 @@ export class CustomersController {
 
   @Post()
   @ApiBody({ type: CreateCustomerRequestApiDto })
-  @Public()
   async create(@Body() body: unknown, @Res() res: FastifyReply) {
     const result = await this.createCustomerUseCase.execute(body);
     if (result.isFailure()) {
@@ -60,7 +57,6 @@ export class CustomersController {
   }
 
   @Put(":id")
-  @Public()
   @ApiBody({ type: UpdateCustomerRequestApiDto })
   async update(
     @Param("id") id: string,

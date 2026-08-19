@@ -18,7 +18,6 @@ import { UpdateFolderUseCase } from "@application/budgets/usecases/folder/update
 import type { IFolderRepository } from "@domain/folders/repositories/i-folder-repository";
 import { CreateFolderRequestApiDto } from "@api/dtos/folders/requests/create-folder-request.api.dto";
 import { UpdateFolderRequestApiDto } from "@api/dtos/folders/requests/update-folder-request.api.dto";
-import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 import { Admin } from "@infra/auth/jwt/decorators/admin.decorator";
 
 @ApiTags("folders")
@@ -33,7 +32,6 @@ export class FoldersController {
   ) {}
 
   @Get()
-  @Public()
   async getAll(@Res() res: FastifyReply) {
     const result = await this.folderRepository.getAll();
     if (result.isFailure()) {
@@ -46,7 +44,6 @@ export class FoldersController {
   }
 
   @Post()
-  @Public()
   @ApiBody({ type: CreateFolderRequestApiDto })
   async create(@Body() body: unknown, @Res() res: FastifyReply) {
     const result = await this.createFolderUseCase.execute(body);
@@ -60,7 +57,6 @@ export class FoldersController {
   }
 
   @Put(":id")
-  @Public()
   @ApiBody({ type: UpdateFolderRequestApiDto })
   async update(
     @Param("id") id: string,
