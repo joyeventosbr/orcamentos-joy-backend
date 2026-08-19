@@ -18,7 +18,6 @@ import { UpdateCategoryUseCase } from "@application/budgets/usecases/category/up
 import type { ICategoryRepository } from "@domain/budgets/repositories/i-category-repository";
 import { CreateCategoryRequestApiDto } from "@api/dtos/categories/requests/create-category-request.api.dto";
 import { UpdateCategoryRequestApiDto } from "@api/dtos/categories/requests/update-category-request.api.dto";
-import { Public } from "@infra/auth/jwt/decorators/public.decorator";
 
 @ApiTags("categories")
 @Controller("categories")
@@ -32,7 +31,6 @@ export class CategoriesController {
   ) {}
 
   @Get()
-  @Public()
   async getAll(@Res() res: FastifyReply) {
     const result = await this.categoryRepository.getAll();
     if (result.isFailure()) {
@@ -46,7 +44,6 @@ export class CategoriesController {
 
   @Post()
   @ApiBody({ type: CreateCategoryRequestApiDto })
-  @Public()
   async create(@Body() body: unknown, @Res() res: FastifyReply) {
     const result = await this.createCategoryUseCase.execute(body);
     if (result.isFailure()) {
@@ -60,7 +57,6 @@ export class CategoriesController {
 
   @Put(":id")
   @ApiBody({ type: UpdateCategoryRequestApiDto })
-  @Public()
   async update(
     @Param("id") id: string,
     @Body() body: unknown,
@@ -80,7 +76,6 @@ export class CategoriesController {
   }
 
   @Delete(":id")
-  @Public()
   async delete(@Param("id") id: string, @Res() res: FastifyReply) {
     const result = await this.deleteCategoryUseCase.execute({ id });
     if (result.isFailure()) {
