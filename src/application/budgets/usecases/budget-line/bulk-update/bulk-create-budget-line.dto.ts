@@ -6,7 +6,7 @@ export const bulkCreateBudgetLineSchema = z.object({
   categoryCode: z.string().trim().min(1),
   parentId: z.string().trim().optional().nullable(),
   order: z.number().int().nonnegative(),
-  name: z.string().trim().min(1),
+  name: z.string().trim(),
   description: z.string().optional(),
   billingType: z.nativeEnum(BillingType).optional().nullable(),
   quantity: z.number().nonnegative().optional(),

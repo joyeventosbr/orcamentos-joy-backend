@@ -68,8 +68,6 @@ export class BudgetLine {
       return Result.failure("Orçamento é obrigatório");
     if (!input.categoryCode?.trim())
       return Result.failure("Categoria da linha é obrigatória");
-    if (!input.name?.trim())
-      return Result.failure("Nome da linha é obrigatório");
 
     if (input.order < 0) return Result.failure("Ordem da linha inválida");
     if (input.quantity && input.quantity < 0)
@@ -117,7 +115,7 @@ export class BudgetLine {
       input.categoryCode,
       input.parentId ?? null,
       input.order,
-      input.name,
+      input.name?.trim() ?? "",
       input.description ?? "",
       input.quantity ?? 0,
       input.dailyRates ?? 0,
@@ -311,8 +309,6 @@ export class BudgetLine {
       return Result.failure("Orçamento é obrigatório");
     if (!this.categoryCode?.trim())
       return Result.failure("Categoria da linha é obrigatória");
-    if (!this.name?.trim())
-      return Result.failure("Nome da linha é obrigatório");
 
     if (this.order < 0) return Result.failure("Ordem da linha inválida");
     if (this.quantity < 0) return Result.failure("Quantidade inválida");

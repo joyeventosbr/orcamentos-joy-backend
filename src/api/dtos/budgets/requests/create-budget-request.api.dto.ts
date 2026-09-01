@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateBudgetRequestApiDto {
   @ApiProperty()
@@ -9,7 +9,4 @@ export class CreateBudgetRequestApiDto {
 
   @ApiProperty()
   folderId!: string;
-
-  @ApiPropertyOptional()
-  projectedValue?: number;
 }
