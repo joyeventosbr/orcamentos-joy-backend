@@ -3,6 +3,7 @@ import { Budget } from "@domain/budgets/entities/budget.entity";
 import { BudgetLine } from "@domain/budgets/entities/budget-line.entity";
 import { FolderBudget } from "@domain/budgets/entities/folder-budget.entity";
 import { BudgetStatus } from "@domain/budgets/enums/budget-status.enum";
+import { validateBudgetLinesForApproval } from "@domain/budgets/validators/validate-budget-lines-for-approval";
 import type { IBudgetRepository } from "@domain/budgets/repositories/i-budget-repository";
 import type { IBudgetLineRepository } from "@domain/budgets/repositories/i-budget-line-repository";
 import type { IBudgetRelationRepository } from "@domain/budgets/repositories/i-budget-relation-repository";
@@ -66,6 +67,11 @@ export class ApproveBudgetToProductionUseCase {
     );
     if (linesResult.isFailure()) {
       return Result.failure(linesResult.getError());
+    }
+
+    const linesValidation = validateBudgetLinesForApproval(linesResult.getValue());
+    if (linesValidation.isFailure()) {
+      return Result.failure(linesValidation.getError());
     }
 
     const production = Budget.create({

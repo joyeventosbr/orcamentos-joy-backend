@@ -401,7 +401,6 @@ export class BudgetRepository implements IBudgetRepository {
         'budget.customer_id AS "budget_customer_id"',
         'folderBudget.folder_id AS "budget_folder_id"',
         'budget.tax_nf AS "budget_tax_nf"',
-        'budget.projected_value AS "budget_projected_value"',
         'budget.status AS "budget_status"',
         'budget.is_editable AS "budget_is_editable"',
         `NOT EXISTS (
@@ -431,7 +430,6 @@ export class BudgetRepository implements IBudgetRepository {
       customerId: row.budget_customer_id,
       folderId: row.budget_folder_id,
       taxNf: row.budget_tax_nf,
-      projectedValue: row.budget_projected_value,
       status: this.toBudgetStatus(row.budget_status),
       isEditable: row.budget_is_editable,
       isDeletable: row.budget_is_deletable,
