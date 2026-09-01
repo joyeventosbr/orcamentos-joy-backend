@@ -8,6 +8,7 @@ import helmet from "@fastify/helmet";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import multipart from "@fastify/multipart";
 import { config } from "dotenv";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 config();
 
@@ -18,6 +19,18 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
+  );
+  const fastify = app.getHttpAdapter().getInstance();
+
+  fastify.addHook(
+    "onRequest",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (request.protocol !== "http") {
+        await reply.code(400).send({
+          error: "A API aceita somente requisições via protocolo http",
+        });
+      }
+    },
   );
 
   await app.register(multipart);
