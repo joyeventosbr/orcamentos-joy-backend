@@ -89,6 +89,7 @@ export class BulkUpdateBudgetLinesUseCase {
         supplier: line.supplier,
         supplierValue: line.supplierValue,
         percentBv: line.percentBv,
+        percentNfBv: line.percentNfBv,
         percentNfOver: line.percentNfOver,
         nfReceived: line.nfReceived,
       });

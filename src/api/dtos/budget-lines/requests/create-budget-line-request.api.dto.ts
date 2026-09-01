@@ -68,6 +68,9 @@ export class CreateBudgetLineRequestApiDto {
   @ApiPropertyOptional()
   percentBv?: number;
 
+  @ApiPropertyOptional({ nullable: true })
+  percentNfBv?: number | null;
+
   @ApiPropertyOptional()
   percentNfOver?: number;
 

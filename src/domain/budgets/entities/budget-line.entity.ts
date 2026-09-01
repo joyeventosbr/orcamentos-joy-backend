@@ -57,7 +57,7 @@ export class BudgetLine {
     supplier?: string | null;
     supplierValue?: number;
     percentBv?: number;
-    percentNfBv?: number;
+    percentNfBv?: number | null;
     bvValue?: number;
     percentNfOver?: number;
     overValue?: number;
@@ -98,7 +98,7 @@ export class BudgetLine {
       return Result.failure("Valor do fornecedor inválido");
     if (input.percentBv && input.percentBv < 0)
       return Result.failure("Percentual de BV inválido");
-    if (input.percentNfBv && input.percentNfBv < 0)
+    if (input.percentNfBv != null && input.percentNfBv < 0)
       return Result.failure("Percentual de NF BV inválido");
     if (input.bvValue && input.bvValue < 0)
       return Result.failure("Valor de BV inválido");
@@ -230,7 +230,7 @@ export class BudgetLine {
     supplier?: string | null;
     supplierValue?: number;
     percentBv?: number;
-    percentNfBv?: number;
+    percentNfBv?: number | null;
     bvValue?: number;
     percentNfOver?: number;
     overValue?: number;
