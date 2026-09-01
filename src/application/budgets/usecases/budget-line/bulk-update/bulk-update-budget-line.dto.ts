@@ -24,6 +24,7 @@ export const bulkUpdateBudgetLineSchema = z.object({
   supplier: z.string().trim().optional().nullable(),
   supplierValue: z.number().nonnegative().optional(),
   percentBv: z.number().nonnegative().optional(),
+  percentNfBv: z.number().nonnegative().nullable().optional(),
   percentNfOver: z.number().nonnegative().optional(),
   nfReceived: z.string().trim().optional().nullable(),
 });
