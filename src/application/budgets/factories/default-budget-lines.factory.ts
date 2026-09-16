@@ -226,10 +226,12 @@ export class DefaultBudgetLinesFactory {
 
   static create(budgetId: string): Result<BudgetLine[]> {
     const lines: BudgetLine[] = [];
-    let order = 0;
+    const orderByCategory = new Map<string, number>();
 
     for (const template of this.buildTemplates()) {
-      order += 1;
+      const order = (orderByCategory.get(template.categoryCode) ?? 0) + 1;
+      orderByCategory.set(template.categoryCode, order);
+
       const { name, description } = this.resolveName(
         template.name,
         template.description ?? "",

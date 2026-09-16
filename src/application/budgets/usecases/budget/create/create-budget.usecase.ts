@@ -66,6 +66,8 @@ export class CreateBudgetUseCase {
       customerId: parsed.data.customerId,
       folderId: parsed.data.folderId,
       taxNf,
+      honorariumPercentage: parsed.data.honorariumPercentage,
+      honorariumMinimumFee: parsed.data.honorariumMinimumFee,
       createdBy: parsed.data.createdBy,
       status: BudgetStatus.CONCORRENCIA,
     });

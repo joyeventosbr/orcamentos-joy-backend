@@ -80,6 +80,8 @@ export class ApproveBudgetToProductionUseCase {
       folderId: budget.folderId,
       taxNf: budget.taxNf,
       projectedValue: budget.projectedValue,
+      honorariumPercentage: budget.honorariumPercentage,
+      honorariumMinimumFee: budget.honorariumMinimumFee,
       createdBy: parsed.data.updatedBy,
       version: 0,
       status: BudgetStatus.PRODUCAO,
