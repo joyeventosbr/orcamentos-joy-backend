@@ -26,6 +26,12 @@ export class BudgetSchema {
   @Column({ name: "projected_value", type: "float", default: 0 })
   projectedValue!: number;
 
+  @Column({ name: "honorarium_percentage", type: "float", default: 0 })
+  honorariumPercentage!: number;
+
+  @Column({ name: "honorarium_minimum_fee", type: "float", default: 0 })
+  honorariumMinimumFee!: number;
+
   @Column({ type: "smallint", default: BudgetStatus.CONCORRENCIA })
   status!: BudgetStatus;
 

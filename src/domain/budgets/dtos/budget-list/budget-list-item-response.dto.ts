@@ -7,6 +7,8 @@ export class BudgetListItemResponseDto {
   customerId!: string;
   folderId!: string;
   taxNf!: number;
+  honorariumPercentage!: number;
+  honorariumMinimumFee!: number;
   status!: BudgetStatus;
   isEditable!: boolean;
   isDeletable!: boolean;

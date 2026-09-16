@@ -11,6 +11,8 @@ export class BudgetDetailResponseDto {
   folderName!: string;
   taxNf!: number;
   projectedValue!: number;
+  honorariumPercentage!: number;
+  honorariumMinimumFee!: number;
   status!: BudgetStatus;
   isEditable!: boolean;
   isDeletable!: boolean;

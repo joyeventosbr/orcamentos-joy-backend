@@ -14,6 +14,12 @@ export class UpdateBudgetRequestApiDto {
   @ApiPropertyOptional()
   projectedValue?: number;
 
+  @ApiPropertyOptional({ nullable: true, minimum: 0 })
+  honorariumPercentage?: number | null;
+
+  @ApiPropertyOptional({ nullable: true, minimum: 0 })
+  honorariumMinimumFee?: number | null;
+
   @ApiPropertyOptional()
   jobDescription?: string;
 

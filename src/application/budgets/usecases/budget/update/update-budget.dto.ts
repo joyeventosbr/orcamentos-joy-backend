@@ -7,6 +7,8 @@ export const updateBudgetSchema = z.object({
   customerId: z.string().trim().min(1).optional(),
   folderId: z.string().trim().min(1).optional(),
   projectedValue: z.number().nonnegative().optional(),
+  honorariumPercentage: z.number().nonnegative().nullable().optional(),
+  honorariumMinimumFee: z.number().nonnegative().nullable().optional(),
   jobDescription: z.string().trim().min(1).optional(),
   location: z.string().trim().min(1).optional(),
   eventDate: z.string().trim().min(1).optional(),

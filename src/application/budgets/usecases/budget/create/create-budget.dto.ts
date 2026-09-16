@@ -4,6 +4,8 @@ export const createBudgetSchema = z.object({
   name: z.string().trim().min(1),
   customerId: z.string().trim().min(1),
   folderId: z.string().trim().min(1),
+  honorariumPercentage: z.number().nonnegative().nullable().optional(),
+  honorariumMinimumFee: z.number().nonnegative().nullable().optional(),
   createdBy: z.string().trim().min(1),
 });
 

@@ -10,6 +10,8 @@ export class Budget {
     public folderId: string,
     public taxNf: number,
     public projectedValue: number,
+    public honorariumPercentage: number,
+    public honorariumMinimumFee: number,
     public status: BudgetStatus,
     public isEditable: boolean,
     public parentId: string | null,
@@ -30,6 +32,8 @@ export class Budget {
     folderId: string;
     taxNf: number;
     projectedValue?: number;
+    honorariumPercentage?: number | null;
+    honorariumMinimumFee?: number | null;
     createdBy: string;
     version?: number;
     status?: BudgetStatus;
@@ -50,6 +54,14 @@ export class Budget {
     const projectedValue = input.projectedValue ?? 0;
     if (!Number.isFinite(projectedValue) || projectedValue < 0) {
       return Result.failure("Valor projetado inválido");
+    }
+    const honorariumPercentage = input.honorariumPercentage ?? 0;
+    if (!Number.isFinite(honorariumPercentage) || honorariumPercentage < 0) {
+      return Result.failure("Taxa de honorários inválida");
+    }
+    const honorariumMinimumFee = input.honorariumMinimumFee ?? 0;
+    if (!Number.isFinite(honorariumMinimumFee) || honorariumMinimumFee < 0) {
+      return Result.failure("Valor total de honorários inválido");
     }
     if (!input.createdBy?.trim())
       return Result.failure("Usuário de criação é obrigatório");
@@ -72,6 +84,8 @@ export class Budget {
         input.folderId.trim(),
         input.taxNf,
         projectedValue,
+        honorariumPercentage,
+        honorariumMinimumFee,
         status,
         Budget.isEditableByStatus(status),
         input.parentId?.trim() ?? null,
@@ -94,6 +108,8 @@ export class Budget {
     folderId: string;
     taxNf: number;
     projectedValue: number;
+    honorariumPercentage: number;
+    honorariumMinimumFee: number;
     status: BudgetStatus;
     isEditable: boolean;
     parentId: string | null;
@@ -114,6 +130,8 @@ export class Budget {
       input.folderId,
       input.taxNf,
       input.projectedValue,
+      input.honorariumPercentage,
+      input.honorariumMinimumFee,
       input.status,
       input.isEditable,
       input.parentId,
@@ -134,6 +152,8 @@ export class Budget {
     customerId?: string;
     folderId?: string;
     projectedValue?: number;
+    honorariumPercentage?: number | null;
+    honorariumMinimumFee?: number | null;
     jobDescription?: string;
     location?: string;
     eventDate?: string;
@@ -169,6 +189,22 @@ export class Budget {
         return Result.failure("Valor projetado inválido");
       }
       this.projectedValue = input.projectedValue;
+    }
+
+    if (input.honorariumPercentage !== undefined) {
+      const honorariumPercentage = input.honorariumPercentage ?? 0;
+      if (!Number.isFinite(honorariumPercentage) || honorariumPercentage < 0) {
+        return Result.failure("Taxa de honorários inválida");
+      }
+      this.honorariumPercentage = honorariumPercentage;
+    }
+
+    if (input.honorariumMinimumFee !== undefined) {
+      const honorariumMinimumFee = input.honorariumMinimumFee ?? 0;
+      if (!Number.isFinite(honorariumMinimumFee) || honorariumMinimumFee < 0) {
+        return Result.failure("Valor total de honorários inválido");
+      }
+      this.honorariumMinimumFee = honorariumMinimumFee;
     }
 
     if (input.jobDescription !== undefined) {
