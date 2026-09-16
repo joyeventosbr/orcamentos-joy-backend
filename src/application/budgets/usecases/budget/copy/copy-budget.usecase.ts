@@ -52,6 +52,8 @@ export class CopyBudgetUseCase {
       folderId: budget.folderId,
       taxNf: budget.taxNf,
       projectedValue: budget.projectedValue,
+      honorariumPercentage: budget.honorariumPercentage,
+      honorariumMinimumFee: budget.honorariumMinimumFee,
       createdBy: parsed.data.createdBy,
       version: budget.version + 1,
       status: budget.status,
