@@ -5,5 +5,6 @@ export type JwtPayload = {
   name: string;
   email: string;
   role: Role;
+  folderIds?: string[];
   roleDescription?: string;
 };

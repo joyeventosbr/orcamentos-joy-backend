@@ -18,6 +18,12 @@ export class UserSchema {
   @Column({ type: "smallint", default: Role.CUSTOMER })
   role!: Role;
 
+  @Column({ name: "is_active", default: true })
+  isActive!: boolean;
+
+  @Column("uuid", { name: "folder_ids", array: true, default: () => "'{}'" })
+  folderIds!: string[];
+
   @Column({ name: "created_at" })
   createdAt!: Date;
 

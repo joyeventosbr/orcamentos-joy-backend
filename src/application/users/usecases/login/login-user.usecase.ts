@@ -40,7 +40,7 @@ export class LoginUserUseCase {
     }
 
     const user = userResult.getValue();
-    if (!user) {
+    if (!user || !user.isActive) {
       return Result.failure("Email ou senha inválidos");
     }
 

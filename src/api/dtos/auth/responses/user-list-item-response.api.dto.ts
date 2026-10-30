@@ -4,6 +4,11 @@ import { Role } from "@domain/users/enums/user-role.enum";
 
 export class UserListItemResponseApiDto extends UserListItemResponseDto {
   @ApiProperty()
+  declare isActive: boolean;
+
+  @ApiProperty({ type: [String] })
+  declare folderIds: string[];
+  @ApiProperty()
   declare id: string;
 
   @ApiProperty()

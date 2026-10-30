@@ -1,3 +1,4 @@
+import { TemporaryAccessService } from "@infra/auth/jwt/temporary-access.service";
 import { Inject, Injectable } from "@nestjs/common";
 import { User } from "@domain/users/entities/user/user.entity";
 import type { IUserRepository } from "@domain/users/repositories/i-user-repository";
@@ -25,6 +26,7 @@ export class RegisterUserUseCase {
   constructor(
     @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
+    private readonly access: TemporaryAccessService,
     private readonly passwordHasherService: PasswordHasherService,
     @Inject("ITokenService")
     private readonly tokenService: ITokenService,
@@ -59,12 +61,17 @@ export class RegisterUserUseCase {
       name: resultData.data.name,
       email: resultData.data.email,
       password: await this.passwordHasherService.hash(resultData.data.password),
-      role: Role.CUSTOMER,
+      role: resultData.data.role ?? Role.CUSTOMER,
       roleDescription: resultData.data.roleDescription,
     });
 
     if (newUser.isFailure()) {
       return Result.failure(newUser.getError());
+    }
+
+    if (resultData.data.role === Role.TEMPORARY) {
+      await this.access.validateFolders(resultData.data.folderIds ?? []);
+      newUser.getValue().folderIds = resultData.data.folderIds ?? [];
     }
 
     const createResult = await this.userRepository.create(newUser.getValue());

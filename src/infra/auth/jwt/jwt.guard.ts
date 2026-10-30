@@ -8,7 +8,8 @@ import { AuthGuard } from "@nestjs/passport";
 import { Reflector } from "@nestjs/core";
 import { IS_PUBLIC_KEY } from "./decorators/public.decorator";
 import { REQUIRED_ROLE_KEY } from "./decorators/admin.decorator";
-import { type Role } from "@domain/users/enums/user-role.enum";
+import { TemporaryAccessService } from "./temporary-access.service";
+import { Role } from "@domain/users/enums/user-role.enum";
 
 type JwtUser = {
   userId: string;
@@ -19,11 +20,11 @@ type JwtUser = {
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard("jwt") {
-  constructor(private readonly reflector: Reflector) {
+  constructor(private readonly reflector: Reflector, private readonly access: TemporaryAccessService) {
     super();
   }
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -33,7 +34,12 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
       return true;
     }
 
-    return super.canActivate(context);
+    const allowed = await super.canActivate(context);
+    const request = context.switchToHttp().getRequest<{ user: { role: Role; folderIds: string[] }; method: string; params: Record<string, string>; body: unknown }>();
+    if (request.user.role === Role.TEMPORARY) {
+      await this.access.authorize(context.getClass().name, request.method, request.params, request.body, request.user.folderIds);
+    }
+    return Boolean(allowed);
   }
 
   handleRequest<TUser = JwtUser>(
