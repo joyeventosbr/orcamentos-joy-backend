@@ -54,11 +54,16 @@ export class BudgetsController {
         .send({ error: result.getError() });
     }
 
-    return res
-      .status(HttpStatus.OK)
-      .send(
-        result.getValue().map((budget) => this.serializeBudget(budget, user)),
-      );
+    return res.status(HttpStatus.OK).send(
+      result
+        .getValue()
+        .filter(
+          (budget) =>
+            user.role !== Role.TEMPORARY ||
+            (user.folderIds ?? []).includes(budget.folderId),
+        )
+        .map((budget) => this.serializeBudget(budget, user)),
+    );
   }
 
   @Post()
@@ -148,11 +153,16 @@ export class BudgetsController {
         .send({ error: result.getError() });
     }
 
-    return res
-      .status(HttpStatus.OK)
-      .send(
-        result.getValue().map((budget) => this.serializeBudget(budget, user)),
-      );
+    return res.status(HttpStatus.OK).send(
+      result
+        .getValue()
+        .filter(
+          (budget) =>
+            user.role !== Role.TEMPORARY ||
+            (user.folderIds ?? []).includes(budget.folderId),
+        )
+        .map((budget) => this.serializeBudget(budget, user)),
+    );
   }
 
   @Admin()

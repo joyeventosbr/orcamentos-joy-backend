@@ -13,6 +13,8 @@ export class UserMapper {
       createdAt: schema.createdAt,
       roleDescription: schema.roleDescription,
       updatedAt: schema.updatedAt,
+      isActive: schema.isActive,
+      folderIds: schema.folderIds,
     });
   }
 
@@ -26,6 +28,8 @@ export class UserMapper {
     schema.createdAt = entity.createdAt;
     schema.roleDescription = entity.roleDescription;
     schema.updatedAt = entity.updatedAt;
+    schema.isActive = entity.isActive;
+    schema.folderIds = entity.folderIds;
 
     return schema;
   }
@@ -39,6 +43,8 @@ export class UserMapper {
       roleDescription: schema.roleDescription,
       createdAt: schema.createdAt,
       updatedAt: schema.updatedAt,
+      isActive: schema.isActive,
+      folderIds: schema.folderIds,
     };
   }
 }

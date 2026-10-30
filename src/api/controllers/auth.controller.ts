@@ -1,5 +1,6 @@
 import {
   Body,
+  Patch,
   Controller,
   Delete,
   Get,
@@ -17,6 +18,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { TemporaryAccessService } from "@infra/auth/jwt/temporary-access.service";
 import { RegisterUserUseCase } from "@application/users/usecases/register/register-user.usecase";
 import { LoginUserUseCase } from "@application/users/usecases/login/login-user.usecase";
 import { DeleteUserUseCase } from "@application/users/usecases/delete/delete-user.usecase";
@@ -37,6 +39,7 @@ import type { IUserRepository } from "@domain/users/repositories/i-user-reposito
 @Controller("auth")
 export class AuthController {
   constructor(
+    private readonly access: TemporaryAccessService,
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly registerAdminUseCase: RegisterAdminUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
@@ -44,6 +47,17 @@ export class AuthController {
     @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
   ) {}
+
+  @Admin()
+  @Patch("users/:id/access")
+  async updateAccess(
+    @Param("id") id: string,
+    @Body() body: unknown,
+    @Res() res: FastifyReply,
+  ) {
+    await this.access.update(id, body);
+    return res.status(HttpStatus.NO_CONTENT).send();
+  }
 
   @Admin()
   @Get("users")

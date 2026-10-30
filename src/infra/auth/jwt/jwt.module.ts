@@ -1,3 +1,4 @@
+import { TemporaryAccessService } from "./temporary-access.service";
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
@@ -16,6 +17,7 @@ import { JwtTokenService } from "./jwt-token.service";
   ],
   providers: [
     JwtStrategy,
+    TemporaryAccessService,
     {
       provide: "ITokenService",
       useClass: JwtTokenService,
@@ -25,6 +27,6 @@ import { JwtTokenService } from "./jwt-token.service";
       useClass: JwtAuthGuard,
     },
   ],
-  exports: [JwtModule, "ITokenService"],
+  exports: [TemporaryAccessService, JwtModule, "ITokenService"],
 })
 export class AuthJwtModule {}

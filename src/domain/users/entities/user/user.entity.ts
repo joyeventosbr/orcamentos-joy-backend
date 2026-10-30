@@ -11,6 +11,8 @@ export class User {
     public createdAt: Date,
     public roleDescription?: string,
     public updatedAt?: Date,
+    public isActive = true,
+    public folderIds: string[] = [],
   ) {}
 
   static create({
@@ -68,6 +70,8 @@ export class User {
     createdAt: Date;
     roleDescription?: string;
     updatedAt?: Date;
+    isActive?: boolean;
+    folderIds?: string[];
   }): User {
     return new User(
       userData.id,
@@ -78,6 +82,8 @@ export class User {
       userData.createdAt,
       userData.roleDescription,
       userData.updatedAt,
+      userData.isActive,
+      userData.folderIds,
     );
   }
 }

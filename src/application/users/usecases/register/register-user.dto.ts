@@ -12,6 +12,8 @@ export const makeRegisterUserSchema = (validationService: IValidationService) =>
       }),
     password: z.string(),
     roleDescription: z.string().trim().min(1),
+    role: z.literal(3).optional(),
+    folderIds: z.array(z.string().uuid()).min(1).max(500).optional(),
   });
 
 export type RegisterUserDto = z.infer<
